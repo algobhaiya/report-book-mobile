@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/algoBhaiya.ReportBook.Mobile/algoBhaiya.ReportBook.MobileApp/obj
+/src/algoBhaiya.ReportBook.Mobile/algoBhaiya.ReportBook.MobileApp/bin
