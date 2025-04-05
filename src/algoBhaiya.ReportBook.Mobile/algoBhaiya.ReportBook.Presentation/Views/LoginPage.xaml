@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.LoginPage"
+             xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views;assembly=algoBhaiya.ReportBook.Presentation"             
+             Title="Login">
+    <VerticalStackLayout Padding="30" Spacing="20">
+
+        <Label Text="Welcome to Report Book!" 
+               FontSize="24" 
+               HorizontalOptions="Center" />
+
+        <Label Text="Previously Logged-in Users:" FontSize="18" />
+
+        <!-- Existing Users List -->
+        <CollectionView x:Name="UserListView"
+                ItemsSource="{Binding ExistingUsers}"
+                SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.UserTappedCommand}"
+                                          CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                        <Label Text="{Binding UserName}" FontSize="16"/>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- New User Entry -->
+        <Label Text="New or Returning User:" FontSize="18" />
+        <Entry x:Name="UsernameEntry" Placeholder="Enter your name" />
+
+        <Button Text="Login or Register"
+                Clicked="OnLoginClicked"
+                BackgroundColor="#2196F3"
+                TextColor="White" />
+
+    </VerticalStackLayout>
+</ContentPage>

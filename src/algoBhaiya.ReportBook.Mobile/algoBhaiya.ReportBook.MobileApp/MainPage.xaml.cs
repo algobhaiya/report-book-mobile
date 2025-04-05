@@ -33,6 +33,16 @@ namespace algoBhaiya.ReportBook.MobileApp
             // Navigate to dailyEntryPage
             await Navigation.PushAsync(dailyEntryPage);
         }
+
+        private async void OnOpenLogInPageClicked(object sender, EventArgs e)
+        {
+            // Resolve logInPage with logInPage from the DI container
+            var logInPage = _serviceProvider.GetRequiredService<LoginPage>();
+
+            // Navigate to logInPage
+            await Navigation.PushAsync(logInPage);
+        }
+
     }
 
 }
