@@ -1,5 +1,6 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
+using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -41,8 +42,11 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddSingleton<MainPage>();
 
             // Register pages and view models
-            builder.Services.AddTransient<DailyEntryPage>();
             builder.Services.AddTransient<LoginPage>();
+
+            builder.Services.AddTransient<DailyEntryViewModel>();
+            builder.Services.AddTransient<DailyEntryPage>();
+            
 
 
 #if DEBUG
