@@ -8,10 +8,10 @@ namespace algoBhaiya.ReportBook.Presentation.Views
     
     public partial class DailyEntryPage : ContentPage
     {
-        private readonly IDailyProductivityRepository _repository;
+        private readonly IDailyEntryRepository _repository;
 
         public DailyEntryPage(
-            IDailyProductivityRepository repository)
+            IDailyEntryRepository repository)
         {
             InitializeComponent();
             _repository = repository;
