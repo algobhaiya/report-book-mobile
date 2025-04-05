@@ -21,16 +21,18 @@ namespace algoBhaiya.ReportBook.MobileApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Configure Database
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ReportBookClient.db");
-
             // Register the SQLite connection
-            builder.Services.AddSingleton(new SQLiteAsyncConnection(dbPath));
+            builder.Services.AddSingleton(db =>
+            {
+                // Configure Database
+                string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ReportBookClient.db");
+                return new SQLiteAsyncConnection(dbPath);
+            });
 
             // Register the generic repository for scoped lifetime
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            builder.Services.AddScoped<IDailyProductivityRepository, DailyProductivityRepository>();
+            builder.Services.AddScoped<IDailyEntryRepository, DailyEntryRepository>();
 
             // Register AppShell as a singleton
             builder.Services.AddSingleton<AppShell>();
