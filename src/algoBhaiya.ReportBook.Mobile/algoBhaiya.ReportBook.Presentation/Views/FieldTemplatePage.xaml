@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+    
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplatePage"
+             Title="Field Templates">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <CollectionView ItemsSource="{Binding Templates}" SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="LightGray" Padding="10" CornerRadius="8">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding FieldName}" FontAttributes="Bold" />
+                            <Label Text="{Binding ValueType}" TextColor="Gray" />
+                            <Label Text="{Binding Unit.UnitName}" FontAttributes="Italic" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="➕ Add Field"
+                BackgroundColor="#388E3C"
+                TextColor="White"
+                Clicked="OnAddClicked" />
+
+    </VerticalStackLayout>
+</ContentPage>

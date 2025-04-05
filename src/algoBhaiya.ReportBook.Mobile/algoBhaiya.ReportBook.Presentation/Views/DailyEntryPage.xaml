@@ -1,26 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
-             Title="Daily Productivity Entry">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+             xmlns:viewmodels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
+             xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             xmlns:helpers="clr-namespace:algoBhaiya.ReportBook.Presentation.Helpers"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage">
+    <ContentPage.Resources>
+        <helpers:FieldTemplateSelector x:Key="FieldTemplateSelector"/>
+    </ContentPage.Resources>
 
-            <Label Text="📘 Study Hours" FontAttributes="Bold" />
-            <Entry x:Name="StudyHoursEntry" Keyboard="Numeric" Placeholder="e.g., 3.5" />
+    <StackLayout Padding="20">
+        <Label Text="Daily Entry" FontAttributes="Bold" FontSize="20" />
 
-            <Label Text="🏃‍♂️ Exercise Minutes" FontAttributes="Bold" />
-            <Entry x:Name="ExerciseMinutesEntry" Keyboard="Numeric" Placeholder="e.g., 45" />
+        <CollectionView ItemsSource="{Binding Fields}" ItemTemplate="{StaticResource FieldTemplateSelector}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+        </CollectionView>
 
-            <Label Text="🍵 Tea Count" FontAttributes="Bold" />
-            <Entry x:Name="TeaCountEntry" Keyboard="Numeric" Placeholder="e.g., 2" />
-
-            <Button Text="Save Today's Entry"
-                    Clicked="OnSaveClicked"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White"
-                    CornerRadius="10"/>
-
-        </VerticalStackLayout>
-    </ScrollView>
+        <Button Text="Save" Command="{Binding SaveCommand}" />
+    </StackLayout>
 </ContentPage>
