@@ -44,6 +44,20 @@
                 SemanticProperties.Hint="Open Log in Page"
                 Clicked="OnOpenLogInPageClicked"
                 HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="OpenFieldTemplateBtn"
+                Text="Field Template" 
+                SemanticProperties.Hint="Open Field Template Page"
+                Clicked="OnOpenFieldTemplatePageClicked"
+                HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="OpenFieldUnitBtn"
+                Text="Field Unit" 
+                SemanticProperties.Hint="Open Field Unit Page"
+                Clicked="OnOpenFieldUnitPageClicked"
+                HorizontalOptions="Fill" />
             
         </VerticalStackLayout>
     </ScrollView>

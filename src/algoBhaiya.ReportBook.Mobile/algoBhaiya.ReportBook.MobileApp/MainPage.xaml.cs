@@ -43,6 +43,23 @@ namespace algoBhaiya.ReportBook.MobileApp
             await Navigation.PushAsync(logInPage);
         }
 
+        private async void OnOpenFieldTemplatePageClicked(object sender, EventArgs e)
+        {
+            // Resolve logInPage with logInPage from the DI container
+            var templatePage = _serviceProvider.GetRequiredService<FieldTemplatePage>();
+
+            // Navigate to logInPage
+            await Navigation.PushAsync(templatePage);
+        }
+
+        private async void OnOpenFieldUnitPageClicked(object sender, EventArgs e)
+        {
+            // Resolve logInPage with logInPage from the DI container
+            var unitPage = _serviceProvider.GetRequiredService<FieldUnitPage>();
+
+            // Navigate to logInPage
+            await Navigation.PushAsync(unitPage);
+        }
     }
 
 }
