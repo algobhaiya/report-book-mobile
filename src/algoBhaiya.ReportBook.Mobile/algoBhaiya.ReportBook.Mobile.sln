@@ -3,7 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "algoBhaiya.ReportBook.MobileApp", "algoBhaiya.ReportBook.MobileApp\algoBhaiya.ReportBook.MobileApp.csproj", "{0E6C4E4E-A89C-4F63-826E-31CD1A777865}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "algoBhaiya.ReportBook.MobileApp", "algoBhaiya.ReportBook.MobileApp\algoBhaiya.ReportBook.MobileApp.csproj", "{0E6C4E4E-A89C-4F63-826E-31CD1A777865}"
+	ProjectSection(ProjectDependencies) = postProject
+		{795A0847-E912-4D34-88C5-ECC5577CCC12} = {795A0847-E912-4D34-88C5-ECC5577CCC12}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "algoBhaiya.ReportBook.Presentation", "algoBhaiya.ReportBook.Presentation\algoBhaiya.ReportBook.Presentation.csproj", "{C01FF3A9-3998-45AC-8762-6DC0AE716665}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "algoBhaiya.ReportBook.Infrastructure", "algoBhaiya.ReportBook.Infrastructure\algoBhaiya.ReportBook.Infrastructure.csproj", "{55017D82-B3E0-4C0D-9BB6-489E72C6E6B4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "algoBhaiya.ReportBook.Core", "algoBhaiya.ReportBook.Core\algoBhaiya.ReportBook.Core.csproj", "{795A0847-E912-4D34-88C5-ECC5577CCC12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +26,18 @@ Global
 		{0E6C4E4E-A89C-4F63-826E-31CD1A777865}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E6C4E4E-A89C-4F63-826E-31CD1A777865}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E6C4E4E-A89C-4F63-826E-31CD1A777865}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C01FF3A9-3998-45AC-8762-6DC0AE716665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01FF3A9-3998-45AC-8762-6DC0AE716665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01FF3A9-3998-45AC-8762-6DC0AE716665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01FF3A9-3998-45AC-8762-6DC0AE716665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55017D82-B3E0-4C0D-9BB6-489E72C6E6B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55017D82-B3E0-4C0D-9BB6-489E72C6E6B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55017D82-B3E0-4C0D-9BB6-489E72C6E6B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55017D82-B3E0-4C0D-9BB6-489E72C6E6B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{795A0847-E912-4D34-88C5-ECC5577CCC12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{795A0847-E912-4D34-88C5-ECC5577CCC12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{795A0847-E912-4D34-88C5-ECC5577CCC12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{795A0847-E912-4D34-88C5-ECC5577CCC12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,10 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
+using algoBhaiya.ReportBook.Presentation.Views;
+using algoBhaiya.ReportBooks.Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using SQLite;
+
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
     public static class MauiProgram
     {
-        public static MauiApp CreateMauiApp()
+        public static MauiApp CreateMauiApp() 
         {
             var builder = MauiApp.CreateBuilder();
             builder
@@ -15,8 +21,29 @@ namespace algoBhaiya.ReportBook.MobileApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // Configure Database
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ReportBookClient.db");
+
+            // Register the SQLite connection
+            builder.Services.AddSingleton(new SQLiteAsyncConnection(dbPath));
+
+            // Register the generic repository for scoped lifetime
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            builder.Services.AddScoped<IDailyProductivityRepository, DailyProductivityRepository>();
+
+            // Register AppShell as a singleton
+            builder.Services.AddSingleton<AppShell>();
+
+            // Register your services, view models, and pages here
+            builder.Services.AddSingleton<MainPage>();
+
+            // Register pages and view models
+            builder.Services.AddTransient<DailyEntryPage>();
+
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
