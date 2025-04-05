@@ -37,6 +37,13 @@
                 SemanticProperties.Hint="Open Daily Form Page"
                 Clicked="OnOpenDailyFormPageClicked"
                 HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="OpenLogInBtn"
+                Text="LogIn" 
+                SemanticProperties.Hint="Open Log in Page"
+                Clicked="OnOpenLogInPageClicked"
+                HorizontalOptions="Fill" />
             
         </VerticalStackLayout>
     </ScrollView>
