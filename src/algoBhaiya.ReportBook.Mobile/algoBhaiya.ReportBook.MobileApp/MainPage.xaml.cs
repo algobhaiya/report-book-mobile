@@ -60,6 +60,16 @@ namespace algoBhaiya.ReportBook.MobileApp
             // Navigate to logInPage
             await Navigation.PushAsync(unitPage);
         }
+
+        private async void OnOpenMonthlyTargetPageClicked(object sender, EventArgs e)
+        {
+            // Resolve logInPage with logInPage from the DI container
+            var targetPage = _serviceProvider.GetRequiredService<MonthlyTargetPage>();
+
+            // Navigate to logInPage
+            await Navigation.PushAsync(targetPage);
+        }
+
     }
 
 }

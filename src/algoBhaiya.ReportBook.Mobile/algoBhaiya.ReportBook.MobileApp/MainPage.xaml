@@ -58,6 +58,13 @@
                 SemanticProperties.Hint="Open Field Unit Page"
                 Clicked="OnOpenFieldUnitPageClicked"
                 HorizontalOptions="Fill" />
+
+            <Button
+                x:Name="OpenMonthlyTargetBtn"
+                Text="Monthly Target" 
+                SemanticProperties.Hint="Open Monthly Target Page"
+                Clicked="OnOpenMonthlyTargetPageClicked"
+                HorizontalOptions="Fill" />
             
         </VerticalStackLayout>
     </ScrollView>
