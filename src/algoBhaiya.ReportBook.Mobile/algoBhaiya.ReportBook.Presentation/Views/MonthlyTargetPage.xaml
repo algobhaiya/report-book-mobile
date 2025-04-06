@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlyTargetPage"
+             Title="Set Monthly Targets">
+
+    <StackLayout Padding="20">
+
+        <HorizontalStackLayout Spacing="10">
+            <Picker Title="Month" SelectedIndex="{Binding SelectedMonth}">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>1</x:String>
+                        <x:String>2</x:String>
+                        <x:String>3</x:String>
+                        <x:String>4</x:String>
+                        <x:String>5</x:String>
+                        <x:String>6</x:String>
+                        <x:String>7</x:String>
+                        <x:String>8</x:String>
+                        <x:String>9</x:String>
+                        <x:String>10</x:String>
+                        <x:String>11</x:String>
+                        <x:String>12</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Entry Placeholder="Year" Keyboard="Numeric" Text="{Binding SelectedYear}" WidthRequest="80"/>
+        </HorizontalStackLayout>
+
+        <Button Text="Load Fields" Command="{Binding LoadCommand}" />
+
+        <CollectionView ItemsSource="{Binding Fields}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Orientation="Horizontal" Padding="5">
+                        <Label Text="{Binding FieldName}" WidthRequest="120"/>
+                        <Entry Text="{Binding TargetValue}" WidthRequest="100" Keyboard="Numeric"/>
+                        <Label Text="{Binding UnitName}" Margin="5,0,0,0"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="Save Targets" Command="{Binding SaveCommand}" Margin="0,20,0,0"/>
+    </StackLayout>
+</ContentPage>
