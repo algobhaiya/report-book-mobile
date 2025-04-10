@@ -14,21 +14,41 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             _database.CreateTableAsync<DailyEntry>().Wait();
         }
 
-        public Task SaveDailyEntryAsync(DailyEntry entry)
+        public async Task SaveDailyEntryAsync(DailyEntry entry)
         {
-            return _database.InsertOrReplaceAsync(entry);
+            if (entry.Id == 0)
+            {
+                await _database.InsertAsync(entry);
+            }
+            else
+            {
+                await _database.UpdateAsync(entry);
+            }            
         }
 
         public Task SaveDailyEntryAsync(DailyProductivityEntry entry)
         {
             return _database.InsertOrReplaceAsync(entry);
         }
+        
+        public async Task<List<DailyEntry>> GetEntriesForUserAndDateAsync(int userId, DateTime date)
+        {
+            var list = new List<DailyEntry>();
+            try
+            {
+                var start = date.Date;
+                var end = start.AddDays(1);
 
-        public Task<List<DailyEntry>> GetEntriesForUserAndDateAsync(int userId, DateTime date) =>
-            _database.Table<DailyEntry>()
-            .Where(e => e.UserId == userId && e.Date.Date == date.Date)
-            .ToListAsync();
-
+                list = await _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= start && e.Date < end)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return list;
+        }
 
         public Task<DailyEntry> GetEntryByDateAsync(DateTime date)
         {

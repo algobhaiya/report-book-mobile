@@ -38,12 +38,16 @@
                     <StackLayout Orientation="Horizontal" Padding="5">
                         <Label Text="{Binding FieldName}" WidthRequest="120"/>
                         <Entry Text="{Binding TargetValue}" WidthRequest="100" Keyboard="Numeric"/>
-                        <Label Text="{Binding UnitName}" Margin="5,0,0,0"/>
+                        <Label Text="{Binding UnitName}" FontAttributes="Italic" TextColor="Gray" Margin="5,0,0,0"/>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Button Text="Save Targets" Command="{Binding SaveCommand}" Margin="0,20,0,0"/>
+        <Button Text="Save Targets" 
+                Command="{Binding SaveCommand}"
+                Margin="0,20,0,0" 
+                BackgroundColor="#4CAF50"
+                TextColor="White" />
     </StackLayout>
 </ContentPage>

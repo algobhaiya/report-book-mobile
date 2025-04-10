@@ -53,6 +53,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _repository = repository;
             LoadCommand = new Command(async () => await LoadTargetsAsync());
             SaveCommand = new Command(async () => await SaveTargetsAsync());
+
+            LoadCommand.Execute(null);
         }
 
         public async Task LoadTargetsAsync()

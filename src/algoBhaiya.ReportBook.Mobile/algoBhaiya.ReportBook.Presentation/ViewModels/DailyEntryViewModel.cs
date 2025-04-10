@@ -3,30 +3,35 @@ using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
-    public class DailyEntryViewModel : INotifyPropertyChanged
+    public class DailyEntryViewModel
     {
+        public ObservableCollection<DailyEntry> Fields { get; set; } = new();
+
+        public ICommand SubmitCommand { get; }
+        public ICommand LoadCommand { get; }
+
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
 
-        public ObservableCollection<DailyEntryFieldViewModel> Fields { get; set; } = new();
-
         public DailyEntryViewModel(
             IServiceProvider serviceProvider,
-            IDailyEntryRepository repository)
+            IDailyEntryRepository repository
+            )
         {
             _repository = repository;
             _serviceProvider = serviceProvider;
-            LoadDataCommand = new Command(async () => await LoadFormFieldsAsync());
-            SaveCommand = new Command(async () => await SaveFormAsync());
+
+            SubmitCommand = new Command(async () => await SubmitAsync());
+            LoadCommand = new Command(async () => await LoadFieldsAsync());
+
+            LoadCommand.Execute(null);
         }
 
-        public Command LoadDataCommand { get; }
-        public Command SaveCommand { get; }
-
-        public async Task LoadFormFieldsAsync()
+        private async Task LoadFieldsAsync()
         {
             Fields.Clear();
             int userId = Preferences.Get("CurrentUserId", -1);
@@ -35,7 +40,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
             var fieldUnitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
-            var templates = await fieldTemplateRepo.GetAllAsync();
+            var templates = (await fieldTemplateRepo.GetAllAsync()).ToList();
             var units = await fieldUnitRepo.GetAllAsync();
             var entries = await _repository.GetEntriesForUserAndDateAsync(userId, DateTime.Today);
 
@@ -44,12 +49,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
                 var entry = entries.FirstOrDefault(e => e.FieldTemplateId == template.Id);
 
-                Fields.Add(new DailyEntryFieldViewModel
+                template.Unit = unit ?? new FieldUnit();
+
+                Fields.Add(new DailyEntry
                 {
+                    Id = entry?.Id ?? 0,
+                    FieldTemplate = template,
                     FieldTemplateId = template.Id,
-                    FieldName = template.FieldName,
-                    ValueType = template.ValueType,
-                    UnitName = unit?.UnitName ?? "",
                     UserId = userId,
                     Date = DateTime.Today,
                     Value = entry?.Value ?? ""
@@ -57,21 +63,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
-        public async Task SaveFormAsync()
+        private async Task SubmitAsync()
         {
-            foreach (var field in Fields)
+            foreach (var entry in Fields)
             {
-                await _repository.SaveDailyEntryAsync(new DailyEntry
-                {
-                    FieldTemplateId = field.FieldTemplateId,
-                    UserId = field.UserId,
-                    Date = field.Date,
-                    Value = field.Value
-                });
+                await _repository.SaveDailyEntryAsync(entry);
             }
-        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+            await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
+        }
     }
 
 }
