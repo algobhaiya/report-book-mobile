@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using algoBhaiya.ReportBook.Core.Entities;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
@@ -9,7 +10,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public string FieldName { get; set; }
         public string ValueType { get; set; } // "int", "double", "bool"
         public string UnitName { get; set; }
-
+        public FieldUnit Unit { get; set; }
         public int UserId { get; set; }
         public DateTime Date { get; set; }
 

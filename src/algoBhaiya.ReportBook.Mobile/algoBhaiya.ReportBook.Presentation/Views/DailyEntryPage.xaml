@@ -1,23 +1,63 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
-             xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
-             xmlns:helpers="clr-namespace:algoBhaiya.ReportBook.Presentation.Helpers"
-             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage">
-    <ContentPage.Resources>
-        <helpers:FieldTemplateSelector x:Key="FieldTemplateSelector"/>
-    </ContentPage.Resources>
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
+             Title="Daily Entry">
 
-    <StackLayout Padding="20">
-        <Label Text="Daily Entry" FontAttributes="Bold" FontSize="20" />
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-        <CollectionView ItemsSource="{Binding Fields}" ItemTemplate="{StaticResource FieldTemplateSelector}">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
-        </CollectionView>
+            <Label Text="Fill Today’s Report" FontSize="24" HorizontalOptions="Center" />
 
-        <Button Text="Save" Command="{Binding SaveCommand}" />
-    </StackLayout>
+            <!-- Dynamic Form Fields -->
+            <CollectionView ItemsSource="{Binding Fields}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnSpacing="10" Padding="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" />
+                                <!-- FieldName: 50% -->
+                                <ColumnDefinition Width="3*" />
+                                <!-- Input: 30% -->
+                                <ColumnDefinition Width="2*" />
+                                <!-- Unit: 20% -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Field Name -->
+                            <Label Grid.Column="0"
+                                   Text="{Binding FieldTemplate.FieldName}"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+
+                            <!-- Input -->
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Entry Placeholder="Enter value"
+                                       Keyboard="Numeric"
+                                       Text="{Binding Value, Mode=TwoWay}" 
+                                       IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
+
+                                <CheckBox IsChecked="{Binding Value, Mode=TwoWay}"
+                                          IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=bool}" />
+                            </StackLayout>
+
+                            <!-- Unit -->
+                            <Label Grid.Column="2"
+                                   Text="{Binding FieldTemplate.Unit.UnitName}"
+                                   FontAttributes="Italic"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"
+                                   HorizontalTextAlignment="Start" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Submit -->
+            <Button Text="Submit Entry"
+                    Command="{Binding SubmitCommand}"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
