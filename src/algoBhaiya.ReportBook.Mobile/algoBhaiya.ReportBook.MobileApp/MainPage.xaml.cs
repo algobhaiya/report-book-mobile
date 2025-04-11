@@ -70,6 +70,14 @@ namespace algoBhaiya.ReportBook.MobileApp
             await Navigation.PushAsync(targetPage);
         }
 
+        private async void OnOpenDailyEntryListPageClicked(object sender, EventArgs e)
+        {
+            // Resolve logInPage with logInPage from the DI container
+            var targetPage = _serviceProvider.GetRequiredService<DailyEntryListPage>();
+
+            // Navigate to logInPage
+            await Navigation.PushAsync(targetPage);
+        }
     }
 
 }

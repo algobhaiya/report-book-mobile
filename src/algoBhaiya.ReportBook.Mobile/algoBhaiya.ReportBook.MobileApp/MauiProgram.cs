@@ -54,6 +54,9 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<MonthlyTargetViewModel>();
             builder.Services.AddTransient<MonthlyTargetPage>();
 
+            builder.Services.AddTransient<DailyEntryListViewModel>();
+            builder.Services.AddTransient<DailyEntryListPage>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

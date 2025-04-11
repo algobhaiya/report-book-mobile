@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
+             Title="Daily Entry List">
+
+    <Grid RowDefinitions="Auto,*" Padding="10">
+        <!-- Header -->
+        <HorizontalStackLayout Grid.Row="0">
+            <Label Text="{Binding CurrentMonthLabel}" 
+                   FontSize="20" FontAttributes="Bold" 
+                   VerticalOptions="CenterAndExpand" />
+            <ImageButton Source="calendar_days_regular.svg"
+                         HeightRequest="30" WidthRequest="30"
+                         HorizontalOptions="EndAndExpand"
+                         Clicked="OnCalendarClicked"/>
+        </HorizontalStackLayout>
+
+        <!-- Scrollable Daily Records -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding DailySummaries}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="LightGray" CornerRadius="10" Margin="5" Padding="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding DateString}" FontSize="16" FontAttributes="Bold"/>
+                                <Label Text="{Binding StatusText}" FontSize="14" TextColor="Gray"/>
+                            </VerticalStackLayout>
+                            <Image Source="{Binding StatusIcon}" HeightRequest="30" WidthRequest="30" Grid.Column="1"/>
+                        </Grid>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:DailyEntryListPage}}, Path=BindingContext.OpenEntryCommand}" 
+                                                  CommandParameter="{Binding Date}"/>
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
