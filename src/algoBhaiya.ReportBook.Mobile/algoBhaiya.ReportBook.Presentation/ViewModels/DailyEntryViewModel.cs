@@ -3,11 +3,12 @@ using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
-    public class DailyEntryViewModel
+    public class DailyEntryViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<DailyEntry> Fields { get; set; } = new();
 
@@ -15,6 +16,23 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ICommand LoadCommand { get; }
 
         public DateTime? LoadingDateTime { get; set; } = null;
+        
+        private bool _isReadOnly = false;
+        public bool IsReadOnly
+        {
+            get => _isReadOnly;
+            set
+            {
+                if (_isReadOnly != value)
+                {
+                    _isReadOnly = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CanSubmit));
+                }
+            }
+        }
+        public bool CanSubmit => !IsReadOnly;
+
 
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
@@ -31,18 +49,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             LoadCommand = new Command(async () => await LoadFieldsAsync());            
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
         private async Task LoadFieldsAsync()
         {
             Fields.Clear();
             int userId = Preferences.Get("CurrentUserId", -1);
             if (userId == -1) return;
 
+            var effectiveDate = LoadingDateTime ?? DateTime.Today;
+            IsReadOnly = (DateTime.Today - effectiveDate).Days > 14;
+            
             var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
             var fieldUnitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
             var templates = (await fieldTemplateRepo.GetAllAsync()).ToList();
             var units = await fieldUnitRepo.GetAllAsync();
-            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, LoadingDateTime ?? DateTime.Today);
+            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, effectiveDate);
 
             foreach (var template in templates)
             {
