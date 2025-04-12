@@ -32,7 +32,7 @@
                         </Grid>
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:DailyEntryListPage}}, Path=BindingContext.OpenEntryCommand}" 
-                                                  CommandParameter="{Binding Date}"/>
+                                                  CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
                     </Frame>
                 </DataTemplate>

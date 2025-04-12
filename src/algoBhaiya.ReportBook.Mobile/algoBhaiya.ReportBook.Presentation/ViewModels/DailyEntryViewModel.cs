@@ -14,6 +14,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ICommand SubmitCommand { get; }
         public ICommand LoadCommand { get; }
 
+        public DateTime? LoadingDateTime { get; set; } = null;
+
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
 
@@ -26,9 +28,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _serviceProvider = serviceProvider;
 
             SubmitCommand = new Command(async () => await SubmitAsync());
-            LoadCommand = new Command(async () => await LoadFieldsAsync());
-
-            LoadCommand.Execute(null);
+            LoadCommand = new Command(async () => await LoadFieldsAsync());            
         }
 
         private async Task LoadFieldsAsync()
@@ -42,7 +42,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             var templates = (await fieldTemplateRepo.GetAllAsync()).ToList();
             var units = await fieldUnitRepo.GetAllAsync();
-            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, DateTime.Today);
+            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, LoadingDateTime ?? DateTime.Today);
 
             foreach (var template in templates)
             {

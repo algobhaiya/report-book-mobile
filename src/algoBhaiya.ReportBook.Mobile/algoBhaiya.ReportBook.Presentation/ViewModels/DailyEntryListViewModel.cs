@@ -1,39 +1,56 @@
 ﻿using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
     public class DailyEntryListViewModel
     {
         public ObservableCollection<DailyEntrySummaryViewModel> DailySummaries { get; } = new();
-        public ICommand OpenEntryCommand { get; }
-
+        
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
         
         public string CurrentMonthLabel => DateTime.Today.ToString("MMMM yyyy");
 
+        private bool _isNavigating = false;
+        public ICommand OpenEntryCommand { get; }
+
         public DailyEntryListViewModel(
-            IDailyEntryRepository repository, 
+            IDailyEntryRepository repository,
             IServiceProvider serviceProvider)
         {
             _repository = repository;
             _serviceProvider = serviceProvider;
 
-            //OpenEntryCommand = new AsyncRelayCommand<DateTime>(OpenEntryAsync);
+            OpenEntryCommand = new Command<DailyEntrySummaryViewModel>(async (selectedItem) =>
+            {
+                if (selectedItem == null || _isNavigating)
+                    return;
+
+                try
+                {
+                    _isNavigating = true;
+
+                    Preferences.Set("CurrentUserId", 1);
+
+                    var dailyEntryViewModel = _serviceProvider.GetRequiredService<DailyEntryViewModel>();
+                    dailyEntryViewModel.LoadingDateTime = selectedItem.Date;
+
+                    var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
+                    await Shell.Current.Navigation.PushAsync(dailyEntryPage);
+                }
+                finally
+                {
+                    _isNavigating = false;
+                }
+            });
 
             LoadDailySummaries();
         }
-
         private async void LoadDailySummaries()
         {
             DailySummaries.Clear();

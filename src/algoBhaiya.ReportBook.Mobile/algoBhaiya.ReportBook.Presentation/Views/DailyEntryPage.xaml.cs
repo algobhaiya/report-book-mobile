@@ -8,5 +8,6 @@ public partial class DailyEntryPage : ContentPage
 	{
 		InitializeComponent();
         BindingContext = viewModel;
+		viewModel.LoadCommand.Execute(null);
     }
 }
