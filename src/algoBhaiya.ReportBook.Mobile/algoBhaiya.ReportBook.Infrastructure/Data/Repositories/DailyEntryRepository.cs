@@ -19,11 +19,22 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         {
             if (entry.Id == 0)
             {
+                if (isInvalidToSave(entry))
+                {
+                    return;
+                }
                 await _database.InsertAsync(entry);
             }
             else
             {
-                await _database.UpdateAsync(entry);
+                if (isInvalidToSave(entry))
+                {
+                    await _database.DeleteAsync(entry);
+                }
+                else
+                {
+                    await _database.UpdateAsync(entry);
+                }              
             }            
         }
 
@@ -111,5 +122,17 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return result;
         }
 
+
+        #region Private methods
+        private bool isInvalidToSave(DailyEntry entry)
+        {
+            if (string.IsNullOrEmpty(entry.Value) || entry.Value == "0" || entry.Value == "False")
+            {
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
     }
 }

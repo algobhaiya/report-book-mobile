@@ -82,7 +82,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     FieldTemplate = template,
                     FieldTemplateId = template.Id,
                     UserId = userId,
-                    Date = DateTime.Today,
+                    Date = effectiveDate,
                     Value = entry?.Value ?? ""
                 });
             }
