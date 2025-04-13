@@ -2,7 +2,6 @@
 using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using SQLite;
-using static SQLite.SQLite3;
 
 namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 {
