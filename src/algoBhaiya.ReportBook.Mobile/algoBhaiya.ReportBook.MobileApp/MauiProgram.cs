@@ -45,7 +45,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             // Register pages and view models
             builder.Services.AddTransient<LoginPage>();
 
-            builder.Services.AddTransient<DailyEntryViewModel>();
+            builder.Services.AddSingleton<DailyEntryViewModel>();
             builder.Services.AddTransient<DailyEntryPage>();
 
             builder.Services.AddTransient<FieldTemplatePage>();
@@ -53,6 +53,9 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             builder.Services.AddTransient<MonthlyTargetViewModel>();
             builder.Services.AddTransient<MonthlyTargetPage>();
+
+            builder.Services.AddTransient<DailyEntryListViewModel>();
+            builder.Services.AddTransient<DailyEntryListPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
+             Title="{Binding CurrentMonthLabel}">
+
+    <Grid RowDefinitions="Auto,*" Padding="10">
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="0,5">
+
+            <!-- Search Row -->
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                <Label Text="Search"
+               FontAttributes="Italic"
+               FontSize="15"
+               VerticalOptions="Center" />
+
+                <!-- (Optional: Replace with SearchBar or Entry if you want text input in future) -->
+                <!-- <SearchBar Placeholder="Enter keyword..." /> -->
+            </HorizontalStackLayout>
+
+            <!-- Filter Buttons Row -->
+            <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+                <Button Text="📅 By Date"
+                FontAttributes="Bold"
+                Clicked="OnDateCalendarClicked"
+                BackgroundColor="#f0f0f0"
+                TextColor="Black"
+                CornerRadius="20"
+                Padding="10,5"
+                FontSize="14" />
+
+                <Button Text="🗓️ By Month"
+                FontAttributes="Bold"
+                Clicked="OnMonthCalendarClicked"
+                BackgroundColor="#f0f0f0"
+                TextColor="Black"
+                CornerRadius="20"
+                Padding="10,5"
+                FontSize="14" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Scrollable Daily Records -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding DailySummaries}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="LightGray" CornerRadius="10" Margin="5" Padding="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding DateString}" FontSize="16" FontAttributes="Bold"/>
+                                <Label Text="{Binding StatusText}" FontSize="14" TextColor="Gray"/>
+                            </VerticalStackLayout>
+                            <Image Source="{Binding StatusIcon}" HeightRequest="30" WidthRequest="30" Grid.Column="1"/>
+                        </Grid>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:DailyEntryListPage}}, Path=BindingContext.OpenEntryCommand}" 
+                                                  CommandParameter="{Binding .}"/>
+                        </Frame.GestureRecognizers>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="No records found for this month." TextColor="Gray" FontAttributes="Italic" FontSize="15"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

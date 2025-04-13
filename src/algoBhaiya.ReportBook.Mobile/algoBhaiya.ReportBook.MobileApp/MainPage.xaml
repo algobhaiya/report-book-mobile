@@ -65,7 +65,13 @@
                 SemanticProperties.Hint="Open Monthly Target Page"
                 Clicked="OnOpenMonthlyTargetPageClicked"
                 HorizontalOptions="Fill" />
-            
+
+            <Button
+                x:Name="OpenEntryListBtn"
+                Text="Daily Entry List" 
+                SemanticProperties.Hint="Open Daily Entry List Page"
+                Clicked="OnOpenDailyEntryListPageClicked"
+                HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
 

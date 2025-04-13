@@ -1,4 +1,5 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
+﻿using algoBhaiya.ReportBook.Core.Dtos;
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using SQLite;
 
@@ -18,11 +19,22 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         {
             if (entry.Id == 0)
             {
+                if (isInvalidToSave(entry))
+                {
+                    return;
+                }
                 await _database.InsertAsync(entry);
             }
             else
             {
-                await _database.UpdateAsync(entry);
+                if (isInvalidToSave(entry))
+                {
+                    await _database.DeleteAsync(entry);
+                }
+                else
+                {
+                    await _database.UpdateAsync(entry);
+                }              
             }            
         }
 
@@ -63,5 +75,69 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                              .Where(x => x.Date.Month == month && x.Date.Year == year)
                              .ToListAsync();
         }
+
+        public async Task<List<DailySummaryItem>> GetMonthlyEntrySummaryAsync(int userId, int year, int month)
+        {
+            var result = new List<DailySummaryItem>();
+            try
+            {
+                var totalFields = await _database.Table<FieldTemplate>().CountAsync();
+
+                var startDate = new DateTime(year, month, 1);
+                var endDate = startDate.AddMonths(1);
+
+                if (startDate.Month > DateTime.Today.Month)
+                {
+                    return result;
+                }
+
+                var entries = await _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
+                    .ToListAsync();
+
+                var entriesByDate = entries
+                    .GroupBy(e => e.Date.Date)
+                    .ToDictionary(g => g.Key, g => g.ToList());
+
+                var daysInMonth = DateTime.DaysInMonth(year, month);
+
+                var currentDateTime = DateTime.Today;
+                if (currentDateTime.Year == year && currentDateTime.Month == month)
+                {
+                    daysInMonth = Math.Min(currentDateTime.Day, daysInMonth);
+                }
+
+                for (int day = 1; day <= daysInMonth; day++)
+                {
+                    var date = new DateTime(year, month, day);
+                    var filled = entriesByDate.ContainsKey(date) ? entriesByDate[date].Count : 0;
+
+                    result.Add(new DailySummaryItem
+                    {
+                        Date = date,
+                        FilledCount = filled,
+                        TotalFields = totalFields
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                // handle or log error
+            }
+            return result;
+        }
+
+
+        #region Private methods
+        private bool isInvalidToSave(DailyEntry entry)
+        {
+            if (string.IsNullOrEmpty(entry.Value) || entry.Value == "0" || entry.Value == "False")
+            {
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
     }
 }
