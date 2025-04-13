@@ -4,10 +4,12 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 
 public partial class DailyEntryListPage : ContentPage
 {
+    private readonly DailyEntryListViewModel _viewModel;
     public DailyEntryListPage(DailyEntryListViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
+        _viewModel = viewModel;
     }
 
     private async void OnCalendarClicked(object sender, EventArgs e)
@@ -15,8 +17,8 @@ public partial class DailyEntryListPage : ContentPage
         var selected = await DatePickerDialog();
         if (selected != null)
         {
-            var vm = BindingContext as DailyEntryListViewModel;
-            //await vm.OpenEntryCommand.ExecuteAsync(selected.Value);
+            DateTime formDate = selected ?? throw new ArgumentNullException(nameof(selected));
+            await _viewModel.OpenEntryAsync(formDate);
         }
     }
 

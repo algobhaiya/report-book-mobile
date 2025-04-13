@@ -78,9 +78,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
-        private async Task OpenEntryAsync(DateTime date)
+        public async Task OpenEntryAsync(DateTime date)
         {
-            await Shell.Current.GoToAsync($"dailyentrypage?entryDate={date:yyyy-MM-dd}");
+            var item = new DailyEntrySummaryViewModel { Date = date };
+            OpenEntryCommand.Execute(item);
         }
     }
 
