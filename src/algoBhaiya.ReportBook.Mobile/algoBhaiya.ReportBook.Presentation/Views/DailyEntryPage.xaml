@@ -2,12 +2,17 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
-             Title="Daily Entry">
+             Title="Daily Report">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label Text="Fill Today’s Report" FontSize="24" HorizontalOptions="Center" />
+            <!-- Date Display -->
+            <Label Text="{Binding FormDate, StringFormat='Fill up for {0:MMMM dd, yyyy}'}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="DarkSlateBlue" />
 
             <!-- Dynamic Form Fields -->
             <CollectionView ItemsSource="{Binding Fields}">

@@ -16,6 +16,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ICommand LoadCommand { get; }
 
         public DateTime? LoadingDateTime { get; set; } = null;
+        private DateTime _effectiveDate;
+        public DateTime FormDate 
+        { 
+            get => _effectiveDate;
+            set
+            {
+                if (_effectiveDate != value)
+                {
+                    _effectiveDate = value;
+                    OnPropertyChanged();
+                }
+            }
+
+        }
         
         private bool _isReadOnly = false;
         public bool IsReadOnly
@@ -59,15 +73,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             int userId = Preferences.Get("CurrentUserId", -1);
             if (userId == -1) return;
 
-            var effectiveDate = LoadingDateTime ?? DateTime.Today;
-            IsReadOnly = (DateTime.Today - effectiveDate).Days > 14;
+            FormDate = LoadingDateTime ?? DateTime.Today; // place to set effectiveDate
+            IsReadOnly = (DateTime.Today - FormDate).Days > 14;
             
             var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
             var fieldUnitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
             var templates = (await fieldTemplateRepo.GetAllAsync()).ToList();
             var units = await fieldUnitRepo.GetAllAsync();
-            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, effectiveDate);
+            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, FormDate);
 
             foreach (var template in templates)
             {
@@ -82,7 +96,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     FieldTemplate = template,
                     FieldTemplateId = template.Id,
                     UserId = userId,
-                    Date = effectiveDate,
+                    Date = FormDate,
                     Value = entry?.Value ?? ""
                 });
             }
