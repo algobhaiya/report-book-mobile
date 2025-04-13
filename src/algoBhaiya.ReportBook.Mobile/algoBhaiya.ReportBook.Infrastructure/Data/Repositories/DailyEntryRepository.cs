@@ -86,6 +86,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 var startDate = new DateTime(year, month, 1);
                 var endDate = startDate.AddMonths(1);
 
+                if (startDate.Month > DateTime.Today.Month)
+                {
+                    return result;
+                }
+
                 var entries = await _database.Table<DailyEntry>()
                     .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
                     .ToListAsync();

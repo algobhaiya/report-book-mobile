@@ -3,18 +3,33 @@ using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
-    public class DailyEntryListViewModel
+    public class DailyEntryListViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<DailyEntrySummaryViewModel> DailySummaries { get; } = new();
         
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
-        
-        public string CurrentMonthLabel => DateTime.Today.ToString("MMMM yyyy");
+
+        private string _currentMonthLabel;
+        public string CurrentMonthLabel 
+        {
+            get => _currentMonthLabel;
+            set
+            {
+                if (_currentMonthLabel != value)
+                {
+                    _currentMonthLabel = value;
+                    OnPropertyChanged(nameof(CurrentMonthLabel));
+                }
+            }
+        }
 
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
@@ -49,20 +64,27 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 }
             });
 
-            LoadDailySummaries();
+            LoadDailySummariesAsync(DateTime.Today.Year, DateTime.Today.Month);
         }
-        private async void LoadDailySummaries()
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+
+        private async void LoadDailySummariesAsync(int year, int month)
         {
             DailySummaries.Clear();
             int userId = Preferences.Get("CurrentUserId", -1);
             if (userId == -1) return;
 
+            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
             var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
 
             var templates = await fieldTemplateRepo.GetAllAsync();
             var totalFieldCount = templates.Count();
 
-            var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, DateTime.Today.Year, DateTime.Today.Month);
+            var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
             
             foreach (var item in entries)
             {
@@ -82,6 +104,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             var item = new DailyEntrySummaryViewModel { Date = date };
             OpenEntryCommand.Execute(item);
+        }
+
+        public async Task LoadEntriesMonthlyAsync(int year, int month)
+        {
+            LoadDailySummariesAsync(year, month);            
         }
     }
 
