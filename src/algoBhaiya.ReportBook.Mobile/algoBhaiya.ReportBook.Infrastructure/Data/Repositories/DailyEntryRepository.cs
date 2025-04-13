@@ -19,7 +19,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         {
             if (entry.Id == 0)
             {
-                if (isInvalidToSave(entry))
+                if (IsInvalidToSave(entry))
                 {
                     return;
                 }
@@ -27,7 +27,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             }
             else
             {
-                if (isInvalidToSave(entry))
+                if (IsInvalidToSave(entry))
                 {
                     await _database.DeleteAsync(entry);
                 }
@@ -86,7 +86,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 var startDate = new DateTime(year, month, 1);
                 var endDate = startDate.AddMonths(1);
 
-                if (startDate.Month > DateTime.Today.Month)
+                if (IsInvalidMonth(startDate, DateTime.Today))
                 {
                     return result;
                 }
@@ -129,9 +129,21 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
 
         #region Private methods
-        private bool isInvalidToSave(DailyEntry entry)
+        private bool IsInvalidToSave(DailyEntry entry)
         {
             if (string.IsNullOrEmpty(entry.Value) || entry.Value == "0" || entry.Value == "False")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsInvalidMonth(DateTime startDate, DateTime currentDateTime)
+        {
+            if (((startDate.Month > currentDateTime.Month) 
+                    && (startDate.Year == currentDateTime.Year))
+                || startDate.Year > currentDateTime.Year)
             {
                 return true;
             }
