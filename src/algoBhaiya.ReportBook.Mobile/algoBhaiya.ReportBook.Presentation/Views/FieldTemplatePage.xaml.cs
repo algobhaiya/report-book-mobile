@@ -57,4 +57,29 @@ public partial class FieldTemplatePage : ContentPage
             _templates.Add(tpl);
         }
     }
+
+    public Command<FieldTemplate> OpenDetailsCommand => new Command<FieldTemplate>(OnFieldTapped);
+
+    private async void OnFieldTapped(FieldTemplate tappedTemplate)
+    {
+        await DisplayAlert("Field Details",
+            $"Name: {tappedTemplate.FieldName}\n" +
+            $"Unit: {tappedTemplate.Unit?.UnitName ?? "None"}\n" +
+            $"Type: {tappedTemplate.ValueType ?? "N/A"}", "OK");
+    }
+
+    private async void OnEditClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.BindingContext is FieldTemplate template)
+        {
+            string newName = await DisplayPromptAsync("Edit Field", "Update field name:", initialValue: template.FieldName);
+            if (!string.IsNullOrWhiteSpace(newName))
+            {
+                template.FieldName = newName;
+                await _repository.UpdateAsync(template);
+                LoadTemplates(); // Refresh
+            }
+        }
+    }
+
 }

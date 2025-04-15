@@ -1,30 +1,69 @@
 <?xml version="1.0" encoding="utf-8" ?>
-    
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplatePage"
              Title="Field Templates">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-        <CollectionView ItemsSource="{Binding Templates}" SelectionMode="Single">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="LightGray" Padding="10" CornerRadius="8">
-                        <VerticalStackLayout>
-                            <Label Text="{Binding FieldName}" FontAttributes="Bold" />
-                            <Label Text="{Binding ValueType}" TextColor="Gray" />
-                            <Label Text="{Binding Unit.UnitName}" FontAttributes="Italic" />
-                        </VerticalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <CollectionView ItemsSource="{Binding Templates}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="LightGray"
+                               CornerRadius="12"
+                               Margin="5"
+                               Padding="12"
+                               BackgroundColor="White"
+                               HasShadow="True">
 
-        <Button Text="➕ Add Field"
-                BackgroundColor="#388E3C"
-                TextColor="White"
-                Clicked="OnAddClicked" />
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10">
 
-    </VerticalStackLayout>
+                                <!-- Tappable content -->
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=OpenDetailsCommand}" CommandParameter="{Binding}" />
+                                </Grid.GestureRecognizers>
+
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding FieldName}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       Text="{Binding ValueType}"
+                                       FontSize="13"
+                                       TextColor="DarkGray" />
+                                <Label Grid.Row="2" Grid.Column="0"
+                                       Text="{Binding Unit.UnitName}"
+                                       FontSize="13"
+                                       FontAttributes="Italic"
+                                       TextColor="DarkSlateGray" />
+
+                                <!-- Right side actions -->
+                                <HorizontalStackLayout Grid.RowSpan="3" Grid.Column="1" VerticalOptions="Center">
+                                    <Switch IsToggled="True" Margin="0,0,10,0"/>
+                                    <Button Text="✏️"
+                                            FontSize="14"
+                                            Padding="6"
+                                            BackgroundColor="#eeeeee"
+                                            CornerRadius="6"
+                                            Clicked="OnEditClicked"/>
+                                </HorizontalStackLayout>
+
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="➕ Add Field"
+                    BackgroundColor="#388E3C"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    Padding="10"
+                    Clicked="OnAddClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
