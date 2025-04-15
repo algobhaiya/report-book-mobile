@@ -91,27 +91,50 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             int userId = Preferences.Get("CurrentUserId", -1);
             if (userId == -1) return;
 
+            IsReadOnly = IsNonEditableMonth(year, month);
+
             var templates = await _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>().GetAllAsync();
             var units = await _serviceProvider.GetRequiredService<IRepository<FieldUnit>>().GetAllAsync();
             var targets = await _repository.GetMonthlyTargetsAsync(userId, year, month);
 
-            foreach (var template in templates)
+            if (IsReadOnly)
             {
-                var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
-                var target = targets.FirstOrDefault(t => t.FieldTemplateId == template.Id);
-
-                Fields.Add(new MonthlyTargetFieldViewModel
+                // Based on Fixed template
+                foreach (var item in targets)
                 {
-                    FieldTemplateId = template.Id,
-                    FieldName = template.FieldName,
-                    ValueType = template.ValueType,
-                    UnitName = unit?.UnitName ?? "",
-                    TargetValue = target?.TargetValue ?? ""
-                });
+                    var template = templates.FirstOrDefault(t => t.Id == item.FieldTemplateId);
+                    var unit = units.FirstOrDefault(u => u.Id == template.UnitId);                  
+
+                    Fields.Add(new MonthlyTargetFieldViewModel
+                    {
+                        FieldTemplateId = item.FieldTemplateId,
+                        FieldName = template.FieldName,
+                        ValueType = template.ValueType,
+                        UnitName = unit?.UnitName ?? "",
+                        TargetValue = item?.TargetValue ?? ""
+                    });
+                }
+            }
+            else
+            {
+                // Based on Dynamic current template
+                foreach (var template in templates)
+                {
+                    var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
+                    var target = targets.FirstOrDefault(t => t.FieldTemplateId == template.Id);
+
+                    Fields.Add(new MonthlyTargetFieldViewModel
+                    {
+                        FieldTemplateId = template.Id,
+                        FieldName = template.FieldName,
+                        ValueType = template.ValueType,
+                        UnitName = unit?.UnitName ?? "",
+                        TargetValue = target?.TargetValue ?? ""
+                    });
+                }
             }
 
-            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
-            IsReadOnly = IsNonEditableMonth(year, month);
+            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";           
         }
 
         public async Task SaveTargetsAsync()

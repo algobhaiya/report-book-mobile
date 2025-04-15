@@ -55,7 +55,8 @@
 
         </VerticalStackLayout>
 
-        <CollectionView ItemsSource="{Binding Fields}">
+        <CollectionView ItemsSource="{Binding Fields}"
+                        VerticalOptions="FillAndExpand">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout Orientation="Horizontal" Padding="5">
@@ -65,6 +66,14 @@
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="No records found for this month." 
+                           TextColor="Gray" 
+                           FontAttributes="Italic" 
+                           FontSize="15"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
         </CollectionView>
 
         <!-- Submit -->
