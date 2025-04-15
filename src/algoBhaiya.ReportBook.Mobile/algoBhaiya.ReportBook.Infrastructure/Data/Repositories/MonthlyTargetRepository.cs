@@ -14,7 +14,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             _db.CreateTableAsync<MonthlyTarget>().Wait();
         }
 
-        public Task<List<MonthlyTarget>> GetMonthlyTargetsAsync(int userId, int month, int year) =>
+        public Task<List<MonthlyTarget>> GetMonthlyTargetsAsync(int userId, int year, int month) =>
             _db.Table<MonthlyTarget>()
                .Where(t => t.UserId == userId && t.Month == month && t.Year == year)
                .ToListAsync();
