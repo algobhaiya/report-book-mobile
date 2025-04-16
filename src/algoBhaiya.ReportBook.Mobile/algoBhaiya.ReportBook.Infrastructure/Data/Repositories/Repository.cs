@@ -1,6 +1,7 @@
 ﻿
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using SQLite;
+using System.Linq.Expressions;
 
 namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 {
@@ -22,6 +23,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         public async Task<T> GetByIdAsync(int id)
         {
             return await _connection.FindAsync<T>(id);
+        }
+
+        public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _connection.Table<T>().Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(T entity)

@@ -39,6 +39,9 @@
 	  <MauiXaml Update="Views\FieldTemplatePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\FieldUnitAddEditPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\FieldUnitPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

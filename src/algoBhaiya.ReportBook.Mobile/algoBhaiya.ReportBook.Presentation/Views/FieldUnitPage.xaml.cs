@@ -1,4 +1,5 @@
 using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 
@@ -7,12 +8,14 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class FieldUnitPage : ContentPage
 {
     private readonly IRepository<FieldUnit> _repository;
+    private readonly IServiceProvider _serviceProvider;
     private ObservableCollection<FieldUnit> _units = new();
 
     public ObservableCollection<FieldUnit> Units => _units;
 
     public FieldUnitPage(
-        IRepository<FieldUnit> repository)
+        IRepository<FieldUnit> repository, 
+        IServiceProvider serviceProvider)
     {
         InitializeComponent();
         BindingContext = this;
@@ -21,6 +24,7 @@ public partial class FieldUnitPage : ContentPage
 
         // Load saved units
         LoadUnits();
+        _serviceProvider = serviceProvider;
     }
 
     private async void LoadUnits()
@@ -33,24 +37,21 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        string name = await DisplayPromptAsync("New Unit", "Enter unit name:");
-        string[] types = new[] { "int", "double", "bool" };
-        string type = await DisplayActionSheet("Select Value Type", "Cancel", null, types);
+        var unitViewModel = _serviceProvider.GetRequiredService<FieldUnitAddEditViewModel>();
+        unitViewModel.AssignEntryAsync(null);
 
-        if (!string.IsNullOrWhiteSpace(name) && type != "Cancel")
-        {
-            var unit = new FieldUnit { UnitName = name, ValueType = type };
-            await _repository.AddAsync(unit);
-            _units.Add(unit);
-        }
+        var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
+        await Shell.Current.Navigation.PushAsync(unitPage);
     }
 
     public Command<FieldUnit> OpenDetailsCommand => new Command<FieldUnit>(OnUnitTapped);
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {
-        await DisplayAlert("Unit Details",
-            $"Name: {tappedUnit.UnitName}\n" +            
-            $"Type: {tappedUnit.ValueType ?? "N/A"}", "OK");
+        var unitViewModel = _serviceProvider.GetRequiredService<FieldUnitAddEditViewModel>();        
+        unitViewModel.AssignEntryAsync(tappedUnit);
+
+        var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
+        await Shell.Current.Navigation.PushAsync(unitPage);       
     }
 }
