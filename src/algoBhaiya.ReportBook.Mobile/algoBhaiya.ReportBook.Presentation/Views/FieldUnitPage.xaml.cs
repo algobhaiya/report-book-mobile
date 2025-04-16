@@ -44,4 +44,13 @@ public partial class FieldUnitPage : ContentPage
             _units.Add(unit);
         }
     }
+
+    public Command<FieldUnit> OpenDetailsCommand => new Command<FieldUnit>(OnUnitTapped);
+
+    private async void OnUnitTapped(FieldUnit tappedUnit)
+    {
+        await DisplayAlert("Unit Details",
+            $"Name: {tappedUnit.UnitName}\n" +            
+            $"Type: {tappedUnit.ValueType ?? "N/A"}", "OK");
+    }
 }

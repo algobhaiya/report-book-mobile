@@ -57,7 +57,7 @@
             </CollectionView>
 
             <Button Text="➕ Add Field"
-                    BackgroundColor="#388E3C"
+                    BackgroundColor="#1976D2"
                     TextColor="White"
                     FontAttributes="Bold"
                     CornerRadius="8"
