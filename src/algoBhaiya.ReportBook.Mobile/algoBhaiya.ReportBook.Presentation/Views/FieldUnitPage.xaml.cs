@@ -1,5 +1,5 @@
 using algoBhaiya.ReportBook.Core.Entities;
-using algoBhaiya.ReportBook.Presentation.ViewModels;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 
@@ -9,13 +9,16 @@ public partial class FieldUnitPage : ContentPage
 {
     private readonly IRepository<FieldUnit> _repository;
     private readonly IServiceProvider _serviceProvider;
+    private readonly NavigationDataService _navDataService;
+    
     private ObservableCollection<FieldUnit> _units = new();
 
     public ObservableCollection<FieldUnit> Units => _units;
 
     public FieldUnitPage(
         IRepository<FieldUnit> repository, 
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        NavigationDataService navDataService)
     {
         InitializeComponent();
         BindingContext = this;
@@ -25,6 +28,7 @@ public partial class FieldUnitPage : ContentPage
         // Load saved units
         LoadUnits();
         _serviceProvider = serviceProvider;
+        _navDataService = navDataService;
     }
 
     private async void LoadUnits()
@@ -37,9 +41,9 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        var unitViewModel = _serviceProvider.GetRequiredService<FieldUnitAddEditViewModel>();
-        unitViewModel.AssignEntryAsync(null);
-
+        
+        _navDataService.Set("OnUnitSaved", (Action<FieldUnit>)OnUnitSaved);
+        
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
         await Shell.Current.Navigation.PushAsync(unitPage);
     }
@@ -48,10 +52,24 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {
-        var unitViewModel = _serviceProvider.GetRequiredService<FieldUnitAddEditViewModel>();        
-        unitViewModel.AssignEntryAsync(tappedUnit);
-
+        _navDataService.Set("FieldUnitToEdit", tappedUnit);
+        _navDataService.Set("OnUnitSaved", (Action<FieldUnit>)OnUnitSaved);
+        
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
-        await Shell.Current.Navigation.PushAsync(unitPage);       
+        await Shell.Current.Navigation.PushAsync(unitPage);
+    }
+
+    private void OnUnitSaved(FieldUnit savedUnit)
+    {
+        var existing = Units.FirstOrDefault(x => x.Id == savedUnit.Id);
+        if (existing != null)
+        {
+            var index = Units.IndexOf(existing);
+            Units[index] = savedUnit; // updates item in-place
+        }
+        else
+        {
+            Units.Add(savedUnit);
+        }
     }
 }

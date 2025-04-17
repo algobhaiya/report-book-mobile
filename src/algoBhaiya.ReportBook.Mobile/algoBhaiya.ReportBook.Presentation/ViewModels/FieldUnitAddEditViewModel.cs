@@ -1,4 +1,5 @@
 ﻿using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,8 +10,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
     public class FieldUnitAddEditViewModel : INotifyPropertyChanged
     {
+        private readonly NavigationDataService _navDataService;
         private readonly IRepository<FieldUnit> _repository;
 
+        private readonly Action<FieldUnit> _onSubmit;
         public ObservableCollection<string> DisplayTypes { get; } = new();
 
         private string _unitName;
@@ -52,14 +55,29 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         
         public FieldUnit TappedUnit { get; set; }
 
-        public FieldUnitAddEditViewModel(IRepository<FieldUnit> repository)
+        public FieldUnitAddEditViewModel(
+            IRepository<FieldUnit> repository,
+            NavigationDataService navigationDataService)
         {
             _repository = repository;
+            _navDataService = navigationDataService;
 
             SubmitCommand = new Command(async () => await SubmitAsync());
 
             foreach (var key in _typeMap.Keys)
                 DisplayTypes.Add(key);
+
+            var unit = _navDataService.Get<FieldUnit>("FieldUnitToEdit");
+            AssignEntryAsync(unit);
+
+            var onSaveAction = _navDataService.Get<Action<FieldUnit>>("OnUnitSaved");
+            if (onSaveAction != null)
+            {
+                _onSubmit = onSaveAction;
+            }
+
+            _navDataService.Remove("FieldUnitToEdit");
+            _navDataService.Remove("OnUnitSaved");
         }
 
         private async Task SubmitAsync()
@@ -72,20 +90,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             var backendType = _typeMap[SelectedDisplayType];
 
-            var tappedUnit = await _repository.GetFirstOrDefaultAsync(
+            var unit = await _repository.GetFirstOrDefaultAsync(
                 u => u.UnitName == TappedUnit.UnitName &&
                      u.ValueType == TappedUnit.ValueType);
 
-            if (tappedUnit != null)
+            if (unit != null)
             {
-                tappedUnit.UnitName = UnitName.Trim();
-                tappedUnit.ValueType = backendType;
+                unit.UnitName = UnitName.Trim();
+                unit.ValueType = backendType;
 
-                await _repository.UpdateAsync(tappedUnit);
+                await _repository.UpdateAsync(unit);
             }
             else
             {
-                var unit = new FieldUnit
+                unit = new FieldUnit
                 {
                     UnitName = UnitName.Trim(),
                     ValueType = backendType
@@ -93,6 +111,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 await _repository.AddAsync(unit);
             }
+
+            _onSubmit?.Invoke(unit); // Notify list page
 
             await Shell.Current.Navigation.PopModalAsync();
         }
@@ -102,7 +122,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public void AssignEntryAsync(FieldUnit? fieldUnit)
+        private void AssignEntryAsync(FieldUnit? fieldUnit)
         {
             if (fieldUnit == null)
             {
