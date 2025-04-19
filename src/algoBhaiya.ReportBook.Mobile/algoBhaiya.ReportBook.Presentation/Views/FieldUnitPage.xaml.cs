@@ -15,6 +15,9 @@ public partial class FieldUnitPage : ContentPage
 
     public ObservableCollection<FieldUnit> Units => _units;
 
+    public Command<FieldUnit> OpenDetailsCommand => new Command<FieldUnit>(OnUnitTapped);
+    public Command DeleteCommand { get; }
+
     public FieldUnitPage(
         IRepository<FieldUnit> repository, 
         IServiceProvider serviceProvider,
@@ -24,11 +27,28 @@ public partial class FieldUnitPage : ContentPage
         BindingContext = this;
 
         _repository = repository;
-
-        // Load saved units
-        LoadUnits();
         _serviceProvider = serviceProvider;
         _navDataService = navDataService;
+
+        DeleteCommand = new Command<FieldUnit>(async (unit) =>
+        {
+            var confirm = await DisplayAlert("Delete", $"Delete '{unit.UnitName}'?", "Yes", "No");
+            if (confirm)
+            {
+                var templates = await _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>().GetListAsync(t => t.UnitId == unit.Id);                
+
+                if (templates.Count() > 0)
+                {
+                    await Shell.Current.DisplayAlert("Error", "This unit already in use", "OK");
+                    return;
+                }
+                await _repository.DeleteAsync(unit.Id);
+                Units.Remove(unit);
+            }
+        });
+
+        // Load saved units
+        LoadUnits();        
     }
 
     private async void LoadUnits()
@@ -47,8 +67,6 @@ public partial class FieldUnitPage : ContentPage
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
         await Shell.Current.Navigation.PushAsync(unitPage);
     }
-
-    public Command<FieldUnit> OpenDetailsCommand => new Command<FieldUnit>(OnUnitTapped);
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {

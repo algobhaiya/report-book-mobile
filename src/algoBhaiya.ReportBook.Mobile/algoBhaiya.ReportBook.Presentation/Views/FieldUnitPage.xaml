@@ -32,10 +32,13 @@
                            Padding="15"
                            Margin="0,5"
                            HasShadow="True">
+                        <!-- Inside your existing <Frame> in DataTemplate -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Added for Delete button -->
                             </Grid.ColumnDefinitions>
 
                             <VerticalStackLayout>
@@ -44,24 +47,45 @@
                                        FontSize="16" />
                                 <Label Text="{Binding ValueType}"
                                        FontSize="13"
-                                       TextColor="Gray" />
+                                       TextColor="Gray" />      
                             </VerticalStackLayout>
 
+                            <!-- ✏️ Edit Button -->
                             <Button Text="✏️"
-                                   FontSize="14"
-                                   Padding="6"
-                                   CornerRadius="6"
-                                   BackgroundColor="#eeeeee"
-                                   Grid.Column="1"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="End"
-                                   Margin="10,0,0,0">
+                                    FontSize="14"
+                                    Padding="6"
+                                    CornerRadius="6"
+                                    BackgroundColor="#eeeeee"
+                                    Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    Margin="5,0,0,0">   
                                 <Button.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}"
-                                                          CommandParameter="{Binding .}" />
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}" 
+                                        CommandParameter="{Binding .}" />
+                                </Button.GestureRecognizers>
+                            </Button>
+
+                            <!-- 🗑️ Delete Button -->
+                            <Button Text="🗑️"
+                                    FontSize="14"
+                                    Padding="6"
+                                    CornerRadius="6"
+                                    BackgroundColor="#FFCDD2"
+                                    TextColor="DarkRed"
+                                    Grid.Column="2"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    Margin="5,0,0,0">
+                                <Button.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}" 
+                                        CommandParameter="{Binding .}" />
                                 </Button.GestureRecognizers>
                             </Button>
                         </Grid>
+
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
