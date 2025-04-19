@@ -13,6 +13,7 @@
                 CornerRadius="20"
                 BackgroundColor="#1976D2"
                 TextColor="White"
+                FontAttributes="Bold"
                 FontSize="14"
                 Padding="10,5"
                 HorizontalOptions="End"
@@ -46,19 +47,20 @@
                                        TextColor="Gray" />
                             </VerticalStackLayout>
 
-                            <Label Text="✏️"
+                            <Button Text="✏️"
                                    FontSize="14"
-                                   Padding="10"
+                                   Padding="6"
+                                   CornerRadius="6"
                                    BackgroundColor="#eeeeee"
                                    Grid.Column="1"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End"
                                    Margin="10,0,0,0">
-                                <Label.GestureRecognizers>
+                                <Button.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}"
                                                           CommandParameter="{Binding .}" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                                </Button.GestureRecognizers>
+                            </Button>
                         </Grid>
                     </Frame>
                 </DataTemplate>

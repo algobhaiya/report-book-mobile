@@ -33,7 +33,7 @@ public partial class FieldUnitPage : ContentPage
 
     private async void LoadUnits()
     {
-        var units = await _repository.GetAllAsync();
+        var units = await _repository.GetListAsync(u => u.IsDeleted == false);
         _units.Clear();
         foreach (var unit in units)
             _units.Add(unit);
@@ -42,7 +42,7 @@ public partial class FieldUnitPage : ContentPage
     private async void OnAddClicked(object sender, EventArgs e)
     {
         
-        _navDataService.Set("OnUnitSaved", (Action<FieldUnit>)OnUnitSaved);
+        _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
         
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
         await Shell.Current.Navigation.PushAsync(unitPage);
@@ -52,24 +52,24 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {
-        _navDataService.Set("FieldUnitToEdit", tappedUnit);
-        _navDataService.Set("OnUnitSaved", (Action<FieldUnit>)OnUnitSaved);
+        _navDataService.Set(Constants.Constants.FieldUnit.Item_ToEdit, tappedUnit);
+        _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
         
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
         await Shell.Current.Navigation.PushAsync(unitPage);
     }
 
-    private void OnUnitSaved(FieldUnit savedUnit)
+    private void OnUnitSaved(FieldUnit oldUnit, FieldUnit newUnit)
     {
-        var existing = Units.FirstOrDefault(x => x.Id == savedUnit.Id);
+        var existing = Units.FirstOrDefault(x => x.Id == oldUnit.Id);
         if (existing != null)
         {
             var index = Units.IndexOf(existing);
-            Units[index] = savedUnit; // updates item in-place
+            Units[index] = newUnit; // updates item in-place           
         }
         else
         {
-            Units.Add(savedUnit);
+            Units.Add(newUnit);
         }
     }
 }

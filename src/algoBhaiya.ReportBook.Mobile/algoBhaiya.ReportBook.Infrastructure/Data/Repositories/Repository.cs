@@ -20,6 +20,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return await _connection.Table<T>().ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _connection.Table<T>().Where(predicate).ToListAsync();
+        }
+
         public async Task<T> GetByIdAsync(int id)
         {
             return await _connection.FindAsync<T>(id);
@@ -38,6 +43,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         public async Task UpdateAsync(T entity)
         {
             await _connection.UpdateAsync(entity);
+        }
+
+        public async Task UpdateAsync(IEnumerable<T> entries)
+        {
+            await _connection.UpdateAllAsync(entries, true);
         }
 
         public async Task InsertOrReplaceAsync(T entity)
