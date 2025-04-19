@@ -6,7 +6,7 @@ namespace algoBhaiya.ReportBook.Core.Entities
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-
+        public int UserId { get; set; }
         public string FieldName { get; set; }
         public string ValueType { get; set; } // "int", "double", "bool" // TODO: remove this.
         public int UnitId { get; set; }

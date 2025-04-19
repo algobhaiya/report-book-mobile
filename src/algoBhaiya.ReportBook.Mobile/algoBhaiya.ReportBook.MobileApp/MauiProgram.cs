@@ -1,5 +1,6 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
@@ -45,10 +46,16 @@ namespace algoBhaiya.ReportBook.MobileApp
             // Register pages and view models
             builder.Services.AddTransient<LoginPage>();
 
+            builder.Services.AddSingleton<NavigationDataService>();
+
             builder.Services.AddSingleton<DailyEntryViewModel>();
             builder.Services.AddTransient<DailyEntryPage>();
 
             builder.Services.AddTransient<FieldTemplatePage>();
+
+            builder.Services.AddTransient<FieldUnitAddEditViewModel>();
+            builder.Services.AddTransient<FieldUnitAddEditPage>();
+            
             builder.Services.AddTransient<FieldUnitPage>();
 
             builder.Services.AddTransient<MonthlyTargetViewModel>();

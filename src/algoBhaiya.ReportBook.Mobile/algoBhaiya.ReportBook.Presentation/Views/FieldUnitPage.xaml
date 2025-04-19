@@ -1,30 +1,94 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldUnitPage"
              Title="Field Units">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid>
+        <!-- Add Button at Top Right -->
+        <Button Text="➕ Add"
+                x:Name="AddUnitButton"
+                Clicked="OnAddClicked"
+                CornerRadius="20"
+                BackgroundColor="#1976D2"
+                TextColor="White"
+                FontAttributes="Bold"
+                FontSize="14"
+                Padding="10,5"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                Margin="10" />
 
-        <CollectionView ItemsSource="{Binding Units}" SelectionMode="Single">
+        <!-- Scrollable Content -->
+        <CollectionView ItemsSource="{Binding Units}"
+                        SelectionMode="None"
+                        Margin="10,60,10,10">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame BorderColor="LightGray" Padding="10" CornerRadius="8">
-                        <HorizontalStackLayout>
-                            <Label Text="{Binding UnitName}" FontAttributes="Bold" />
-                            <Label Text=" (" />
-                            <Label Text="{Binding ValueType}" TextColor="Gray" />
-                            <Label Text=")" />
-                        </HorizontalStackLayout>
+                    <Frame BorderColor="#E0E0E0"
+                           BackgroundColor="White"
+                           CornerRadius="12"
+                           Padding="15"
+                           Margin="0,5"
+                           HasShadow="True">
+                        <!-- Inside your existing <Frame> in DataTemplate -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Added for Delete button -->
+                            </Grid.ColumnDefinitions>
+
+                            <VerticalStackLayout>
+                                <Label Text="{Binding UnitName}"
+                                       FontAttributes="Bold"
+                                       FontSize="16" />
+                                <Label Text="{Binding ValueType}"
+                                       FontSize="13"
+                                       TextColor="Gray" />      
+                            </VerticalStackLayout>
+
+                            <!-- ✏️ Edit Button -->
+                            <Button Text="✏️"
+                                    FontSize="14"
+                                    Padding="6"
+                                    CornerRadius="6"
+                                    BackgroundColor="#eeeeee"
+                                    Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    Margin="5,0,0,0">   
+                                <Button.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}" 
+                                        CommandParameter="{Binding .}" />
+                                </Button.GestureRecognizers>
+                            </Button>
+
+                            <!-- 🗑️ Delete Button -->
+                            <Button Text="🗑️"
+                                    FontSize="14"
+                                    Padding="6"
+                                    CornerRadius="6"
+                                    BackgroundColor="#FFCDD2"
+                                    TextColor="DarkRed"
+                                    Grid.Column="2"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="End"
+                                    Margin="5,0,0,0">
+                                <Button.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}" 
+                                        CommandParameter="{Binding .}" />
+                                </Button.GestureRecognizers>
+                            </Button>
+                        </Grid>
+
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <Button Text="➕ Add Unit"
-                BackgroundColor="#1976D2"
-                TextColor="White"
-                Clicked="OnAddClicked" />
-
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

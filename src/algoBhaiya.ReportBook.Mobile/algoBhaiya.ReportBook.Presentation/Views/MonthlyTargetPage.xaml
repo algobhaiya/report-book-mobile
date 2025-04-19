@@ -19,10 +19,8 @@
 
                 <!-- (Optional: Replace with SearchBar or Entry if you want text input in future) -->
                 <!-- <SearchBar Placeholder="Enter keyword..." /> -->
-            </HorizontalStackLayout>
 
             <!-- Filter Buttons Row -->
-            <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
                 <Button Text="🗓️ By Month"
                         FontAttributes="Bold"
                         Clicked="OnMonthCalendarClicked"
@@ -59,11 +57,37 @@
                         VerticalOptions="FillAndExpand">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Orientation="Horizontal" Padding="5">
-                        <Label Text="{Binding FieldName}" WidthRequest="120"/>
-                        <Entry Text="{Binding TargetValue}" WidthRequest="100" Keyboard="Numeric"/>
-                        <Label Text="{Binding UnitName}" FontAttributes="Italic" TextColor="Gray" Margin="5,0,0,0"/>
-                    </StackLayout>
+                    <Grid ColumnSpacing="10" Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <!-- FieldName: 50% -->
+                            <ColumnDefinition Width="3*" />
+                            <!-- Input: 30% -->
+                            <ColumnDefinition Width="2*" />
+                            <!-- Unit: 20% -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Field Name -->
+                        <Label Grid.Column="0"
+                               Text="{Binding FieldName}"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
+
+                        <!-- Input -->
+                        <StackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Entry Placeholder="Enter value"
+                                   Keyboard="Numeric"
+                                   Text="{Binding TargetValue}" />
+                        </StackLayout>
+
+                        <!-- Unit -->
+                        <Label Grid.Column="2"
+                               Text="{Binding UnitName}"
+                               FontAttributes="Italic"
+                               TextColor="Gray"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Start" />
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
