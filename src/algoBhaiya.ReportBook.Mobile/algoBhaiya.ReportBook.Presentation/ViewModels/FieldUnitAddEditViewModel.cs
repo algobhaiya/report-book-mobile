@@ -113,7 +113,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 await SaveAsync(backendType);
             } 
-            else if (TappedUnit.ValueType != backendType)
+            else if (HasFieldValueChanged(backendType))
             {
                 await SaveAsync(backendType);
             } 
@@ -220,6 +220,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await _templateRepository.UpdateAsync(templates);
         }
 
+        private bool HasFieldValueChanged(string valueType)
+        {
+            return TappedUnit.ValueType != valueType;
+        }
     }
 
 }
