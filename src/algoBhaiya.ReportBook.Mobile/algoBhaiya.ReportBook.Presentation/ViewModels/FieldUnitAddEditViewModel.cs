@@ -20,7 +20,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private string _unitName;
         public string UnitName
         {
-            get => _unitName;
+            get => _unitName.Trim();
             set
             {
                 if (_unitName != value)
@@ -107,7 +107,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 if (duplicateUnit != null)
                 {
-                    await Shell.Current.DisplayAlert("Error", "This unit name already exists", "OK");
+                    await Shell.Current.DisplayAlert(
+                        "Duplicate Name",
+                        $"The unit \"{UnitName}\" already exists. Please choose a different name.",
+                        "OK");
                     return;
                 }
 
@@ -198,7 +201,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 unit = new FieldUnit
                 {
-                    UnitName = UnitName.Trim(),
+                    UnitName = UnitName,
                     ValueType = valueType
                 };
 
