@@ -39,7 +39,10 @@ public partial class FieldUnitPage : ContentPage
 
                 if (templates.Count() > 0)
                 {
-                    await Shell.Current.DisplayAlert("Error", "This unit already in use", "OK");
+                    await Shell.Current.DisplayAlert(
+                        "Unit In Use",
+                        "This unit is used in templates and can't be deleted.",
+                        "OK");
                     return;
                 }
                 await _repository.DeleteAsync(unit.Id);

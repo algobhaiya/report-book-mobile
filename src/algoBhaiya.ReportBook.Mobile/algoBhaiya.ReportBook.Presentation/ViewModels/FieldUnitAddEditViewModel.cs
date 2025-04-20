@@ -14,13 +14,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IRepository<FieldUnit> _repository;
         private readonly IRepository<FieldTemplate> _templateRepository;
 
-        private readonly Action<FieldUnit, FieldUnit> _onSubmit;
+        private readonly Action<FieldUnit, FieldUnit> _onSave;
         public ObservableCollection<string> DisplayTypes { get; } = new();
 
         private string _unitName;
         public string UnitName
         {
-            get => _unitName;
+            get => _unitName.Trim();
             set
             {
                 if (_unitName != value)
@@ -76,7 +76,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             var onSaveAction = _navDataService.Get<Action<FieldUnit, FieldUnit>>(Constants.Constants.FieldUnit.Action_OnUnitSaved);
             if (onSaveAction != null)
             {
-                _onSubmit = onSaveAction;
+                _onSave = onSaveAction;
             }
 
             _navDataService.Remove(Constants.Constants.FieldUnit.Item_ToEdit);
@@ -96,30 +96,47 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            // validate unitName.
-            var duplicateUnit = await _repository.GetFirstOrDefaultAsync(
-                    u => u.UnitName == UnitName && u.IsDeleted == false);
-
-            if (duplicateUnit != null)
-            {
-                await Shell.Current.DisplayAlert("Error", "This unit name already exists", "OK");
-                return;
-            }
-
             var backendType = _typeMap[SelectedDisplayType];
-            
-            if (TappedUnit.UnitName !=  UnitName || TappedUnit.ValueType != backendType)
-            {                
-                var oldUnit = await DeleteUnitAsync(TappedUnit.UnitName, TappedUnit.ValueType);
 
-                var newUnit = await AddUnitAsync(UnitName, backendType);
+            // If different name, then check duplicate.
+            if (TappedUnit.UnitName != UnitName)
+            {
+                // validate unitName.
+                var duplicateUnit = await _repository.GetFirstOrDefaultAsync(
+                        u => u.UnitName == UnitName && u.IsDeleted == false);
 
-                await ReplaceByNewUnitAsync(oldUnit, newUnit);
+                if (duplicateUnit != null)
+                {
+                    await Shell.Current.DisplayAlert(
+                        "Duplicate Name",
+                        $"The unit \"{UnitName}\" already exists. Please choose a different name.",
+                        "OK");
+                    return;
+                }
 
-                _onSubmit?.Invoke(oldUnit, newUnit); // Notify list page
+                await SaveAsync(backendType);
+            } 
+            else if (HasFieldValueChanged(backendType))
+            {
+                await SaveAsync(backendType);
+            } 
+            else
+            {
+                // Skip updating.
             }
-
+                       
             await Shell.Current.Navigation.PopModalAsync();
+        }
+
+        private async Task SaveAsync(string backendType)
+        {
+            var oldUnit = await DeleteUnitAsync(TappedUnit.UnitName, TappedUnit.ValueType);
+
+            var newUnit = await AddUnitAsync(UnitName, backendType);
+
+            await ReplaceByNewUnitAsync(oldUnit, newUnit);
+
+            _onSave?.Invoke(oldUnit, newUnit); // Notify list page
         }
 
         private void AssignEntryAsync(FieldUnit? fieldUnit)
@@ -184,7 +201,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 unit = new FieldUnit
                 {
-                    UnitName = UnitName.Trim(),
+                    UnitName = UnitName,
                     ValueType = valueType
                 };
 
@@ -206,6 +223,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await _templateRepository.UpdateAsync(templates);
         }
 
+        private bool HasFieldValueChanged(string valueType)
+        {
+            return TappedUnit.ValueType != valueType;
+        }
     }
 
 }
