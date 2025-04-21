@@ -15,6 +15,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IRepository<FieldTemplate> _templateRepository;
 
         private readonly Action<FieldUnit, FieldUnit> _onSave;
+        public  Action onModalClose;
         public ObservableCollection<string> DisplayTypes { get; } = new();
 
         private string _unitName;
@@ -124,8 +125,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 // Skip updating.
             }
-                       
-            await Shell.Current.Navigation.PopModalAsync();
+
+            onModalClose?.Invoke();           
         }
 
         private async Task SaveAsync(string backendType)
