@@ -12,6 +12,12 @@ public partial class DailyEntryListPage : ContentPage
         _viewModel = viewModel;
     }
 
+    private async void OnTodayCalendarClicked(object sender, EventArgs e)
+    {
+        DateTime formDate = DateTime.Today;
+        await _viewModel.OpenEntryAsync(formDate);
+    }
+
     private async void OnDateCalendarClicked(object sender, EventArgs e)
     {
         var selected = await DatePickerDialog();
