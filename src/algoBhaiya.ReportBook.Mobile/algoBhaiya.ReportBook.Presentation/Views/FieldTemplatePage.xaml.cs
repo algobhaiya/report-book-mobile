@@ -13,6 +13,7 @@ public partial class FieldTemplatePage : ContentPage
     private List<FieldUnit> _availableUnits = new();
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
+    private int _loggedInUser = -1;
 
     public FieldTemplatePage(
         IServiceProvider serviceProvider,
@@ -23,17 +24,21 @@ public partial class FieldTemplatePage : ContentPage
         _repository = repository;
         _serviceProvider = serviceProvider;
 
+        _loggedInUser = Preferences.Get("CurrentUserId", -1);
+
         LoadTemplates();
     }
 
     private async void LoadTemplates()
     {
         _availableUnits = (await _serviceProvider.GetRequiredService<IRepository<FieldUnit>>()
-                                    .GetAllAsync())
+                                    .GetListAsync(u => u.IsDeleted == false))
                                     .ToList();
+        
+        if (_loggedInUser == -1) return;
 
-        var templates = await _repository.GetAllAsync();
-
+        var templates = await _repository.GetListAsync(t => t.UserId == _loggedInUser);
+        
         foreach (var tpl in templates)
             tpl.Unit = _availableUnits.FirstOrDefault(u => u.Id == tpl.UnitId);
 
@@ -52,7 +57,13 @@ public partial class FieldTemplatePage : ContentPage
         if (!string.IsNullOrWhiteSpace(name) && unitName != "Cancel")
         {
             var selectedUnit = _availableUnits.FirstOrDefault(u => u.UnitName == unitName);
-            var tpl = new FieldTemplate { FieldName = name, UnitId = selectedUnit.Id, Unit = selectedUnit };
+            var tpl = new FieldTemplate 
+            { 
+                FieldName = name, 
+                UnitId = selectedUnit.Id, 
+                Unit = selectedUnit,
+                UserId = _loggedInUser
+            };
             await _repository.AddAsync(tpl);
             _templates.Add(tpl);
         }
@@ -81,5 +92,35 @@ public partial class FieldTemplatePage : ContentPage
             }
         }
     }
+
+    //private async void OnSwitchToggled(object sender, ToggledEventArgs e)
+    //{
+    //    bool isOn = e.Value;
+
+    //    var confirmationText = isOn ? "Enable" : "Disable";
+    //    var confirm = await DisplayAlert("Confirmation", $"Do you want to '{confirmationText}'?", "Yes", "No");
+    //    if (confirm)
+    //    {
+    //        // Handle the toggle state
+    //        if (isOn)
+    //        {
+    //            if (sender is Button btn && btn.BindingContext is FieldTemplate template)
+    //            {
+    //                template.IsEnabled = true;
+    //                await _repository.UpdateAsync(template);
+    //                LoadTemplates(); // Refresh
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if (sender is Button btn && btn.BindingContext is FieldTemplate template)
+    //            {
+    //                template.IsEnabled = false;
+    //                await _repository.UpdateAsync(template);
+    //                LoadTemplates(); // Refresh
+    //            }
+    //        }
+    //    }
+    //}
 
 }
