@@ -4,17 +4,53 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:algoBhaiya.ReportBook.MobileApp"
+    xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views;assembly=algoBhaiya.ReportBook.Presentation"
     Shell.FlyoutBehavior="Disabled"
-    Title="algoBhaiya.ReportBook.MobileApp"
+    Title="algoBhaiya.ReportBook"
     Shell.NavBarIsVisible="True"
     Shell.BackgroundColor="RoyalBlue"
-    Shell.TabBarBackgroundColor="Red"
+    Shell.TabBarBackgroundColor="#1976D2"
     Shell.TabBarTitleColor="White"
+    Shell.TabBarUnselectedColor="#B3E5FC"
+    Shell.TabBarForegroundColor="White"
     Shell.TitleColor="White">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!-- Bottom Tabs -->
+    <TabBar Title="Menu">
+        <ShellContent 
+            Title="Daily" 
+            Icon="calendar_check_regular.svg"
+            ContentTemplate="{DataTemplate views:DailyEntryListPage}" />
+
+        <ShellContent 
+            Title="Plan" 
+            Icon="calendar_days_regular.svg"
+            ContentTemplate="{DataTemplate views:MonthlyTargetPage}" />
+
+        <ShellContent 
+            Title="Items" 
+            Icon="list_check_solid.svg"
+            ContentTemplate="{DataTemplate views:FieldTemplatePage}" />
+
+        <ShellContent 
+            Title="Units" 
+            Icon="layer_group_solid.svg"
+            ContentTemplate="{DataTemplate views:FieldUnitPage}" />
+
+        <ShellContent 
+            Title="Guide" 
+            Icon="book_solid.svg"
+            ContentTemplate="{DataTemplate local:MainPage}" />
+
+    </TabBar>
+
+    <!-- ToolbarItem (Menu Icon) for the top left corner -->
+    <Shell.ToolbarItems>
+        <ToolbarItem Text="☰"                     
+                     IconImageSource="bars_solid.svg"
+                     Command="{Binding OpenMenuCommand}" 
+                     Order="Primary" 
+                     Priority="0" />
+    </Shell.ToolbarItems>
 
 </Shell>

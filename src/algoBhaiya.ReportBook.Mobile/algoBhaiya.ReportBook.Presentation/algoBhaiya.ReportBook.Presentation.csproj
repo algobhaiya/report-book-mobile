@@ -15,11 +15,24 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-	</PropertyGroup>	
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Resources\Images\bars_solid.svg" />
+	</ItemGroup>
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\bars_solid.svg" />
+	  <MauiImage Include="Resources\Images\book_solid.svg" />
+	  <MauiImage Include="Resources\Images\calendar_check_regular.svg" />
+	  <MauiImage Include="Resources\Images\house_solid.svg">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </MauiImage>
+	</ItemGroup>	
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\calendar_days_regular.svg" />
 	  <MauiImage Include="Resources\Images\green_check_mark.svg" />
+	  <MauiImage Include="Resources\Images\layer_group_solid.svg" />
+	  <MauiImage Include="Resources\Images\list_check_solid.svg" />
 	  <MauiImage Include="Resources\Images\pending_gray_status.svg" />
 	</ItemGroup>
 
