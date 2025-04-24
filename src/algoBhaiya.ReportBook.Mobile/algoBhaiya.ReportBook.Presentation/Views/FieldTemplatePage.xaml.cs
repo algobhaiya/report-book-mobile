@@ -37,8 +37,12 @@ public partial class FieldTemplatePage : ContentPage
         
         if (_loggedInUser == -1) return;
 
-        var templates = await _repository.GetListAsync(t => t.UserId == _loggedInUser);
-        
+        var templates = (await _repository
+                .GetListAsync(t => t.UserId == _loggedInUser)
+                )
+                .OrderByDescending(t => t.IsEnabled)
+                .ThenBy(t => t.FieldOrder);
+
         foreach (var tpl in templates)
             tpl.Unit = _availableUnits.FirstOrDefault(u => u.Id == tpl.UnitId);
 
