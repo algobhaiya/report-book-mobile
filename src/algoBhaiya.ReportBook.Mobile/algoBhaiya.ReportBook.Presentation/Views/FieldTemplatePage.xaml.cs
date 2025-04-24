@@ -93,34 +93,33 @@ public partial class FieldTemplatePage : ContentPage
         }
     }
 
-    //private async void OnSwitchToggled(object sender, ToggledEventArgs e)
-    //{
-    //    bool isOn = e.Value;
+    private async void OnSwitchToggled(object sender, ToggledEventArgs e)
+    {
+        if (sender is Switch sw && sw.BindingContext is FieldTemplate template)
+        {
+            if (template.IsEnabled == e.Value)
+            {
+                return;
+            }
 
-    //    var confirmationText = isOn ? "Enable" : "Disable";
-    //    var confirm = await DisplayAlert("Confirmation", $"Do you want to '{confirmationText}'?", "Yes", "No");
-    //    if (confirm)
-    //    {
-    //        // Handle the toggle state
-    //        if (isOn)
-    //        {
-    //            if (sender is Button btn && btn.BindingContext is FieldTemplate template)
-    //            {
-    //                template.IsEnabled = true;
-    //                await _repository.UpdateAsync(template);
-    //                LoadTemplates(); // Refresh
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if (sender is Button btn && btn.BindingContext is FieldTemplate template)
-    //            {
-    //                template.IsEnabled = false;
-    //                await _repository.UpdateAsync(template);
-    //                LoadTemplates(); // Refresh
-    //            }
-    //        }
-    //    }
-    //}
+            bool requestedState = e.Value;
+            string confirmationText = requestedState ? "Enable" : "Disable";
+
+            bool confirm = await DisplayAlert("Confirmation", $"Do you want to '{confirmationText}'?", "Yes", "No");
+
+            if (confirm)
+            {
+                template.IsEnabled = requestedState;
+                await _repository.UpdateAsync(template);                
+            }
+            else
+            {
+                // Revert the switch to the original state
+                sw.Toggled -= OnSwitchToggled; // prevent recursive trigger
+                sw.IsToggled = template.IsEnabled;
+                sw.Toggled += OnSwitchToggled;
+            }
+        }
+    }
 
 }

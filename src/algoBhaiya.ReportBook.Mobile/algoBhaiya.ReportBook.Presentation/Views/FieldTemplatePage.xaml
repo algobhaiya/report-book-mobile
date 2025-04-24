@@ -41,7 +41,9 @@
 
                                 <!-- Right side actions -->
                                 <HorizontalStackLayout Grid.RowSpan="3" Grid.Column="1" VerticalOptions="Center">
-                                    <Switch IsToggled="True" Margin="0,0,10,0"/>
+                                    <Switch IsToggled="{Binding IsEnabled, Mode=OneWay}" 
+                                            Margin="0,0,10,0"
+                                            Toggled="OnSwitchToggled"/>
                                     <Button Text="✏️"
                                             FontSize="14"
                                             Padding="6"
