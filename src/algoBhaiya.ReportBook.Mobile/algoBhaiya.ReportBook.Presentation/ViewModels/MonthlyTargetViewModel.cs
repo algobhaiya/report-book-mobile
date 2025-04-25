@@ -139,8 +139,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public async Task SaveTargetsAsync()
         {
-            int userId = Preferences.Get("CurrentUserId", -1);
-            if (userId == -1) return;
+            byte userId = (byte)Preferences.Get("CurrentUserId", 0);
+            if (userId == 0) return;
 
             foreach (var field in Fields)
             {

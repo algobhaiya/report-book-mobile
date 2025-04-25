@@ -7,7 +7,7 @@ namespace algoBhaiya.ReportBook.Core.Entities
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        public byte UserId { get; set; }
         public int FieldTemplateId { get; set; }        
 
         public DateTime Date { get; set; }

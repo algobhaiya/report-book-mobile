@@ -70,8 +70,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private async Task LoadFieldsAsync()
         {
             Fields.Clear();
-            int userId = Preferences.Get("CurrentUserId", -1);
-            if (userId == -1) return;
+            byte userId = (byte) Preferences.Get("CurrentUserId", 0);
+            if (userId == 0) return;
 
             FormDate = LoadingDateTime ?? DateTime.Today; // place to set effectiveDate
             IsReadOnly = (DateTime.Today - FormDate).Days > 14;

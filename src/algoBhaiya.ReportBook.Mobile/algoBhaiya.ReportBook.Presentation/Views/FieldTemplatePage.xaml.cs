@@ -13,7 +13,7 @@ public partial class FieldTemplatePage : ContentPage
     private List<FieldUnit> _availableUnits = new();
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
-    private int _loggedInUser = -1;
+    private byte _loggedInUser = 0;
 
     public FieldTemplatePage(
         IServiceProvider serviceProvider,
@@ -24,7 +24,7 @@ public partial class FieldTemplatePage : ContentPage
         _repository = repository;
         _serviceProvider = serviceProvider;
 
-        _loggedInUser = Preferences.Get("CurrentUserId", -1);
+        _loggedInUser = (byte) Preferences.Get("CurrentUserId", 0);
 
         LoadTemplates();
     }
