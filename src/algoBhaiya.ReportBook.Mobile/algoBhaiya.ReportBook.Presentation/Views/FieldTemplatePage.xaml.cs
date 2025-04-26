@@ -16,6 +16,7 @@ public partial class FieldTemplatePage : ContentPage
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
     private byte _loggedInUser = 0;
+    public Command DeleteCommand { get; }
 
     public FieldTemplatePage(
         IServiceProvider serviceProvider,
@@ -29,6 +30,26 @@ public partial class FieldTemplatePage : ContentPage
         _navDataService = navDataService;
 
         _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
+
+        DeleteCommand = new Command<FieldTemplate>(async (field) =>
+        {
+            var confirm = await DisplayAlert("Delete", $"Delete '{field.FieldName}'?", "Yes", "No");
+            if (confirm)
+            {
+                var dailyReports = await _serviceProvider.GetRequiredService<IRepository<DailyEntry>>().GetListAsync(d => d.FieldTemplateId == field.Id);
+
+                if (dailyReports.Count() > 0)
+                {
+                    await Shell.Current.DisplayAlert(
+                        "Field In Use",
+                        "This Field is used in daily reports and can't be deleted.",
+                        "OK");
+                    return;
+                }
+                await _repository.DeleteAsync(field.Id);
+                Templates.Remove(field);
+            }
+        });
 
         LoadTemplates();        
     }
