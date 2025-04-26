@@ -12,6 +12,7 @@ namespace algoBhaiya.ReportBook.Core.Entities
         public byte UnitId { get; set; }
         public byte FieldOrder { get; set; }
         public bool IsEnabled { get; set; } = true;
+        public bool IsDeleted { get; set; } = false;
 
         [Ignore]
         public FieldUnit Unit { get; set; }

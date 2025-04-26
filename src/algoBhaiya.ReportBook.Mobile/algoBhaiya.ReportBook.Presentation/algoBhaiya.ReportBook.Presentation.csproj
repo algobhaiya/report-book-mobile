@@ -45,11 +45,20 @@
 	  <ProjectReference Include="..\algoBhaiya.ReportBook.Infrastructure\algoBhaiya.ReportBook.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\FieldTemplateDetailPage.xaml.cs">
+	    <DependentUpon>FieldTemplateDetailPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
   <ItemGroup>
     <MauiXaml Update="Views\DailyEntryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\FieldTemplatePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\FieldTemplateDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\FieldUnitAddEditPage.xaml">

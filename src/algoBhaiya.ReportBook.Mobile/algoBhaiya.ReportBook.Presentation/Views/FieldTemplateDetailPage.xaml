@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplateDetailPage"
+             BackgroundColor="#80000000"
+             Padding="20">
+
+    <Frame CornerRadius="20"
+           Padding="20"
+           BackgroundColor="White"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           WidthRequest="{OnPlatform Android=0, iOS=0, WinUI=0}"
+           MaximumWidthRequest="600"
+           MinimumWidthRequest="300"
+           HasShadow="True">
+
+        <VerticalStackLayout Spacing="20">
+
+            <Entry Placeholder="Field Name"
+                   Text="{Binding FieldName, Mode=TwoWay}"
+                   FontSize="16"
+                   PlaceholderColor="Gray" />
+
+            <Picker Title="Select Unit"
+                    ItemsSource="{Binding DisplayUnitNames}"
+                    SelectedItem="{Binding SelectedUnitName}"
+                    FontSize="16" />
+
+            <Button Text="Save"
+                    Command="{Binding SubmitCommand}"
+                    BackgroundColor="#1976D2"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="10" />
+            <Button Text="Cancel" Clicked="OnCancelClicked" BackgroundColor="LightGray"/>
+
+        </VerticalStackLayout>
+    </Frame>
+</ContentPage>

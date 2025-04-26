@@ -52,6 +52,9 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddSingleton<DailyEntryViewModel>();
             builder.Services.AddTransient<DailyEntryPage>();
 
+            builder.Services.AddTransient<FieldTemplateDetailViewModel>();
+            builder.Services.AddTransient<FieldTemplateDetailPage>();
+
             builder.Services.AddTransient<FieldTemplatePage>();
 
             builder.Services.AddTransient<FieldUnitAddEditViewModel>();

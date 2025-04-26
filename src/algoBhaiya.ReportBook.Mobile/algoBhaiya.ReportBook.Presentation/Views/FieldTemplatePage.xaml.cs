@@ -1,4 +1,5 @@
 using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 
@@ -8,6 +9,7 @@ public partial class FieldTemplatePage : ContentPage
 {
     private readonly IRepository<FieldTemplate> _repository;
     private readonly IServiceProvider _serviceProvider;
+    private readonly NavigationDataService _navDataService;
 
     private ObservableCollection<FieldTemplate> _templates = new();
     private List<FieldUnit> _availableUnits = new();
@@ -17,16 +19,18 @@ public partial class FieldTemplatePage : ContentPage
 
     public FieldTemplatePage(
         IServiceProvider serviceProvider,
-        IRepository<FieldTemplate> repository)
+        IRepository<FieldTemplate> repository,
+        NavigationDataService navDataService)
     {
         InitializeComponent();
         BindingContext = this;
         _repository = repository;
         _serviceProvider = serviceProvider;
+        _navDataService = navDataService;
 
-        _loggedInUser = (byte) Preferences.Get("CurrentUserId", 0);
+        _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
 
-        LoadTemplates();
+        LoadTemplates();        
     }
 
     private async void LoadTemplates()
@@ -35,7 +39,7 @@ public partial class FieldTemplatePage : ContentPage
                                     .GetListAsync(u => u.IsDeleted == false))
                                     .ToList();
         
-        if (_loggedInUser == -1) return;
+        if (_loggedInUser == 0) return;
 
         var templates = (await _repository
                 .GetListAsync(t => t.UserId == _loggedInUser)
@@ -53,34 +57,20 @@ public partial class FieldTemplatePage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        string name = await DisplayPromptAsync("New Field", "Enter field name:");
-        
-        var unitNames = _availableUnits.Select(u => u.UnitName).ToArray();
-        string unitName = await DisplayActionSheet("Select Unit", "Cancel", null, unitNames);
+        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Action<FieldTemplate, FieldTemplate>)OnUnitSaved);
 
-        if (!string.IsNullOrWhiteSpace(name) && unitName != "Cancel")
-        {
-            var selectedUnit = _availableUnits.FirstOrDefault(u => u.UnitName == unitName);
-            var tpl = new FieldTemplate 
-            { 
-                FieldName = name, 
-                UnitId = selectedUnit.Id, 
-                Unit = selectedUnit,
-                UserId = _loggedInUser
-            };
-            await _repository.AddAsync(tpl);
-            _templates.Add(tpl);
-        }
+        await OpenModalAsync();
     }
 
     public Command<FieldTemplate> OpenDetailsCommand => new Command<FieldTemplate>(OnFieldTapped);
 
     private async void OnFieldTapped(FieldTemplate tappedTemplate)
     {
-        await DisplayAlert("Field Details",
-            $"Name: {tappedTemplate.FieldName}\n" +
-            $"Unit: {tappedTemplate.Unit?.UnitName ?? "None"}\n" +
-            $"Type: {tappedTemplate.ValueType ?? "N/A"}", "OK");
+        _navDataService.Set(Constants.Constants.FieldTemplate.Item_ToEdit, tappedTemplate);
+        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Action<FieldTemplate, FieldTemplate>)OnUnitSaved);
+
+        await OpenModalAsync();
+
     }
 
     private async void OnEditClicked(object sender, EventArgs e)
@@ -126,4 +116,28 @@ public partial class FieldTemplatePage : ContentPage
         }
     }
 
+    private async Task OpenModalAsync()
+    {
+        var fieldPage = _serviceProvider.GetRequiredService<FieldTemplateDetailPage>();
+
+        await Navigation.PushModalAsync(fieldPage);
+
+        await fieldPage.ResultSource.Task;   // wait, until completing the task.
+
+        await Navigation.PopModalAsync();
+    }
+
+    private void OnUnitSaved(FieldTemplate oldField, FieldTemplate newField)
+    {
+        var existing = Templates.FirstOrDefault(x => x.Id == oldField.Id);
+        if (existing != null)
+        {
+            var index = Templates.IndexOf(existing);
+            Templates[index] = newField; // updates item in-place           
+        }
+        else
+        {
+            Templates.Add(newField);
+        }
+    }
 }
