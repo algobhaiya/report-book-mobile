@@ -35,9 +35,23 @@ public partial class FieldUnitPage : ContentPage
             var confirm = await DisplayAlert("Delete", $"Delete '{unit.UnitName}'?", "Yes", "No");
             if (confirm)
             {
-                var templates = await _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>().GetListAsync(t => t.UnitId == unit.Id);                
+                bool isDeletionLocked = false;
+                bool hasActiveTemplate = false;
+
+                // Check in field templates
+                var templates = await _serviceProvider
+                    .GetRequiredService<IRepository<FieldTemplate>>()
+                    .GetListAsync(t => t.UnitId == unit.Id);                
 
                 if (templates.Count() > 0)
+                {
+                    isDeletionLocked = true;
+
+                    hasActiveTemplate = templates.Any(t => t.IsDeleted == false);
+                }
+
+                // NoDelete: if unit is used in active field.
+                if (hasActiveTemplate)
                 {
                     await Shell.Current.DisplayAlert(
                         "Unit In Use",
@@ -45,7 +59,18 @@ public partial class FieldUnitPage : ContentPage
                         "OK");
                     return;
                 }
-                await _repository.DeleteAsync(unit.Id);
+
+                // SoftDelete: if unit is used in inactive field.
+                if (isDeletionLocked)
+                {
+                    unit.IsDeleted = true;
+                    await _repository.UpdateAsync(unit);
+                }
+                else
+                {
+                    await _repository.DeleteAsync(unit.Id);
+                }
+                
                 Units.Remove(unit);
             }
         });
@@ -56,8 +81,12 @@ public partial class FieldUnitPage : ContentPage
 
     private async void LoadUnits()
     {
-        var units = await _repository.GetListAsync(u => u.IsDeleted == false);
+        var units = (await _repository
+            .GetListAsync(u => u.IsDeleted == false)
+            ).OrderBy(u => u.UnitName);
+
         _units.Clear();
+
         foreach (var unit in units)
             _units.Add(unit);
     }
