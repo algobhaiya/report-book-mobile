@@ -29,6 +29,7 @@
 
             <Entry Placeholder="Field Order"
                    Text="{Binding FieldOrder, Mode=TwoWay}"
+                   Keyboard="Numeric"
                    FontSize="16"
                    PlaceholderColor="Gray" />
 
