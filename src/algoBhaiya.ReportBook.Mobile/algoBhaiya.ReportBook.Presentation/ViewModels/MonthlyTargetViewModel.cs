@@ -148,7 +148,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     UserId = userId,
                     FieldTemplateId = field.FieldTemplateId,
-                    Month = DateTime.Today.Month,
+                    Month = (byte)DateTime.Today.Month,
                     Year = DateTime.Today.Year,
                     TargetValue = field.TargetValue
                 });
