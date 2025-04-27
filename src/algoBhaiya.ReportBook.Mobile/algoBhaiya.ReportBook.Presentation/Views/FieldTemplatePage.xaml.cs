@@ -140,7 +140,7 @@ public partial class FieldTemplatePage : ContentPage
     private async Task OpenModalAsync()
     {
         var fieldPage = _serviceProvider.GetRequiredService<FieldTemplateDetailPage>();
-
+        
         await Navigation.PushModalAsync(fieldPage);
 
         await fieldPage.ResultSource.Task;   // wait, until completing the task.

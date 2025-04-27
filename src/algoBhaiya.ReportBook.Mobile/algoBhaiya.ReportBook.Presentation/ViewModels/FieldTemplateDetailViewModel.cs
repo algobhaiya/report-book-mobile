@@ -22,7 +22,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private string _fieldName;
         public string FieldName
         {
-            get => _fieldName.Trim();
+            get => string.IsNullOrWhiteSpace(_fieldName) ? string.Empty : _fieldName.Trim();
             set
             {
                 if (_fieldName != value)
@@ -63,19 +63,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             SubmitCommand = new Command(async () => await SubmitAsync());
 
             _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
-
-            PopulateData();
-
-            var fieldTemplate = _navDataService.Get<FieldTemplate>(Constants.Constants.FieldTemplate.Item_ToEdit);
-            AssignEntryAsync(fieldTemplate);
-
+            
             var onSaveAction = _navDataService.Get<Action<FieldTemplate, FieldTemplate>>(Constants.Constants.FieldTemplate.Action_OnUnitSaved);
             if (onSaveAction != null)
             {
                 _onSave = onSaveAction;
             }
 
-            _navDataService.Remove(Constants.Constants.FieldTemplate.Item_ToEdit);
             _navDataService.Remove(Constants.Constants.FieldTemplate.Action_OnUnitSaved);
         }
 
@@ -84,16 +78,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private async void PopulateData()
+        public async Task PopulateDataAsync()
         {
+            // Load units
             var unitList = (await _unitRepository
                 .GetListAsync(u => u.IsDeleted == false)
                 )
+                .OrderBy(u => u.UnitName)
                 .Select(u => u.UnitName)
                 .ToList();
 
             foreach (var unit in unitList)
                 DisplayUnitNames.Add(unit);
+
+            // Selected unit
+            var fieldTemplate = _navDataService.Get<FieldTemplate>(Constants.Constants.FieldTemplate.Item_ToEdit);
+            
+            AssignEntryAsync(fieldTemplate);
+
+            _navDataService.Remove(Constants.Constants.FieldTemplate.Item_ToEdit);
         }
 
         private async Task SubmitAsync()
@@ -148,12 +151,14 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             var newField = await AddFieldAsync(FieldName, backendUnit);
 
+            oldField.Unit = newField.Unit = backendUnit;
+
             await ReplaceByNewFieldAsync(oldField, newField);
 
             _onSave?.Invoke(oldField, newField); // Notify list page
         }
 
-        private async void AssignEntryAsync(FieldTemplate? fieldTemplate)
+        private void AssignEntryAsync(FieldTemplate? fieldTemplate)
         {
             if (fieldTemplate == null)
             {
@@ -165,10 +170,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 FieldName = fieldTemplate.FieldName;
                 SelectedUnitName = fieldTemplate.Unit.UnitName;
             }
-            
+
             TappedField = fieldTemplate ?? new FieldTemplate();
         }
-        
+
         private async Task<FieldTemplate> DeleteFieldAsync(string fieldName, byte unitId)
         {
             if (fieldName == null || unitId == 0)
