@@ -14,6 +14,8 @@ namespace algoBhaiya.ReportBook.Core.Entities
         public int Year { get; set; }
 
         public string TargetValue { get; set; }
+        public byte FieldOrder { get; set; } = 0;
+        public bool IsDeleted { get; set; } = false;
     }
 
 }
