@@ -61,17 +61,20 @@ public partial class FieldTemplatePage : ContentPage
                     isDeletionLocked = dailyReports.Count() > 0;
                 }
                 
-                // Ignore if field is in Use.
+                // SoftDelete: if field is in Use.
                 if (isDeletionLocked)
+                {                    
+                    field.IsDeleted = true;
+                    field.IsEnabled = false;
+                    await _repository.UpdateAsync(field);
+
+                    // ToDo: SoftDelete: corresponding MonthlyTargets.
+                }
+                else
                 {
-                    await Shell.Current.DisplayAlert(
-                        "Field In Use",
-                        "This Field is used in daily reports and can't be deleted.",
-                        "OK");
-                    return;
+                    await _repository.DeleteAsync(field.Id);
                 }
 
-                await _repository.DeleteAsync(field.Id);
                 Templates.Remove(field);
             }
         });
