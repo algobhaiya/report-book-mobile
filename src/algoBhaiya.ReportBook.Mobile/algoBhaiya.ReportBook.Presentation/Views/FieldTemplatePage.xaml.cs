@@ -16,6 +16,8 @@ public partial class FieldTemplatePage : ContentPage
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
     private byte _loggedInUser = 0;
+    private bool _isInitialized = false;
+
     public Command DeleteCommand { get; }
 
     public FieldTemplatePage(
@@ -73,11 +75,28 @@ public partial class FieldTemplatePage : ContentPage
                 Templates.Remove(field);
             }
         });
-
-        LoadTemplates();        
+       
     }
 
-    private async void LoadTemplates()
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (!_isInitialized)
+        {
+            try
+            {
+                await LoadTemplatesAsync(); // Only after page fully loaded
+                _isInitialized = true;
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+            }
+        }
+    }
+
+    private async Task LoadTemplatesAsync()
     {
         _availableUnits = (await _serviceProvider.GetRequiredService<IRepository<FieldUnit>>()
                                     .GetListAsync(u => u.IsDeleted == false))
@@ -86,7 +105,9 @@ public partial class FieldTemplatePage : ContentPage
         if (_loggedInUser == 0) return;
 
         var templates = (await _repository
-                .GetListAsync(t => t.UserId == _loggedInUser)
+                .GetListAsync(t => 
+                    t.UserId == _loggedInUser &&
+                    t.IsDeleted == false)
                 )
                 .OrderByDescending(t => t.IsEnabled)
                 .ThenBy(t => t.FieldOrder);
@@ -116,21 +137,7 @@ public partial class FieldTemplatePage : ContentPage
         await OpenModalAsync();
 
     }
-
-    private async void OnEditClicked(object sender, EventArgs e)
-    {
-        if (sender is Button btn && btn.BindingContext is FieldTemplate template)
-        {
-            string newName = await DisplayPromptAsync("Edit Field", "Update field name:", initialValue: template.FieldName);
-            if (!string.IsNullOrWhiteSpace(newName))
-            {
-                template.FieldName = newName;
-                await _repository.UpdateAsync(template);
-                LoadTemplates(); // Refresh
-            }
-        }
-    }
-
+    
     private async void OnSwitchToggled(object sender, ToggledEventArgs e)
     {
         if (sender is Switch sw && sw.BindingContext is FieldTemplate template)
