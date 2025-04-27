@@ -30,7 +30,7 @@
                                        FontSize="16"
                                        FontAttributes="Bold" />
                                 <Label Grid.Row="1" Grid.Column="0"
-                                       Text="{Binding ValueType}"
+                                       Text="{Binding FieldOrder}"
                                        FontSize="13"
                                        TextColor="DarkGray" />
                                 <Label Grid.Row="2" Grid.Column="0"
@@ -41,13 +41,27 @@
 
                                 <!-- Right side actions -->
                                 <HorizontalStackLayout Grid.RowSpan="3" Grid.Column="1" VerticalOptions="Center">
-                                    <Switch IsToggled="True" Margin="0,0,10,0"/>
-                                    <Button Text="✏️"
+                                    <Switch IsToggled="{Binding IsEnabled, Mode=OneWay}" 
+                                            Margin="0,0,10,0"
+                                            Toggled="OnSwitchToggled"/>
+                                    
+                                    <!-- 🗑️ Delete Button -->
+                                    <Button Text="🗑️"
                                             FontSize="14"
                                             Padding="6"
-                                            BackgroundColor="#eeeeee"
                                             CornerRadius="6"
-                                            Clicked="OnEditClicked"/>
+                                            BackgroundColor="#FFCDD2"
+                                            TextColor="DarkRed"
+                                            Grid.Column="2"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="End"
+                                            Margin="5,0,0,0">
+                                        <Button.GestureRecognizers>
+                                            <TapGestureRecognizer 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=DeleteCommand}" 
+                                                CommandParameter="{Binding .}" />
+                                        </Button.GestureRecognizers>
+                                    </Button>
                                 </HorizontalStackLayout>
 
                             </Grid>

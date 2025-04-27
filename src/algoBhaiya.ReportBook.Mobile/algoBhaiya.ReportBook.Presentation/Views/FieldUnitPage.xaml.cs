@@ -67,17 +67,26 @@ public partial class FieldUnitPage : ContentPage
         
         _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
         
-        var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
-        await Shell.Current.Navigation.PushAsync(unitPage);
+        await OpenModalAsync();
     }
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {
         _navDataService.Set(Constants.Constants.FieldUnit.Item_ToEdit, tappedUnit);
         _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
-        
+
+        await OpenModalAsync();
+    }
+
+    private async Task OpenModalAsync()
+    {
         var unitPage = _serviceProvider.GetRequiredService<FieldUnitAddEditPage>();
-        await Shell.Current.Navigation.PushAsync(unitPage);
+
+        await Navigation.PushModalAsync(unitPage);
+
+        await unitPage.ResultSource.Task;   // wait, until completing the task.
+
+        await Navigation.PopModalAsync();
     }
 
     private void OnUnitSaved(FieldUnit oldUnit, FieldUnit newUnit)

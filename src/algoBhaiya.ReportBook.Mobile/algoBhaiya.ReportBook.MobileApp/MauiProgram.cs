@@ -38,6 +38,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddScoped<IMonthlyTargetRepository, MonthlyTargetRepository>();
 
             // Register AppShell as a singleton
+            builder.Services.AddSingleton<AppShellViewModel>();
             builder.Services.AddSingleton<AppShell>();
 
             // Register your services, view models, and pages here
@@ -50,6 +51,9 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             builder.Services.AddSingleton<DailyEntryViewModel>();
             builder.Services.AddTransient<DailyEntryPage>();
+
+            builder.Services.AddTransient<FieldTemplateDetailViewModel>();
+            builder.Services.AddTransient<FieldTemplateDetailPage>();
 
             builder.Services.AddTransient<FieldTemplatePage>();
 

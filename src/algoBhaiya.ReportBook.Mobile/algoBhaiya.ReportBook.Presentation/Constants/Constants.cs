@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace algoBhaiya.ReportBook.Presentation.Constants
+﻿namespace algoBhaiya.ReportBook.Presentation.Constants
 {
     public static class Constants
     {
@@ -12,6 +6,12 @@ namespace algoBhaiya.ReportBook.Presentation.Constants
         {
             public static string Item_ToEdit = "FieldUnit_Item_ToEdit";
             public static string Action_OnUnitSaved = "FieldUnit_Action_OnUnitSaved";
+        }
+
+        public static class FieldTemplate
+        {
+            public static string Item_ToEdit = "FieldTemplate_Item_ToEdit";
+            public static string Action_OnUnitSaved = "FieldTemplate_Action_OnUnitSaved";
         }
     }
 }

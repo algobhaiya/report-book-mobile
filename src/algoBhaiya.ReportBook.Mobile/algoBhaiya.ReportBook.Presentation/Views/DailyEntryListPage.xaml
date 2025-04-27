@@ -22,6 +22,15 @@
 
             <!-- Filter Buttons Row -->
             <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+                <Button Text="📍 Today"
+                        FontAttributes="Bold"
+                        Clicked="OnTodayCalendarClicked"
+                        BackgroundColor="#f0f0f0"
+                        TextColor="Black"
+                        CornerRadius="20"
+                        Padding="10,5"
+                        FontSize="14" />
+                
                 <Button Text="📅 By Date"
                         FontAttributes="Bold"
                         Clicked="OnDateCalendarClicked"
