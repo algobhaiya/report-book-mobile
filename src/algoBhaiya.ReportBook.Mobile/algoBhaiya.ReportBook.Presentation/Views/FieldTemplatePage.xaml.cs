@@ -36,9 +36,31 @@ public partial class FieldTemplatePage : ContentPage
             var confirm = await DisplayAlert("Delete", $"Delete '{field.FieldName}'?", "Yes", "No");
             if (confirm)
             {
-                var dailyReports = await _serviceProvider.GetRequiredService<IRepository<DailyEntry>>().GetListAsync(d => d.FieldTemplateId == field.Id);
+                bool isDeletionLocked = false;
 
-                if (dailyReports.Count() > 0)
+                // Check in monthly plan
+                var monthlyPlan = await _serviceProvider
+                    .GetRequiredService<IRepository<MonthlyTarget>>()
+                    .GetListAsync(t => 
+                        t.FieldTemplateId == field.Id &&
+                        t.UserId == _loggedInUser);
+
+                isDeletionLocked = monthlyPlan.Count() > 0;
+
+                // Check in daily report
+                if (!isDeletionLocked)
+                {
+                    var dailyReports = await _serviceProvider
+                        .GetRequiredService<IRepository<DailyEntry>>()
+                        .GetListAsync(d => 
+                            d.FieldTemplateId == field.Id &&
+                            d.UserId == _loggedInUser);
+
+                    isDeletionLocked = dailyReports.Count() > 0;
+                }
+                
+                // Ignore if field is in Use.
+                if (isDeletionLocked)
                 {
                     await Shell.Current.DisplayAlert(
                         "Field In Use",
@@ -46,6 +68,7 @@ public partial class FieldTemplatePage : ContentPage
                         "OK");
                     return;
                 }
+
                 await _repository.DeleteAsync(field.Id);
                 Templates.Remove(field);
             }
