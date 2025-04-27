@@ -27,6 +27,11 @@
                     SelectedItem="{Binding SelectedUnitName}"
                     FontSize="16" />
 
+            <Entry Placeholder="Field Order"
+                   Text="{Binding FieldOrder, Mode=TwoWay}"
+                   FontSize="16"
+                   PlaceholderColor="Gray" />
+
             <Button Text="Save"
                     Command="{Binding SubmitCommand}"
                     BackgroundColor="#1976D2"

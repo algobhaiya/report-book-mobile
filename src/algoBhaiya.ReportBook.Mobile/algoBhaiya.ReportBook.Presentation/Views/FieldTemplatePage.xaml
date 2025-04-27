@@ -30,7 +30,7 @@
                                        FontSize="16"
                                        FontAttributes="Bold" />
                                 <Label Grid.Row="1" Grid.Column="0"
-                                       Text="{Binding ValueType}"
+                                       Text="{Binding FieldOrder}"
                                        FontSize="13"
                                        TextColor="DarkGray" />
                                 <Label Grid.Row="2" Grid.Column="0"

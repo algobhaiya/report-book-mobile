@@ -47,6 +47,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private byte _fieldOrder;
+        public byte FieldOrder
+        {
+            get => _fieldOrder;
+            set
+            {
+                if (_fieldOrder != value)
+                {
+                    _fieldOrder = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ICommand SubmitCommand { get; }
         
         public FieldTemplate TappedField { get; set; }
@@ -158,17 +172,31 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _onSave?.Invoke(oldField, newField); // Notify list page
         }
 
-        private void AssignEntryAsync(FieldTemplate? fieldTemplate)
+        private async void AssignEntryAsync(FieldTemplate? fieldTemplate)
         {
             if (fieldTemplate == null)
             {
                 FieldName = string.Empty;
                 SelectedUnitName = string.Empty;
+                
+                // Take the max value (as default)
+                var maxOrder = (await _repository
+                    .GetListAsync(f =>
+                        f.UserId == _loggedInUser &&
+                        f.IsEnabled == true &&
+                        f.IsDeleted == false)
+                    )
+                    .Select(f => f.FieldOrder)
+                    .OrderByDescending(f => f)
+                    .FirstOrDefault();
+
+                FieldOrder = byte.Min(maxOrder, byte.MaxValue);
             }
             else
             {
                 FieldName = fieldTemplate.FieldName;
                 SelectedUnitName = fieldTemplate.Unit.UnitName;
+                FieldOrder = fieldTemplate.FieldOrder;
             }
 
             TappedField = fieldTemplate ?? new FieldTemplate();
@@ -204,6 +232,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             if (field != null)
             {
                 field.IsDeleted = false;
+                field.FieldOrder = FieldOrder;
 
                 await _repository.UpdateAsync(field);
             }
@@ -211,9 +240,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 field = new FieldTemplate
                 {
-                    FieldName = FieldName,
-                    UserId = _loggedInUser,
-                    UnitId = backendUnit.Id
+                    FieldName = FieldName,                    
+                    UnitId = backendUnit.Id,
+                    FieldOrder = FieldOrder,
+                    UserId = _loggedInUser
                 };
 
                 await _repository.AddAsync(field);
@@ -231,7 +261,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private bool HasFieldValueChanged(FieldUnit backendUnit)
         {
-            return TappedField.UnitId != backendUnit.Id;    // TODO: field order.
+            return TappedField.UnitId != backendUnit.Id ||
+                   TappedField.FieldOrder != FieldOrder;
         }
     }
 
