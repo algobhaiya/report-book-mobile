@@ -177,6 +177,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     FieldOrder = field.FieldOrder
                 });
             }
+
+            await Shell.Current.DisplayAlert("Success", "Plan submitted!", "OK");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
