@@ -75,8 +75,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private async void LoadDailySummariesAsync(int year, int month)
         {
             DailySummaries.Clear();
-            int userId = Preferences.Get("CurrentUserId", -1);
-            if (userId == -1) return;
+            byte userId = (byte) Preferences.Get("CurrentUserId", 0);
+            if (userId == 0) return;
 
             CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
             var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
@@ -94,7 +94,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     DateString = item.Date.ToString("dd MMMM yyyy"),
                     FilledCount = item.FilledCount,
                     TotalCount = item.TotalFields,
-                    StatusText = item.FilledCount > 0 ? $"Filled: {item.FilledCount}/{totalFieldCount}" : $"Pending: 0/{totalFieldCount}",
+                    StatusText = item.FilledCount > 0 ? $"Filled: {item.FilledCount}/{item.TotalFields}" : $"Pending: 0/{item.TotalFields}",
                     StatusIcon = item.FilledCount > 0 ? "green_check_mark.svg" : "pending_gray_status.png"
                 });
             }
