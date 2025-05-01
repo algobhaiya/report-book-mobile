@@ -76,13 +76,14 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                              .ToListAsync();
         }
 
-        public async Task<List<DailySummaryItem>> GetMonthlyEntrySummaryAsync(int userId, int year, int month)
+        public async Task<List<DailySummaryItem>> GetMonthlyEntrySummaryAsync(byte userId, int year, int month)
         {
             var result = new List<DailySummaryItem>();
             try
             {
-                var totalFields = await _database.Table<FieldTemplate>().CountAsync();
+                var today = DateTime.Today;
 
+                // Check validation
                 var startDate = new DateTime(year, month, 1);
                 var endDate = startDate.AddMonths(1);
 
@@ -90,6 +91,58 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 {
                     return result;
                 }
+
+                var plans = await _database
+                    .Table<MonthlyTarget>()
+                    .Where(p => 
+                        p.UserId == userId &&
+                        p.Month == month &&
+                        p.Year == year)
+                    .ToListAsync();
+
+                // IF plan is empty,
+                // THEN set only the current plan.
+                // Can not add for previous month.
+                // To set future month, User can open the monthly plan.
+                // This is only to set for default plan.
+                // Normally, (current or future) plan updates onChange event of field template add, edit, delete.
+                if (plans.Count == 0 &&
+                    today.Month == month &&
+                    today.Year == year)
+                {
+                    var monthlyPlansToAdd = new List<MonthlyTarget>();
+
+                    var activeFields = await _database
+                        .Table<FieldTemplate>()
+                        .Where(f =>
+                            f.UserId == userId &&
+                            !f.IsDeleted &&
+                            f.IsEnabled)
+                        .ToListAsync();
+
+                    foreach (var item in activeFields)
+                    {
+                        var plan = new MonthlyTarget
+                        {
+                            UserId = userId,
+                            FieldTemplateId = item.Id,
+                            Month = (byte) month,
+                            Year = year,
+                            FieldOrder = item.FieldOrder,
+                        };
+                        monthlyPlansToAdd.Add(plan);
+                    }
+                    await _database.InsertAllAsync(monthlyPlansToAdd, true);
+
+                    plans = monthlyPlansToAdd;
+                }
+
+                var activePlanCount = plans.Count(p => !p.IsDeleted);
+
+                var deletedPlanFieldIds = plans
+                    .Where(p => p.IsDeleted)
+                    .Select(p => p.FieldTemplateId)
+                    .ToHashSet(); // Optimized for fast lookup
 
                 var entries = await _database.Table<DailyEntry>()
                     .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
@@ -100,23 +153,26 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .ToDictionary(g => g.Key, g => g.ToList());
 
                 var daysInMonth = DateTime.DaysInMonth(year, month);
-
-                var currentDateTime = DateTime.Today;
-                if (currentDateTime.Year == year && currentDateTime.Month == month)
+                
+                if (today.Year == year && today.Month == month)
                 {
-                    daysInMonth = Math.Min(currentDateTime.Day, daysInMonth);
+                    daysInMonth = Math.Min(today.Day, daysInMonth);
                 }
 
                 for (int day = 1; day <= daysInMonth; day++)
                 {
                     var date = new DateTime(year, month, day);
-                    var filled = entriesByDate.ContainsKey(date) ? entriesByDate[date].Count : 0;
+                    entriesByDate.TryGetValue(date, out var dayEntries);
+                    dayEntries ??= new List<DailyEntry>();
+
+                    var filledCount = dayEntries.Count;
+                    var deletedCount = dayEntries.Count(e => deletedPlanFieldIds.Contains(e.FieldTemplateId));
 
                     result.Add(new DailySummaryItem
                     {
                         Date = date,
-                        FilledCount = filled,
-                        TotalFields = totalFields
+                        FilledCount = filledCount,
+                        TotalFields = activePlanCount + deletedCount
                     });
                 }
             }

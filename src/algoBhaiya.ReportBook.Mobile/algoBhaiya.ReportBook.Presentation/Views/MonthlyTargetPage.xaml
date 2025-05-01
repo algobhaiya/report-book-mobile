@@ -108,7 +108,7 @@
                 BackgroundColor="#4CAF50"
                 TextColor="White" />
 
-        <Label Text="No modification for previous/future month."
+        <Label Text="No modification for previous month."
                TextColor="Red"
                FontAttributes="Italic"
                FontSize="12"

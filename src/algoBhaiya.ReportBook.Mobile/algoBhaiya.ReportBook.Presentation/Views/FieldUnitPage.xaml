@@ -89,6 +89,14 @@
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="No units found." 
+                           TextColor="Gray" 
+                           FontAttributes="Italic" 
+                           FontSize="15"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
         </CollectionView>
     </Grid>
 </ContentPage>
