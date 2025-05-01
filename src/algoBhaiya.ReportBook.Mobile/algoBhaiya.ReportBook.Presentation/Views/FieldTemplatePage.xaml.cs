@@ -203,31 +203,40 @@ public partial class FieldTemplatePage : ContentPage
 
     private async Task ChangeCurrentMonthlyTarget(FieldTemplate field, bool isDeleted)
     {
-        // SoftDelete: associated current MonthlyTargets.
-        var currentPlan = await _serviceProvider
+        // SoftDelete: associated current/future MonthlyTargets.
+        // Add/Delete for current month
+        // Only Delete for future month
+
+        var today = DateTime.Today;
+        var associatedPlans = await _serviceProvider
             .GetRequiredService<IRepository<MonthlyTarget>>()
-            .GetFirstOrDefaultAsync(t =>
+            .GetListAsync(t =>
                 t.FieldTemplateId == field.Id &&
                 t.UserId == _loggedInUser &&
-                t.Month == DateTime.Today.Month &&
-                t.Year == DateTime.Today.Year);
+                (   ((today.Year == t.Year) && (today.Month <= t.Month)) || 
+                    (today.Year < t.Year)  
+                ));
 
-        if (currentPlan != null)
+        if (associatedPlans.Count() > 0)
         {
-            currentPlan.IsDeleted = isDeleted;
+            foreach (var associatedPlan in associatedPlans )
+            {
+                associatedPlan.IsDeleted = isDeleted;
+            }
 
             await _serviceProvider
                 .GetRequiredService<IRepository<MonthlyTarget>>()
-                .UpdateAsync(currentPlan);
+                .UpdateAsync(associatedPlans);
         }
         else
         {
+            // Add for current month
             var plan = new MonthlyTarget
             {
                 FieldTemplateId = field.Id,
                 UserId = _loggedInUser,
-                Month = (byte) DateTime.Today.Month,
-                Year = DateTime.Today.Year,
+                Month = (byte) today.Month,
+                Year = today.Year,
                 FieldOrder = field.FieldOrder,
                 IsDeleted = isDeleted
             };

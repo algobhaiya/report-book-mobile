@@ -190,8 +190,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         
         private bool IsNonEditableMonth(int year, int month)
         {
-            return !(year == DateTime.Today.Year &&
-                    month == DateTime.Today.Month);
+            var today = DateTime.Today;
+            return (today.Year == year && today.Month > month) || today.Year > year;
         }
 
         #endregion
