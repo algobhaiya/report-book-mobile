@@ -79,11 +79,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             if (userId == 0) return;
 
             CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
-            var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
-
-            var templates = await fieldTemplateRepo.GetAllAsync();
-            var totalFieldCount = templates.Count();
-
+            
             var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
             
             foreach (var item in entries)

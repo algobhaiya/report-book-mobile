@@ -81,6 +81,8 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             var result = new List<DailySummaryItem>();
             try
             {
+                var today = DateTime.Today;
+
                 // Check validation
                 var startDate = new DateTime(year, month, 1);
                 var endDate = startDate.AddMonths(1);
@@ -98,6 +100,43 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         p.Year == year)
                     .ToListAsync();
 
+                // IF plan is empty,
+                // THEN set only the current plan.
+                // Can not add for previous month.
+                // To set future month, User can open the monthly plan.
+                // This is only to set for default plan.
+                // Normally, (current or future) plan updates onChange event of field template add, edit, delete.
+                if (plans.Count == 0 &&
+                    today.Month == month &&
+                    today.Year == year)
+                {
+                    var monthlyPlansToAdd = new List<MonthlyTarget>();
+
+                    var activeFields = await _database
+                        .Table<FieldTemplate>()
+                        .Where(f =>
+                            f.UserId == userId &&
+                            !f.IsDeleted &&
+                            f.IsEnabled)
+                        .ToListAsync();
+
+                    foreach (var item in activeFields)
+                    {
+                        var plan = new MonthlyTarget
+                        {
+                            UserId = userId,
+                            FieldTemplateId = item.Id,
+                            Month = (byte) month,
+                            Year = year,
+                            FieldOrder = item.FieldOrder,
+                        };
+                        monthlyPlansToAdd.Add(plan);
+                    }
+                    await _database.InsertAllAsync(monthlyPlansToAdd, true);
+
+                    plans = monthlyPlansToAdd;
+                }
+
                 var activePlanCount = plans.Count(p => !p.IsDeleted);
 
                 var deletedPlanFieldIds = plans
@@ -114,8 +153,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .ToDictionary(g => g.Key, g => g.ToList());
 
                 var daysInMonth = DateTime.DaysInMonth(year, month);
-
-                var today = DateTime.Today;
+                
                 if (today.Year == year && today.Month == month)
                 {
                     daysInMonth = Math.Min(today.Day, daysInMonth);
