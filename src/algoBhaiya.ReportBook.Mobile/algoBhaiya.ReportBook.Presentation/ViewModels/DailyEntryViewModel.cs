@@ -141,6 +141,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
+            
+            await Shell.Current.Navigation.PopAsync();
         }
     }
 

@@ -50,8 +50,6 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _isNavigating = true;
 
-                    Preferences.Set("CurrentUserId", 1);
-
                     var dailyEntryViewModel = _serviceProvider.GetRequiredService<DailyEntryViewModel>();
                     dailyEntryViewModel.LoadingDateTime = selectedItem.Date;
 
