@@ -14,7 +14,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IRepository<FieldTemplate> _repository;
         private readonly IRepository<FieldUnit> _unitRepository;        
 
-        private readonly Action<FieldTemplate, FieldTemplate> _onSave;
+        private readonly Func<FieldTemplate, FieldTemplate, Task> _onSave;
         public  Action onModalClose;
         public ObservableCollection<string> DisplayUnitNames { get; } = new();
         private byte _loggedInUser = 0;
@@ -78,7 +78,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
             
-            var onSaveAction = _navDataService.Get<Action<FieldTemplate, FieldTemplate>>(Constants.Constants.FieldTemplate.Action_OnUnitSaved);
+            var onSaveAction = _navDataService.Get<Func<FieldTemplate, FieldTemplate, Task>>(Constants.Constants.FieldTemplate.Action_OnUnitSaved);
             if (onSaveAction != null)
             {
                 _onSave = onSaveAction;
@@ -169,7 +169,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             await ReplaceByNewFieldAsync(oldField, newField);
 
-            _onSave?.Invoke(oldField, newField); // Notify list page
+            await _onSave(oldField, newField); // Notify list page
         }
 
         private async void AssignEntryAsync(FieldTemplate? fieldTemplate)

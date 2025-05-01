@@ -174,7 +174,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     Month = (byte)DateTime.Today.Month,
                     Year = DateTime.Today.Year,
                     TargetValue = field.TargetValue,
-                    FieldOrder = field.FieldOrder
+                    FieldOrder = field.FieldOrder,
+                    IsDeleted = false
                 });
             }
 

@@ -41,13 +41,13 @@ public partial class FieldTemplatePage : ContentPage
                 bool isDeletionLocked = false;
 
                 // Check in monthly plan
-                var monthlyPlan = await _serviceProvider
+                var monthlyPlans = await _serviceProvider
                     .GetRequiredService<IRepository<MonthlyTarget>>()
                     .GetListAsync(t => 
                         t.FieldTemplateId == field.Id &&
                         t.UserId == _loggedInUser);
 
-                isDeletionLocked = monthlyPlan.Count() > 0;
+                isDeletionLocked = monthlyPlans.Count() > 0;
 
                 // Check in daily report
                 if (!isDeletionLocked)
@@ -68,7 +68,8 @@ public partial class FieldTemplatePage : ContentPage
                     field.IsEnabled = false;
                     await _repository.UpdateAsync(field);
 
-                    // ToDo: SoftDelete: corresponding MonthlyTargets.
+                    // SoftDelete: associated current MonthlyTargets.
+                    await ChangeCurrentMonthlyTarget(field, true);
                 }
                 else
                 {
@@ -125,7 +126,7 @@ public partial class FieldTemplatePage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Action<FieldTemplate, FieldTemplate>)OnUnitSaved);
+        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Func<FieldTemplate, FieldTemplate, Task>)OnUnitSaved);
 
         await OpenModalAsync();
     }
@@ -135,7 +136,7 @@ public partial class FieldTemplatePage : ContentPage
     private async void OnFieldTapped(FieldTemplate tappedTemplate)
     {
         _navDataService.Set(Constants.Constants.FieldTemplate.Item_ToEdit, tappedTemplate);
-        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Action<FieldTemplate, FieldTemplate>)OnUnitSaved);
+        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Func<FieldTemplate, FieldTemplate, Task>)OnUnitSaved);
 
         await OpenModalAsync();
 
@@ -158,7 +159,9 @@ public partial class FieldTemplatePage : ContentPage
             if (confirm)
             {
                 template.IsEnabled = requestedState;
-                await _repository.UpdateAsync(template);                
+                await _repository.UpdateAsync(template); 
+                
+                await ChangeCurrentMonthlyTarget(template, !requestedState);
             }
             else
             {
@@ -181,7 +184,7 @@ public partial class FieldTemplatePage : ContentPage
         await Navigation.PopModalAsync();
     }
 
-    private void OnUnitSaved(FieldTemplate oldField, FieldTemplate newField)
+    private async Task OnUnitSaved(FieldTemplate oldField, FieldTemplate newField)
     {
         var existing = Templates.FirstOrDefault(x => x.Id == oldField.Id);
         if (existing != null)
@@ -192,6 +195,46 @@ public partial class FieldTemplatePage : ContentPage
         else
         {
             Templates.Add(newField);
+        }
+
+        await ChangeCurrentMonthlyTarget(oldField, true);
+        await ChangeCurrentMonthlyTarget(newField, false);
+    }
+
+    private async Task ChangeCurrentMonthlyTarget(FieldTemplate field, bool isDeleted)
+    {
+        // SoftDelete: associated current MonthlyTargets.
+        var currentPlan = await _serviceProvider
+            .GetRequiredService<IRepository<MonthlyTarget>>()
+            .GetFirstOrDefaultAsync(t =>
+                t.FieldTemplateId == field.Id &&
+                t.UserId == _loggedInUser &&
+                t.Month == DateTime.Today.Month &&
+                t.Year == DateTime.Today.Year);
+
+        if (currentPlan != null)
+        {
+            currentPlan.IsDeleted = isDeleted;
+
+            await _serviceProvider
+                .GetRequiredService<IRepository<MonthlyTarget>>()
+                .UpdateAsync(currentPlan);
+        }
+        else
+        {
+            var plan = new MonthlyTarget
+            {
+                FieldTemplateId = field.Id,
+                UserId = _loggedInUser,
+                Month = (byte) DateTime.Today.Month,
+                Year = DateTime.Today.Year,
+                FieldOrder = field.FieldOrder,
+                IsDeleted = isDeleted
+            };
+
+            await _serviceProvider
+                .GetRequiredService<IRepository<MonthlyTarget>>()
+                .AddAsync(plan);
         }
     }
 }
