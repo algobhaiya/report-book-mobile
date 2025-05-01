@@ -64,7 +64,7 @@
                     BackgroundColor="#4CAF50"
                     TextColor="White" />
 
-            <Label Text="You can no longer edit this entry after 14 days."
+            <Label Text="This entry is locked and can’t be edited (older than 14 days)."
                    TextColor="Red"
                    FontAttributes="Italic"
                    FontSize="12"
