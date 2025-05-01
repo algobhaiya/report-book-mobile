@@ -1,5 +1,6 @@
 ﻿using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,9 +14,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ObservableCollection<DailyEntry> Fields { get; set; } = new();
 
         public ICommand SubmitCommand { get; }
-        public ICommand LoadCommand { get; }
 
-        public DateTime? LoadingDateTime { get; set; } = null;
+        public DateTime LoadingDateTime { get; set; }
         private DateTime _effectiveDate;
         public DateTime FormDate 
         { 
@@ -50,45 +50,79 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly NavigationDataService _navDataService;
 
         public DailyEntryViewModel(
             IServiceProvider serviceProvider,
-            IDailyEntryRepository repository
+            IDailyEntryRepository repository,
+            NavigationDataService navDataService
             )
         {
             _repository = repository;
             _serviceProvider = serviceProvider;
+            _navDataService = navDataService;
 
-            SubmitCommand = new Command(async () => await SubmitAsync());
-            LoadCommand = new Command(async () => await LoadFieldsAsync());            
+            SubmitCommand = new Command(async () => await SubmitAsync());           
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private async Task LoadFieldsAsync()
+        public async Task LoadFieldsAsync()
         {
             Fields.Clear();
-            byte userId = (byte) Preferences.Get("CurrentUserId", 0);
-            if (userId == 0) return;
 
-            FormDate = LoadingDateTime ?? DateTime.Today; // place to set effectiveDate
+            byte userId = (byte)Preferences.Get("CurrentUserId", 0);
+            if (userId == 0)
+                return;
+
+            SetLoadingTime();
+
+            FormDate = LoadingDateTime;
             IsReadOnly = (DateTime.Today - FormDate).Days > 14;
-            
-            var fieldTemplateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
-            var fieldUnitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
-            var templates = (await fieldTemplateRepo.GetAllAsync()).ToList();
-            var units = await fieldUnitRepo.GetAllAsync();
-            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, FormDate);
+            var targetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
+            var templateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
+            var unitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
-            foreach (var template in templates)
+            var plannedFieldsTask = targetRepo
+                .GetListAsync(f =>
+                    f.UserId == userId &&
+                    f.Month == FormDate.Month &&
+                    f.Year == FormDate.Year);
+
+            var templatesTask = templateRepo.GetListAsync(f => f.UserId == userId);
+            var unitsTask = unitRepo.GetAllAsync();
+            var entriesTask = _repository.GetEntriesForUserAndDateAsync(userId, FormDate);
+
+            await Task.WhenAll(plannedFieldsTask, templatesTask, unitsTask, entriesTask);
+
+            var plannedFields = plannedFieldsTask.Result;
+            var fieldTemplates = templatesTask.Result;
+            var units = unitsTask.Result;
+            var entries = entriesTask.Result;
+
+            var fieldTemplateLookup = fieldTemplates
+                .Where(t => plannedFields.Any(p => p.FieldTemplateId == t.Id))
+                .ToDictionary(t => t.Id);
+
+            var unitLookup = units.ToDictionary(u => u.Id);
+
+            foreach (var plan in plannedFields)
             {
-                var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
-                var entry = entries.FirstOrDefault(e => e.FieldTemplateId == template.Id);
+                if (!fieldTemplateLookup.TryGetValue(plan.FieldTemplateId, out var template))
+                    continue;
 
-                template.Unit = unit ?? new FieldUnit();
+                var entry = entries.FirstOrDefault(e => e.FieldTemplateId == plan.FieldTemplateId);
+
+                // Skip if field deleted and no corresponding entry exists
+                if (plan.IsDeleted && entry == null)
+                    continue;
+
+                template.Unit = unitLookup.TryGetValue(template.UnitId, out var unit)
+                    ? unit
+                    : new FieldUnit();
 
                 Fields.Add(new DailyEntry
                 {
@@ -97,9 +131,19 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     FieldTemplateId = template.Id,
                     UserId = userId,
                     Date = FormDate,
-                    Value = entry?.Value ?? ""
+                    Value = entry?.Value ?? string.Empty
                 });
             }
+        }
+
+        private void SetLoadingTime()
+        {
+            // Selected unit
+            DateTime? loadingDateTime = _navDataService.Get<DateTime>(Constants.Constants.DailyEntry.Item_SelectedDate);
+
+            LoadingDateTime = loadingDateTime ?? DateTime.Today;
+
+            _navDataService.Remove(Constants.Constants.DailyEntry.Item_SelectedDate);
         }
 
         private async Task SubmitAsync()
@@ -110,6 +154,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
+            
+            await Shell.Current.Navigation.PopAsync();
         }
     }
 

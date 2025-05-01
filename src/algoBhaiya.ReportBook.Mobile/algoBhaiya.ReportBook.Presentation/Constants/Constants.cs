@@ -13,5 +13,10 @@
             public static string Item_ToEdit = "FieldTemplate_Item_ToEdit";
             public static string Action_OnUnitSaved = "FieldTemplate_Action_OnUnitSaved";
         }
+
+        public static class DailyEntry
+        {
+            public static string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
+        }
     }
 }
