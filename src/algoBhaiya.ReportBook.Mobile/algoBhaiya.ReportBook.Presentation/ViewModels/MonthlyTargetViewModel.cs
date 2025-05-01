@@ -136,8 +136,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 // Based on Dynamic current template
                 templates = templates
                     .Where(t => 
-                        t.IsDeleted == false && 
-                        t.IsEnabled == true)
+                        t.UserId == _loggedInUser &&
+                        !t.IsDeleted && 
+                        t.IsEnabled)
                     .OrderBy(t => t.FieldOrder);
 
                 foreach (var template in templates)
