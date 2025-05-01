@@ -1,7 +1,6 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
-using algoBhaiya.ReportBook.Core.Interfaces;
+﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBook.Presentation.Views;
-using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -16,6 +15,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly NavigationDataService _navDataService;
 
         private string _currentMonthLabel;
         public string CurrentMonthLabel 
@@ -36,10 +36,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public DailyEntryListViewModel(
             IDailyEntryRepository repository,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            NavigationDataService navDataService)
         {
             _repository = repository;
             _serviceProvider = serviceProvider;
+            _navDataService = navDataService;
 
             OpenEntryCommand = new Command<DailyEntrySummaryViewModel>(async (selectedItem) =>
             {
@@ -50,8 +52,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _isNavigating = true;
 
-                    var dailyEntryViewModel = _serviceProvider.GetRequiredService<DailyEntryViewModel>();
-                    dailyEntryViewModel.LoadingDateTime = selectedItem.Date;
+                    // Passing the LoadingDateTime
+                    _navDataService.Set(Constants.Constants.DailyEntry.Item_SelectedDate, selectedItem.Date);
 
                     var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
                     await Shell.Current.Navigation.PushAsync(dailyEntryPage);

@@ -1,5 +1,6 @@
 ﻿using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,9 +14,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ObservableCollection<DailyEntry> Fields { get; set; } = new();
 
         public ICommand SubmitCommand { get; }
-        public ICommand LoadCommand { get; }
 
-        public DateTime? LoadingDateTime { get; set; } = null;
+        public DateTime LoadingDateTime { get; set; }
         private DateTime _effectiveDate;
         public DateTime FormDate 
         { 
@@ -50,24 +50,26 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly NavigationDataService _navDataService;
 
         public DailyEntryViewModel(
             IServiceProvider serviceProvider,
-            IDailyEntryRepository repository
+            IDailyEntryRepository repository,
+            NavigationDataService navDataService
             )
         {
             _repository = repository;
             _serviceProvider = serviceProvider;
+            _navDataService = navDataService;
 
-            SubmitCommand = new Command(async () => await SubmitAsync());
-            LoadCommand = new Command(async () => await LoadFieldsAsync());            
+            SubmitCommand = new Command(async () => await SubmitAsync());           
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private async Task LoadFieldsAsync()
+        public async Task LoadFieldsAsync()
         {
             Fields.Clear();
 
@@ -75,7 +77,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             if (userId == 0)
                 return;
 
-            FormDate = LoadingDateTime ?? DateTime.Today;
+            SetLoadingTime();
+
+            FormDate = LoadingDateTime;
             IsReadOnly = (DateTime.Today - FormDate).Days > 14;
 
             var targetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
@@ -132,6 +136,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private void SetLoadingTime()
+        {
+            // Selected unit
+            DateTime? loadingDateTime = _navDataService.Get<DateTime>(Constants.Constants.DailyEntry.Item_SelectedDate);
+
+            LoadingDateTime = loadingDateTime ?? DateTime.Today;
+
+            _navDataService.Remove(Constants.Constants.DailyEntry.Item_SelectedDate);
+        }
 
         private async Task SubmitAsync()
         {
