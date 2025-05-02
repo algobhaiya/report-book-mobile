@@ -1,16 +1,35 @@
 ﻿
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
+using algoBhaiya.ReportBooks.Core.Interfaces;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
-    public class AppShellViewModel
+    public class AppShellViewModel : INotifyPropertyChanged
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IAppNavigator _appNavigator;
 
         public ICommand OpenMenuCommand { get; }
+
+        private string _loggedInUserName;
+        public string LoggedInUserName
+        {
+            get => _loggedInUserName;
+            set
+            {
+                if (_loggedInUserName != value)
+                {
+                    _loggedInUserName = value;
+                    OnPropertyChanged(nameof(LoggedInUserName));
+                }
+            }
+        }
+
+        public string PageTitle => "Daily Report";
 
         public AppShellViewModel(
             IServiceProvider serviceProvider,
@@ -21,7 +40,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             OpenMenuCommand = new Command(OpenMenu);
         }
-       
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         private async void OpenMenu()
         {
             var page = Shell.Current?.CurrentPage;
@@ -56,6 +79,14 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        public async Task LoadUserNameAsync()
+        {
+            byte loggedInUserId = (byte)Preferences.Get("CurrentUserId", 0);
+
+            LoggedInUserName = (await _serviceProvider
+                .GetRequiredService<IRepository<AppUser>>()
+                .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId)).UserName;
+        }
     }
 }
 

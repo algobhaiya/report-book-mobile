@@ -41,8 +41,8 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
 
             // Register AppShell as a singleton
-            builder.Services.AddSingleton<AppShellViewModel>();
-            builder.Services.AddSingleton<AppShell>();
+            builder.Services.AddTransient<AppShellViewModel>();
+            builder.Services.AddTransient<AppShell>();
 
             // Register your services, view models, and pages here
             builder.Services.AddSingleton<MainPage>();
