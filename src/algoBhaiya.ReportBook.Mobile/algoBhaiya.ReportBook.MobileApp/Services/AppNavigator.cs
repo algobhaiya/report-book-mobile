@@ -24,5 +24,12 @@ namespace algoBhaiya.ReportBook.MobileApp.Services
             var loginPage = _sp.GetRequiredService<LoginPage>();
             Application.Current.MainPage = new NavigationPage(loginPage);
         }
+
+        public async Task NavigateToAsync<TPage>()
+        {
+            var route = typeof(TPage).Name;
+            await Shell.Current.GoToAsync(route);
+        }
+
     }
 }

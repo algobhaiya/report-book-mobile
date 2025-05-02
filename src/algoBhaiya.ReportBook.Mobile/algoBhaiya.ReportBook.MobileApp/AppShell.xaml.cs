@@ -1,4 +1,5 @@
 ﻿using algoBhaiya.ReportBook.Presentation.ViewModels;
+using algoBhaiya.ReportBook.Presentation.Views;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
@@ -8,6 +9,10 @@ namespace algoBhaiya.ReportBook.MobileApp
         {
             InitializeComponent();
             BindingContext = viewModel;
+
+            Routing.RegisterRoute(nameof(MonthlyTargetPage), typeof(MonthlyTargetPage));
+            Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            
         }
     }
 }
