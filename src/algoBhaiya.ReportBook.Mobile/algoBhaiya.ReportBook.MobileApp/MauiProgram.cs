@@ -1,5 +1,6 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
+using algoBhaiya.ReportBook.MobileApp.Services;
 using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
@@ -36,6 +37,8 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             builder.Services.AddScoped<IDailyEntryRepository, DailyEntryRepository>();
             builder.Services.AddScoped<IMonthlyTargetRepository, MonthlyTargetRepository>();
+
+            builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
 
             // Register AppShell as a singleton
             builder.Services.AddSingleton<AppShellViewModel>();
