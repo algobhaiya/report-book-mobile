@@ -221,6 +221,7 @@ public partial class FieldTemplatePage : ContentPage
         {
             foreach (var associatedPlan in associatedPlans )
             {
+                associatedPlan.FieldOrder = field.FieldOrder;
                 associatedPlan.IsDeleted = isDeleted;
             }
 
