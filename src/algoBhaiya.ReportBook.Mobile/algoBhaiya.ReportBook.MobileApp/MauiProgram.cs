@@ -46,11 +46,13 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             // Register your services, view models, and pages here
             builder.Services.AddSingleton<MainPage>();
-
+            builder.Services.AddSingleton<NavigationDataService>();
+            
             // Register pages and view models
             builder.Services.AddTransient<LoginPage>();
 
-            builder.Services.AddSingleton<NavigationDataService>();
+            builder.Services.AddTransient<SwitchProfilePageViewModel>();
+            builder.Services.AddTransient<SwitchProfilePage>();
 
             builder.Services.AddSingleton<DailyEntryViewModel>();
             builder.Services.AddTransient<DailyEntryPage>();

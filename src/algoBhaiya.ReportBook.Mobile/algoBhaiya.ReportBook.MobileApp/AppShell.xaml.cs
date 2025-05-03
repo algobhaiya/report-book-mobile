@@ -5,7 +5,7 @@ namespace algoBhaiya.ReportBook.MobileApp
 {
     public partial class AppShell : Shell
     {
-        private bool _isInitialized = false;
+        private bool _isInitialized = false;          
 
         public AppShell(AppShellViewModel viewModel)
         {
@@ -14,7 +14,7 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             Routing.RegisterRoute(nameof(MonthlyTargetPage), typeof(MonthlyTargetPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
-            
+            Routing.RegisterRoute(nameof(SwitchProfilePage), typeof(SwitchProfilePage));
         }
 
         protected override async void OnAppearing()

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.SwitchProfilePage"
+             Title="Switch Profile">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <Label Text="Choose a Profile" FontSize="20" FontAttributes="Bold" />
+
+        <CollectionView 
+            ItemsSource="{Binding Profiles}"
+            SelectionMode="Single"
+            SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" ColumnDefinitions="Auto, *" VerticalOptions="Center">
+                        <Image Source="profile_avatar_placeholder.png"
+                               HeightRequest="40"
+                               WidthRequest="40"
+                               Margin="0,0,10,0"/>
+                        <Label Text="{Binding UserName}" VerticalOptions="Center" FontSize="18"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>
