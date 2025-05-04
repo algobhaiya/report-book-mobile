@@ -6,5 +6,7 @@ namespace algoBhaiya.ReportBook.Core.Interfaces
         void NavigateToMainShell();
         void NavigateToLogin();
         Task NavigateToAsync<TPage>();
+        Task NavigateToSwitchProfileAsync();
+        Task PopModalAsync();
     }
 }

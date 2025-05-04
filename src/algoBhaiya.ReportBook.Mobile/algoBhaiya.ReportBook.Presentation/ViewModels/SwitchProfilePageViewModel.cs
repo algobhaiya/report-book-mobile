@@ -2,6 +2,7 @@
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
@@ -11,17 +12,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IAppNavigator _appNavigator;
 
         public ObservableCollection<AppUser> Profiles { get; } = new();
-
-        private AppUser _selectedProfile;
-        public AppUser SelectedProfile
-        {
-            get => _selectedProfile;
-            set
-            {
-                if (SetProperty(ref _selectedProfile, value))
-                    SwitchToProfile(value);
-            }
-        }
+        
+        private bool _isNavigating = false;
+        public ICommand SelectUserCommand { get; }
 
         public SwitchProfilePageViewModel(
             IServiceProvider serviceProvider,
@@ -29,6 +22,23 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             _serviceProvider = serviceProvider;
             _appNavigator = appNavigator;
+
+            SelectUserCommand = new Command<AppUser>(async (selectedItem) =>
+            {
+                if (selectedItem == null || _isNavigating)
+                    return;
+
+                try
+                {
+                    _isNavigating = true;
+
+                    await SwitchToProfile(selectedItem);
+                }
+                finally
+                {
+                    _isNavigating = false;
+                }
+            });
 
             LoadProfiles();            
         }
@@ -44,12 +54,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 Profiles.Add(profile);
         }
 
-        private void SwitchToProfile(AppUser profile)
+        private async Task SwitchToProfile(AppUser profile)
         {
             if (profile == null)
                 return;
 
             Preferences.Set(Constants.Constants.AppUser.CurrentUserId, profile.Id);
+
+            // Close modal
+            await _appNavigator.PopModalAsync();
 
             // Go back to main shell or reload
             _appNavigator.NavigateToMainShell();

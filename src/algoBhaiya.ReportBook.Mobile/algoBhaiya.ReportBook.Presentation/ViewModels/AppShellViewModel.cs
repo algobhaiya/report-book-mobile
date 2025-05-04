@@ -63,7 +63,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     await _appNavigator.NavigateToAsync<LoginPage>();
                     break;
                 case "Change Profile":
-                    await _appNavigator.NavigateToAsync<SwitchProfilePage>();
+                    await _appNavigator.NavigateToSwitchProfileAsync();
                     break;
                 case "Logout":
                     // Optional: Confirm logout first

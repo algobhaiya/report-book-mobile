@@ -31,5 +31,15 @@ namespace algoBhaiya.ReportBook.MobileApp.Services
             await Shell.Current.GoToAsync(route);
         }
 
+        public async Task NavigateToSwitchProfileAsync()
+        {
+            var page = _sp.GetRequiredService<SwitchProfilePage>();
+            await Shell.Current.Navigation.PushModalAsync(page);
+        }
+
+        public async Task PopModalAsync()
+        {
+            await Shell.Current.Navigation.PopModalAsync();
+        }
     }
 }
