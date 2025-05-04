@@ -8,7 +8,7 @@
     Shell.FlyoutBehavior="Disabled"
     Title="algoBhaiya.ReportBook"
     Shell.NavBarIsVisible="True"
-    Shell.BackgroundColor="RoyalBlue"
+    Shell.BackgroundColor="RoyalBlue"                  
     Shell.TabBarBackgroundColor="#1976D2"
     Shell.TabBarTitleColor="White"
     Shell.TabBarUnselectedColor="#B3E5FC"
@@ -44,13 +44,40 @@
 
     </TabBar>
 
-    <!-- ToolbarItem (Menu Icon) for the top left corner -->
-    <Shell.ToolbarItems>
-        <ToolbarItem Text="☰"                     
-                     IconImageSource="bars_solid.svg"
-                     Command="{Binding OpenMenuCommand}" 
-                     Order="Primary" 
-                     Priority="0" />
-    </Shell.ToolbarItems>
+    <Shell.TitleView>
+        <Grid Padding="10,0" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Page Title -->
+            <Label 
+                Text="{Binding PageTitle}" 
+                FontSize="18" 
+                VerticalOptions="Center" 
+                TextColor="White"
+                FontAttributes="Bold" />
+
+            <!-- Username + Menu Icon -->
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Label 
+                    Text="{Binding LoggedInUserName}" 
+                    FontAttributes="Italic"    
+                    FontSize="14" 
+                    TextColor="White"
+                    VerticalOptions="Center" />
+                <ImageButton 
+                    Source="bars_solid.svg"
+                    Command="{Binding OpenMenuCommand}"
+                    BackgroundColor="Transparent"
+                    HeightRequest="24"
+                    WidthRequest="24"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+
 
 </Shell>

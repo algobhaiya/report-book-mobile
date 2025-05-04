@@ -37,11 +37,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 }              
             }            
         }
-
-        public Task SaveDailyEntryAsync(DailyProductivityEntry entry)
-        {
-            return _database.InsertOrReplaceAsync(entry);
-        }
         
         public async Task<List<DailyEntry>> GetEntriesForUserAndDateAsync(int userId, DateTime date)
         {

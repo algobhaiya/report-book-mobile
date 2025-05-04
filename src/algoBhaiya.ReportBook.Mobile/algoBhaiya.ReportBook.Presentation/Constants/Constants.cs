@@ -18,5 +18,10 @@
         {
             public static string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
         }
+
+        public static class AppUser
+        {
+            public static string CurrentUserId = "CurrentUserId";
+        }
     }
 }

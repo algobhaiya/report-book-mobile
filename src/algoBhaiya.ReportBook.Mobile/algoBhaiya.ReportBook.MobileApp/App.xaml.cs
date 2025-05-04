@@ -1,12 +1,25 @@
-﻿namespace algoBhaiya.ReportBook.MobileApp
+﻿using algoBhaiya.ReportBook.Core.Interfaces;
+
+namespace algoBhaiya.ReportBook.MobileApp
 {
     public partial class App : Application
     {
-        public App(AppShell appShell)
+        private readonly IServiceProvider _serviceProvider;
+
+        public App(
+            IServiceProvider serviceProvider,
+            IAppNavigator navigator)
         {
             InitializeComponent();
+            _serviceProvider = serviceProvider;
 
-            MainPage = appShell;
+            int currentUserId = Preferences.Get("CurrentUserId", 0);
+
+            if (currentUserId > 0)
+                navigator.NavigateToMainShell();
+            else
+                navigator.NavigateToLogin();
         }
     }
+
 }

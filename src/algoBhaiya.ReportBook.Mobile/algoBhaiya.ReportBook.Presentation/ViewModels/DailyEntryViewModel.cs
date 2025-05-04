@@ -98,7 +98,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             await Task.WhenAll(plannedFieldsTask, templatesTask, unitsTask, entriesTask);
 
-            var plannedFields = plannedFieldsTask.Result;
+            var plannedFields = plannedFieldsTask.Result.OrderBy(p => p.FieldOrder);
             var fieldTemplates = templatesTask.Result;
             var units = unitsTask.Result;
             var entries = entriesTask.Result;

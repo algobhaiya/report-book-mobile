@@ -1,4 +1,5 @@
 using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 
@@ -8,18 +9,21 @@ public partial class LoginPage : ContentPage
 {
     private readonly IRepository<AppUser> _repository;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IAppNavigator _appNavigator;
 
     public ObservableCollection<AppUser> ExistingUsers { get; set; } = new ();
     public Command<AppUser> UserTappedCommand { get; }
 
     public LoginPage(
         IRepository<AppUser> repository,
-        IServiceProvider serviceProvider
+        IServiceProvider serviceProvider,
+        IAppNavigator appNavigator
         )
     {
         InitializeComponent();
         _repository = repository;
         _serviceProvider = serviceProvider;
+        _appNavigator = appNavigator;
         BindingContext = this;
 
         UserTappedCommand = new Command<AppUser>(async (selectedUser) =>
@@ -28,9 +32,9 @@ public partial class LoginPage : ContentPage
             {
                 Preferences.Set("CurrentUserId", selectedUser.Id);
 
-                var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
-                await Navigation.PushAsync(dailyEntryPage);
-                //await Navigation.PushAsync(new HomePage(new HomePageViewModel(_dataService, new NavigationService())));
+                await Navigation.PopAsync();
+
+                _appNavigator.NavigateToMainShell();
             }
         });
     }
@@ -74,7 +78,8 @@ public partial class LoginPage : ContentPage
 
         Preferences.Set("CurrentUserId", user.Id);
 
-        var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
-        await Navigation.PushAsync(dailyEntryPage);
+        await Navigation.PopAsync();
+
+        _appNavigator.NavigateToMainShell(); // ?? Login done, show shell
     }    
 }
