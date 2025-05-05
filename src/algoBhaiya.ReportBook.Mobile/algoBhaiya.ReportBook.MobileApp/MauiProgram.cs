@@ -73,6 +73,9 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<DailyEntryListViewModel>();
             builder.Services.AddTransient<DailyEntryListPage>();
 
+            builder.Services.AddTransient<MonthlySummaryViewModel>();
+            builder.Services.AddTransient<MonthlySummaryPage>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

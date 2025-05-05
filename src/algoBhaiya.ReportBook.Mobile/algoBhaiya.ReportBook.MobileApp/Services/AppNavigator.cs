@@ -41,5 +41,17 @@ namespace algoBhaiya.ReportBook.MobileApp.Services
         {
             await Shell.Current.Navigation.PopModalAsync();
         }
+
+        public async Task PushModalAsync(Func<object> pageFactory)
+        {
+            if (pageFactory.Invoke() is Page page)
+            {
+                await Shell.Current.Navigation.PushModalAsync(page);
+            }
+            else
+            {
+                throw new InvalidOperationException("Factory did not return a Page.");
+            }
+        }
     }
 }
