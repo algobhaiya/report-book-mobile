@@ -66,9 +66,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             await _appNavigator.PushModalAsync(() =>
             {
+                var page = new FilledDatesCalendarPage(
+    new List<DateTime> { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(-2), DateTime.Today });
                 //var page = new FilledDatesCalendarPage(item.FilledDates);
-                //return page;
-                var page = _serviceProvider.GetRequiredService<LoginPage>();
                 return page;
             });
         }
