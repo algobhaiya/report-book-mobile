@@ -21,7 +21,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             IServiceProvider serviceProvider)
         {
             _appNavigator = appNavigator;
-            
+            _serviceProvider = serviceProvider;
+
             ShowCalendarCommand = new Command<MonthlySummaryItem>(async (selectedItem) =>
             {
                 if (selectedItem == null || _isNavigating)
@@ -39,36 +40,29 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 }
             });
 
-            LoadData();
-            _serviceProvider = serviceProvider;
+            LoadData();            
         }
 
-        private void LoadData()
+        private async void LoadData()
         {
-            // Populate with your real data
-            for (int i = 0; i < 30; i++)
-            {
-                MonthlySummaries.Add(new MonthlySummaryItem
-                {
-                    ItemName = "Work Hours",
-                    TotalDays = 20,
-                    AverageValue = 7.5,
-                    TotalSum = 150,
-                    Target = 180,
-                    FilledDates = new List<DateTime> { /* filled dates */ }
-                });
-            }
+            byte userId = (byte)Preferences.Get("CurrentUserId", 0);
+            if (userId == 0) return;
 
-            // Add more items...
+            var records = await _serviceProvider
+                .GetRequiredService<IDailyEntryRepository>()
+                .GetMonthlySummaryReportAsync(userId, DateTime.Today.Year, DateTime.Today.Month);
+
+            foreach( var record in records)
+            {
+                MonthlySummaries.Add(record);
+            }
         }
 
         private async Task ShowCalendar(MonthlySummaryItem item)
         {
             await _appNavigator.PushModalAsync(() =>
             {
-                var page = new FilledDatesCalendarPage(
-    new List<DateTime> { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(-2), DateTime.Today });
-                //var page = new FilledDatesCalendarPage(item.FilledDates);
+                var page = new FilledDatesCalendarPage(item.FilledDates);
                 return page;
             });
         }

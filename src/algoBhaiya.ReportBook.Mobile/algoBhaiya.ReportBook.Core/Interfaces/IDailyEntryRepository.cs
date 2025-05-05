@@ -10,5 +10,6 @@ namespace algoBhaiya.ReportBook.Core.Interfaces
         Task<DailyEntry> GetEntryByDateAsync(DateTime date);
         Task<List<DailyEntry>> GetMonthlyEntriesAsync(int month, int year);
         Task<List<DailySummaryItem>> GetMonthlyEntrySummaryAsync(byte userId, int year, int month);
+        Task<List<MonthlySummaryItem>> GetMonthlySummaryReportAsync(byte userId, int year, int month);
     }
 }
