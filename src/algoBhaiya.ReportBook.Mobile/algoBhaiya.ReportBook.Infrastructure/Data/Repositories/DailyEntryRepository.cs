@@ -87,13 +87,25 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     return result;
                 }
 
-                var plans = await _database
+                var plansTask = _database
                     .Table<MonthlyTarget>()
                     .Where(p => 
                         p.UserId == userId &&
                         p.Month == month &&
                         p.Year == year)
                     .ToListAsync();
+
+                var entriesTask = _database.Table<DailyEntry>()
+                    .Where(e => 
+                        e.UserId == userId && 
+                        e.Date >= startDate && 
+                        e.Date < endDate)
+                    .ToListAsync();
+
+                await Task.WhenAll(plansTask, entriesTask);
+
+                var plans = plansTask.Result;
+                var entries = entriesTask.Result;
 
                 // IF plan is empty,
                 // THEN set only the current plan.
@@ -138,10 +150,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .Where(p => p.IsDeleted)
                     .Select(p => p.FieldTemplateId)
                     .ToHashSet(); // Optimized for fast lookup
-
-                var entries = await _database.Table<DailyEntry>()
-                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
-                    .ToListAsync();
 
                 var entriesByDate = entries
                     .GroupBy(e => e.Date.Date)
@@ -194,7 +202,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     return result;
                 }
 
-                var plans = await _database
+                var plansTask = _database
                     .Table<MonthlyTarget>()
                     .Where(p =>
                         p.UserId == userId &&
@@ -203,6 +211,24 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .OrderBy(p => p.IsDeleted)
                     .ThenBy(p => p.FieldOrder)
                     .ToListAsync();
+
+                var templatesTask = _database
+                    .Table<FieldTemplate>()
+                    .Where(f => f.UserId == userId)
+                    .ToListAsync();
+
+                var unitsTask = _database.Table<FieldUnit>().ToListAsync();
+
+                var entriesTask = _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
+                    .ToListAsync();
+
+                await Task.WhenAll(plansTask, templatesTask, unitsTask, entriesTask);
+
+                var plans = plansTask.Result;
+                var fieldTemplates = templatesTask.Result;
+                var units = unitsTask.Result;
+                var entries = entriesTask.Result;
 
                 // IF plan is empty,
                 // THEN set only the current plan.
@@ -240,23 +266,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
                     plans = monthlyPlansToAdd;
                 }
-
-                var templatesTask = _database
-                    .Table<FieldTemplate>()
-                    .Where(f => f.UserId == userId)
-                    .ToListAsync();
-
-                var unitsTask = _database.Table<FieldUnit>().ToListAsync();
-
-                var entriesTask = _database.Table<DailyEntry>()
-                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
-                    .ToListAsync();
-
-                await Task.WhenAll(templatesTask, unitsTask, entriesTask);
-
-                var fieldTemplates = templatesTask.Result;
-                var units = unitsTask.Result;
-                var entries = entriesTask.Result;
 
                 var fieldTemplateLookup = fieldTemplates
                     .Where(t => plans.Any(p => p.FieldTemplateId == t.Id))
