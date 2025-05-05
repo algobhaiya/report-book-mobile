@@ -1,0 +1,89 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             xmlns:viewModels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlySummaryPage"
+             Title="Monthly Summary">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <!-- Title Row -->
+            <Grid ColumnSpacing="10" RowSpacing="6" Padding="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.2*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Text="Item Name" FontAttributes="Bold" />
+                <Label Text="Days" Grid.Column="1" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Avg" Grid.Column="2" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Sum" Grid.Column="3" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Target" Grid.Column="4" FontAttributes="Bold" HorizontalOptions="Center" />
+            </Grid>
+
+            <!-- Summary Rows -->
+            <CollectionView x:Name="SummaryCollectionView" ItemsSource="{Binding MonthlySummaries}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnSpacing="10" Padding="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="1.2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Item Name -->
+                            <Label Text="{Binding ItemName}" VerticalOptions="Center" />
+
+                            <!-- Days Badge -->
+                            <Frame Grid.Column="1"
+                                   Padding="8"
+                                   CornerRadius="30"
+                                   BackgroundColor="#BBDEFB"
+                                   BorderColor="#1976D2"
+                                   HasShadow="False"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:MonthlySummaryPage}}, Path=BindingContext.ShowCalendarCommand}" 
+                                        CommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="{Binding TotalDays}"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       TextColor="#0D47A1">
+                                </Label>
+                            </Frame>
+
+                            <!-- Average -->
+                            <Label Grid.Column="2"
+                                   Text="{Binding AverageValue}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+
+                            <!-- Total Sum -->
+                            <Label Grid.Column="3"
+                                   Text="{Binding TotalSum}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+
+                            <!-- Target -->
+                            <Label Grid.Column="4"
+                                   Text="{Binding Target}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -178,6 +178,145 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return result;
         }
 
+        public async Task<List<MonthlySummaryItem>> GetMonthlySummaryReportAsync(byte userId, int year, int month)
+        {
+            var result = new List<MonthlySummaryItem>();
+            try
+            {
+                var today = DateTime.Today;
+
+                // Check validation
+                var startDate = new DateTime(year, month, 1);
+                var endDate = startDate.AddMonths(1);
+
+                if (IsInvalidMonth(startDate, DateTime.Today))
+                {
+                    return result;
+                }
+
+                var plans = await _database
+                    .Table<MonthlyTarget>()
+                    .Where(p =>
+                        p.UserId == userId &&
+                        p.Month == month &&
+                        p.Year == year)
+                    .OrderBy(p => p.IsDeleted)
+                    .ThenBy(p => p.FieldOrder)
+                    .ToListAsync();
+
+                // IF plan is empty,
+                // THEN set only the current plan.
+                // Can not add for previous month.
+                // To set future month, User can open the monthly plan.
+                // This is only to set for default plan.
+                // Normally, (current or future) plan updates onChange event of field template add, edit, delete.
+                if (plans.Count == 0 &&
+                    today.Month == month &&
+                    today.Year == year)
+                {
+                    var monthlyPlansToAdd = new List<MonthlyTarget>();
+
+                    var activeFields = await _database
+                        .Table<FieldTemplate>()
+                        .Where(f =>
+                            f.UserId == userId &&
+                            !f.IsDeleted &&
+                            f.IsEnabled)
+                        .ToListAsync();
+
+                    foreach (var item in activeFields)
+                    {
+                        var plan = new MonthlyTarget
+                        {
+                            UserId = userId,
+                            FieldTemplateId = item.Id,
+                            Month = (byte)month,
+                            Year = year,
+                            FieldOrder = item.FieldOrder,
+                        };
+                        monthlyPlansToAdd.Add(plan);
+                    }
+                    await _database.InsertAllAsync(monthlyPlansToAdd, true);
+
+                    plans = monthlyPlansToAdd;
+                }
+
+                var templatesTask = _database
+                    .Table<FieldTemplate>()
+                    .Where(f => f.UserId == userId)
+                    .ToListAsync();
+
+                var unitsTask = _database.Table<FieldUnit>().ToListAsync();
+
+                var entriesTask = _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
+                    .ToListAsync();
+
+                await Task.WhenAll(templatesTask, unitsTask, entriesTask);
+
+                var fieldTemplates = templatesTask.Result;
+                var units = unitsTask.Result;
+                var entries = entriesTask.Result;
+
+                var fieldTemplateLookup = fieldTemplates
+                    .Where(t => plans.Any(p => p.FieldTemplateId == t.Id))
+                    .ToDictionary(t => t.Id);
+
+                var unitLookup = units.ToDictionary(u => u.Id);
+
+                var entriesByItem = entries
+                    .GroupBy(e => e.FieldTemplateId)
+                    .ToDictionary(g => g.Key, g => g.ToList());
+
+                var daysInMonth = DateTime.DaysInMonth(year, month);
+
+                foreach (var planItem in plans)
+                {
+                    entriesByItem.TryGetValue(planItem.FieldTemplateId, out var ItemSummaries);
+                    ItemSummaries ??= new List<DailyEntry>();
+
+                    // Skip deleted field, if it has no daily report entries.
+                    if (planItem.IsDeleted && entriesByItem.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (!fieldTemplateLookup.TryGetValue(planItem.FieldTemplateId, out var template))
+                        continue;
+
+                    if (!unitLookup.TryGetValue(template.UnitId, out var unit))
+                        continue;
+
+                    template.Unit = unit;
+
+                    Type unitType = GetUnitValueType(unit.ValueType);
+
+                    double sum = 0;
+
+                    foreach (var entry in ItemSummaries)
+                    {
+                        sum += GetConvertedValue(unitType, entry.Value);
+                    }
+
+                    result.Add(new MonthlySummaryItem
+                    {
+                        ItemName = template.FieldName,
+                        TotalDays = ItemSummaries.Count.ToString(),
+                        AverageValue = Math.Round(sum / daysInMonth, 2).ToString(),
+                        TotalSum = sum.ToString(),
+                        Target = planItem.TargetValue,
+                        FilledDates = ItemSummaries.Select(x => x.Date).ToList() ?? new List<DateTime>()
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // handle or log error
+            }
+            return result;
+        }
+
 
         #region Private methods
         private bool IsInvalidToSave(DailyEntry entry)
@@ -201,6 +340,33 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
             return false;
         }
+
+        private Type GetUnitValueType(string unitType)
+        {
+            switch (unitType)
+            {
+                case "int": return typeof(int);
+                case "double": return typeof(double);
+                case "bool": return typeof(bool);
+            }
+
+            return typeof(string); // default
+        }
+
+        private double GetConvertedValue(Type valueType, string value)
+        {
+            double convertedValue = 0;
+
+            if (valueType == typeof(int) && int.TryParse(value, out var intVal))
+                convertedValue += intVal;
+            else if (valueType == typeof(double) && double.TryParse(value, out var dblVal))
+                convertedValue += dblVal;
+            else if (valueType == typeof(bool) && bool.TryParse(value, out var boolVal))
+                convertedValue += boolVal ? 1 : 0;
+
+            return convertedValue;
+        }
+
         #endregion
     }
 }
