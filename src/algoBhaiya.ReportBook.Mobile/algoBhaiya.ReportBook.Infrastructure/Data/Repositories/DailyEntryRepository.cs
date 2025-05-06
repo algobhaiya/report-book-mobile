@@ -307,13 +307,25 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         sum += GetConvertedValue(unitType, entry.Value);
                     }
 
+                    var displayPercent = string.Empty;
+                    double targetValue = GetConvertedValue(unitType, planItem.TargetValue);
+                    if (targetValue > 0)
+                    {
+                        var percentageValue = Math.Round((sum / targetValue) * 100);
+                        displayPercent = string.Concat(percentageValue.ToString(), "%");
+                    }
+                    else
+                    {
+                        displayPercent = "N/A";
+                    }
+
                     result.Add(new MonthlySummaryItem
                     {
                         ItemName = template.FieldName,
                         TotalDays = ItemSummaries.Count.ToString(),
-                        AverageValue = Math.Round(sum / daysInMonth, 2).ToString(),
+                        AverageValue = Math.Round(sum / ItemSummaries.Count, 2).ToString(),
                         TotalSum = sum.ToString(),
-                        Target = planItem.TargetValue,
+                        Percentage = displayPercent,
                         FilledDates = ItemSummaries.Select(x => x.Date).ToList() ?? new List<DateTime>()
                     });
 

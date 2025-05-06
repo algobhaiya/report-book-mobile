@@ -12,17 +12,17 @@
             <Grid ColumnSpacing="10" RowSpacing="6" Padding="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1.0*" />
                     <ColumnDefinition Width="1.2*" />
                     <ColumnDefinition Width="1.2*" />
-                    <ColumnDefinition Width="1.2*" />
-                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.0*" />
                 </Grid.ColumnDefinitions>
 
                 <Label Text="Item Name" FontAttributes="Bold" />
                 <Label Text="Days" Grid.Column="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="Avg" Grid.Column="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="Sum" Grid.Column="3" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="Target" Grid.Column="4" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Sum" Grid.Column="2" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Avg" Grid.Column="3" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="(%)" Grid.Column="4" FontAttributes="Bold" HorizontalOptions="Center" />
             </Grid>
 
             <!-- Summary Rows -->
@@ -32,10 +32,10 @@
                         <Grid ColumnSpacing="10" Padding="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="1.0*" />
                                 <ColumnDefinition Width="1.2*" />
                                 <ColumnDefinition Width="1.2*" />
-                                <ColumnDefinition Width="1.2*" />
-                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="1.0*" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Item Name -->
@@ -64,19 +64,19 @@
 
                             <!-- Average -->
                             <Label Grid.Column="2"
-                                   Text="{Binding AverageValue}"
+                                   Text="{Binding TotalSum}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
 
                             <!-- Total Sum -->
                             <Label Grid.Column="3"
-                                   Text="{Binding TotalSum}"
+                                   Text="{Binding AverageValue}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
 
                             <!-- Target -->
                             <Label Grid.Column="4"
-                                   Text="{Binding Target}"
+                                   Text="{Binding Percentage}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
                         </Grid>
