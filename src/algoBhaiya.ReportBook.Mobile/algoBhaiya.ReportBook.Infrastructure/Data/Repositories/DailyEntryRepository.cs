@@ -308,7 +308,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     }
 
                     var displayPercent = string.Empty;
-                    double targetValue = GetConvertedValue(unitType, planItem.TargetValue);
+                    double targetValue = GetConvertedValue(typeof(double), planItem.TargetValue);   // all targets are being considered as double
                     if (targetValue > 0)
                     {
                         var percentageValue = Math.Round((sum / targetValue) * 100);
@@ -378,7 +378,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         {
             double convertedValue = 0;
 
-            if (valueType == typeof(int) && int.TryParse(value, out var intVal))
+            if (valueType == typeof(int) && double.TryParse(value, out var intVal)) // both are being parsed as double
                 convertedValue += intVal;
             else if (valueType == typeof(double) && double.TryParse(value, out var dblVal))
                 convertedValue += dblVal;
