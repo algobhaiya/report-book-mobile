@@ -1,4 +1,4 @@
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              xmlns:viewModels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
@@ -7,7 +7,45 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="12">
+            <!-- Search Row -->
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+                <Label Text="Search"
+                       FontAttributes="Italic"
+                       FontSize="15"
+                       VerticalOptions="Center" />
 
+                <!-- Filter Buttons Row -->
+                <Button Text="🗓️ By Month"
+                        FontAttributes="Bold"
+                        Clicked="OnMonthCalendarClicked"
+                        BackgroundColor="#f0f0f0"
+                        TextColor="Black"
+                        CornerRadius="20"
+                        Padding="10,5"
+                        FontSize="14"
+                        MaximumHeightRequest="50"/>
+
+                <Frame CornerRadius="12"
+                       BackgroundColor="#E0F2F1"
+                       BorderColor="#4CAF50"
+                       Padding="15"
+                       HasShadow="False"
+                       Margin="0,10,0,10">
+                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+                        <Label Text="Month:" 
+                               FontAttributes="Italic"
+                               FontSize="14"
+                               VerticalOptions="Center"
+                               TextColor="#2E7D32" />
+                        <Label Text="{Binding CurrentMonthLabel}" 
+                               FontAttributes="Bold"
+                               FontSize="16"
+                               TextColor="#1B5E20"                          
+                               Padding="8,4" />
+                    </HorizontalStackLayout>
+                </Frame>
+            </HorizontalStackLayout>
+            
             <!-- Title Row -->
             <Grid ColumnSpacing="10" RowSpacing="6" Padding="8">
                 <Grid.ColumnDefinitions>
@@ -82,6 +120,14 @@
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="No records found for this month." 
+                               TextColor="Gray" 
+                               FontAttributes="Italic" 
+                               FontSize="15"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
             </CollectionView>
 
         </VerticalStackLayout>

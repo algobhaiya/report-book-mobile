@@ -2,6 +2,7 @@
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
@@ -12,6 +13,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IServiceProvider _serviceProvider;
 
         public ObservableCollection<MonthlySummaryItem> MonthlySummaries { get; } = new();
+
+        private string _currentMonthLabel;
+        public string CurrentMonthLabel
+        {
+            get => _currentMonthLabel;
+            set
+            {
+                if (_currentMonthLabel != value)
+                {
+                    _currentMonthLabel = value;
+                    OnPropertyChanged(nameof(CurrentMonthLabel));
+                }
+            }
+        }
 
         private bool _isNavigating = false;
         public ICommand ShowCalendarCommand { get; }
@@ -40,22 +55,26 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 }
             });
 
-            LoadData();            
+            LoadDataAsync(DateTime.Today.Year, DateTime.Today.Month);            
         }
 
-        private async void LoadData()
+        public async Task LoadDataAsync(int year, int month)
         {
+            MonthlySummaries.Clear();
+
             byte userId = (byte)Preferences.Get("CurrentUserId", 0);
             if (userId == 0) return;
 
             var records = await _serviceProvider
                 .GetRequiredService<IDailyEntryRepository>()
-                .GetMonthlySummaryReportAsync(userId, DateTime.Today.Year, DateTime.Today.Month);
+                .GetMonthlySummaryReportAsync(userId, year, month);
 
             foreach( var record in records)
             {
                 MonthlySummaries.Add(record);
             }
+            
+            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
         }
 
         private async Task ShowCalendar(MonthlySummaryItem item)

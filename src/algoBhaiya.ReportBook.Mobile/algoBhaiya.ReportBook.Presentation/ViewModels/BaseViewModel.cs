@@ -16,6 +16,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
         }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = "") =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
     }
 
 }
