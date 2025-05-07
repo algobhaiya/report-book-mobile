@@ -1,5 +1,4 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
