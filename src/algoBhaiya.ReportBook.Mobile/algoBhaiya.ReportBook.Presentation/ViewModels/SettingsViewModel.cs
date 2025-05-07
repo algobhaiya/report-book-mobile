@@ -26,16 +26,16 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public SettingsViewModel()
         {
             // Load from Preferences or a config service
-            SelectedModificationDuration = Preferences.Get("ModificationDuration", 15);
-            SelectedDataRemovalPeriod = Preferences.Get("DataRemovalPeriod", 6);
+            SelectedModificationDuration = Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
+            SelectedDataRemovalPeriod = Preferences.Get(Constants.Constants.Setting.DataRemovalPeriod, 6);
 
             SaveSettingsCommand = new Command(SaveSettings);
         }
 
         private async void SaveSettings()
         {
-            Preferences.Set("ModificationDuration", SelectedModificationDuration);
-            Preferences.Set("DataRemovalPeriod", SelectedDataRemovalPeriod);
+            Preferences.Set(Constants.Constants.Setting.ModificationDuration, SelectedModificationDuration);
+            Preferences.Set(Constants.Constants.Setting.DataRemovalPeriod, SelectedDataRemovalPeriod);
 
             await Shell.Current.DisplayAlert("Success", "Settings updated!", "OK");
 
