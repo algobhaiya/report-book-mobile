@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.SettingsPage"
+             Title="Settings">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <!-- Modification Duration Setting -->
+        <Label Text="Daily Report Modification Duration (Edit Lock After)" FontAttributes="Bold"/>
+        <Picker Title="Select duration (in days)"
+                ItemsSource="{Binding ModificationDurationOptions}"
+                SelectedItem="{Binding SelectedModificationDuration}" />
+
+        <!-- Data Removal Period Setting -->
+        <Label Text="Data Retention Period (Auto-removal)" FontAttributes="Bold"/>
+        <Picker Title="Select period (in months)"
+                ItemsSource="{Binding DataRemovalPeriodOptions}"
+                SelectedItem="{Binding SelectedDataRemovalPeriod}" />
+
+        <Button Text="Save Settings"
+                Command="{Binding SaveSettingsCommand}"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                CornerRadius="10" />
+
+    </VerticalStackLayout>
+</ContentPage>
