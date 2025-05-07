@@ -98,15 +98,21 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             IsReadOnly = IsNonEditableMonth(year, month);
 
-            var templates = await _serviceProvider
+            var templatesTask = _serviceProvider
                 .GetRequiredService<IRepository<FieldTemplate>>()
                 .GetListAsync(t => t.UserId == _loggedInUser);
 
-            var units = await _serviceProvider
+            var unitsTask = _serviceProvider
                 .GetRequiredService<IRepository<FieldUnit>>()
                 .GetAllAsync();
 
-            var targets = await _repository.GetMonthlyTargetsAsync(_loggedInUser, year, month);
+            var targetsTask = _repository.GetMonthlyTargetsAsync(_loggedInUser, year, month);
+
+            await Task.WhenAll(templatesTask, unitsTask, targetsTask);
+
+            var templates = templatesTask.Result;
+            var units = unitsTask.Result;
+            var targets = targetsTask.Result;
 
             if (IsReadOnly)
             {
