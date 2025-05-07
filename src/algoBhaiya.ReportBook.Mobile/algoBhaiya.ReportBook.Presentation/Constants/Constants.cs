@@ -23,5 +23,11 @@
         {
             public static string CurrentUserId = "CurrentUserId";
         }
+
+        public static class Setting
+        {
+            public static string ModificationDuration = "Setting_ModificationDuration";
+            public static string DataRemovalPeriod = "Setting_DataRemovalPeriod";
+        }
     }
 }

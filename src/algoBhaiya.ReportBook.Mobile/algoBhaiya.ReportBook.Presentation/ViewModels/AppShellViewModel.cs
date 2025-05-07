@@ -60,7 +60,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     await _appNavigator.NavigateToAsync<MonthlySummaryPage>();
                     break;
                 case "Settings":
-                    await _appNavigator.NavigateToAsync<LoginPage>();
+                    await _appNavigator.NavigateToAsync<SettingsPage>();
                     break;
                 case "Change Profile":
                     await _appNavigator.PushModalAsync(() =>

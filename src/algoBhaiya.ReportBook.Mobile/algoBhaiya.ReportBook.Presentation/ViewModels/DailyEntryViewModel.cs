@@ -45,6 +45,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 }
             }
         }
+
+        private byte _maxEditableDayCount = 15;
+
         public bool CanSubmit => !IsReadOnly;
 
 
@@ -61,6 +64,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _repository = repository;
             _serviceProvider = serviceProvider;
             _navDataService = navDataService;
+
+            _maxEditableDayCount = (byte) Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
 
             SubmitCommand = new Command(async () => await SubmitAsync());           
         }
@@ -80,7 +85,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             SetLoadingTime();
 
             FormDate = LoadingDateTime;
-            IsReadOnly = (DateTime.Today - FormDate).Days > 14;
+            IsReadOnly = (DateTime.Today - FormDate).Days > _maxEditableDayCount;
 
             var targetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
             var templateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();

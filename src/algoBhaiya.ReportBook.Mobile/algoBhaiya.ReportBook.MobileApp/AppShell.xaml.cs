@@ -13,7 +13,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             BindingContext = viewModel;
 
             Routing.RegisterRoute(nameof(MonthlySummaryPage), typeof(MonthlySummaryPage));
-            Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(SwitchProfilePage), typeof(SwitchProfilePage));
         }
 
