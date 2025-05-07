@@ -1,4 +1,5 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
@@ -17,6 +18,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             
             NavigateToUserPage();
 
+            CleanUpData();
         }
 
         private void NavigateToUserPage()
@@ -27,6 +29,26 @@ namespace algoBhaiya.ReportBook.MobileApp
                 _navigator.NavigateToMainShell();
             else
                 _navigator.NavigateToLogin();
+        }
+
+        private void CleanUpData()
+        {
+            // Run cleanup task
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var dataRetentionService = _serviceProvider.GetService<IDataRetentionService>();
+                    if (dataRetentionService != null)
+                    {
+                        await dataRetentionService.PerformIncrementalCleanupAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Optional: log error
+                }
+            });
         }
     }
 

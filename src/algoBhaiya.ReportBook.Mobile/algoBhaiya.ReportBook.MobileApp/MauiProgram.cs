@@ -2,6 +2,7 @@
 using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
 using algoBhaiya.ReportBook.MobileApp.Services;
 using algoBhaiya.ReportBook.Presentation.Helpers;
+using algoBhaiya.ReportBook.Presentation.Services;
 using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
@@ -37,6 +38,7 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             builder.Services.AddScoped<IDailyEntryRepository, DailyEntryRepository>();
             builder.Services.AddScoped<IMonthlyTargetRepository, MonthlyTargetRepository>();
+            builder.Services.AddScoped<IDataRetentionService, DataRetentionService>();
 
             builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
 

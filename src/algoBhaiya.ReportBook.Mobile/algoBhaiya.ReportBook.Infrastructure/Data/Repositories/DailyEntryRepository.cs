@@ -338,6 +338,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return result;
         }
 
+        public async Task<int> DeleteEntriesBetweenAsync(DateTime fromDate, DateTime toDate)
+        {
+            string query = "DELETE FROM DailyEntry WHERE Date >= ? AND Date <= ?";
+            return await _database.ExecuteAsync(query, fromDate, toDate);
+        }
 
         #region Private methods
         private bool IsInvalidToSave(DailyEntry entry)

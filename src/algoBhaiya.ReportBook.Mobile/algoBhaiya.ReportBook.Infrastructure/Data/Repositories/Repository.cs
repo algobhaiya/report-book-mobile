@@ -63,6 +63,14 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 await _connection.DeleteAsync(entity);
             }
         }
+
+        public async Task DeleteAsync(T entity)
+        {
+            if (entity != null)
+            {
+                await _connection.DeleteAsync(entity);
+            }
+        }
     }
 
 }

@@ -13,6 +13,7 @@ namespace algoBhaiya.ReportBooks.Core.Interfaces
         Task UpdateAsync(IEnumerable<T> entries);
         Task InsertOrReplaceAsync(T entity);
         Task DeleteAsync(int id);
+        Task DeleteAsync(T entity);
     }
 
 }
