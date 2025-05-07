@@ -5,6 +5,7 @@ namespace algoBhaiya.ReportBook.MobileApp
     public partial class App : Application
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IAppNavigator _navigator;
 
         public App(
             IServiceProvider serviceProvider,
@@ -12,13 +13,20 @@ namespace algoBhaiya.ReportBook.MobileApp
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            _navigator = navigator;
+            
+            NavigateToUserPage();
 
+        }
+
+        private void NavigateToUserPage()
+        {
             int currentUserId = Preferences.Get("CurrentUserId", 0);
 
             if (currentUserId > 0)
-                navigator.NavigateToMainShell();
+                _navigator.NavigateToMainShell();
             else
-                navigator.NavigateToLogin();
+                _navigator.NavigateToLogin();
         }
     }
 
