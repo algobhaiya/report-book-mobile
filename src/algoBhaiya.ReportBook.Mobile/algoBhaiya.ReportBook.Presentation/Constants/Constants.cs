@@ -29,5 +29,10 @@
             public static string ModificationDuration = "Setting_ModificationDuration";
             public static string DataRemovalPeriod = "Setting_DataRemovalPeriod";
         }
+
+        public static class AppState
+        {
+            public static string LastCleanupDateKey = "last_cleanup_date";
+        }
     }
 }
