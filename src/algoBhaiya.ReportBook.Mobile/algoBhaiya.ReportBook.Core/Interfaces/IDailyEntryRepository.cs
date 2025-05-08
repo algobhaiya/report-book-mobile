@@ -11,6 +11,6 @@ namespace algoBhaiya.ReportBook.Core.Interfaces
         Task<List<DailyEntry>> GetMonthlyEntriesAsync(int month, int year);
         Task<List<DailySummaryItem>> GetMonthlyEntrySummaryAsync(byte userId, int year, int month);
         Task<List<MonthlySummaryItem>> GetMonthlySummaryReportAsync(byte userId, int year, int month);
-        Task<int> DeleteEntriesBetweenAsync(DateTime fromDate, DateTime toDate);
+        Task<int> DeleteEntriesBetweenAsync(DateTime toDate);
     }
 }

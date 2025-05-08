@@ -338,10 +338,10 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return result;
         }
 
-        public async Task<int> DeleteEntriesBetweenAsync(DateTime fromDate, DateTime toDate)
+        public async Task<int> DeleteEntriesBetweenAsync(DateTime toDate)
         {
-            string query = "DELETE FROM DailyEntry WHERE Date >= ? AND Date <= ?";
-            return await _database.ExecuteAsync(query, fromDate, toDate);
+            string query = "DELETE FROM DailyEntry WHERE Date <= ?";
+            return await _database.ExecuteAsync(query, toDate);
         }
 
         #region Private methods

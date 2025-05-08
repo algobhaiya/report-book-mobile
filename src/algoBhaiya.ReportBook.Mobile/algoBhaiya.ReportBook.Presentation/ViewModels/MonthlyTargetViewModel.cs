@@ -77,6 +77,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public bool CanSubmit => !IsReadOnly;
         private byte _loggedInUser = 0;
 
+        private DateTime _selectedItemDate = DateTime.Today;
+
         public MonthlyTargetViewModel(
             IServiceProvider serviceProvider,
             IMonthlyTargetRepository repository)
@@ -95,6 +97,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             Fields.Clear();
             
             if (_loggedInUser == 0) return;
+
+            _selectedItemDate = new DateTime(year, month, 1);
 
             IsReadOnly = IsNonEditableMonth(year, month);
 
@@ -178,8 +182,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     UserId = userId,
                     FieldTemplateId = field.FieldTemplateId,
-                    Month = (byte)DateTime.Today.Month,
-                    Year = DateTime.Today.Year,
+                    Month = (byte)_selectedItemDate.Month,
+                    Year = _selectedItemDate.Year,
                     TargetValue = field.TargetValue,
                     FieldOrder = field.FieldOrder,
                     IsDeleted = false
