@@ -47,7 +47,6 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<AppShell>();
 
             // Register your services, view models, and pages here
-            builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<NavigationDataService>();
             
             // Register pages and view models
