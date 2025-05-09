@@ -21,14 +21,15 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>algoBhaiya.ReportBook.MobileApp</ApplicationTitle>
+		<ApplicationTitle>Report Book</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.algobhaiya.reportbook.mobileapp</ApplicationId>
+		<ApplicationId>com.algobhaiya.reportbook.mobileapp</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationVersion>1</ApplicationVersion>  <!-- Internal platform version (required). Integer only -->
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion> <!-- Optional User-visible version. Semantic version (1.0.0) -->
+		<ApplicationVersionCode>1</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
@@ -62,7 +63,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 	</ItemGroup>
 
