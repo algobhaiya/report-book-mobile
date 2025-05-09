@@ -139,7 +139,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         };
                         monthlyPlansToAdd.Add(plan);
                     }
-                    await _database.InsertAllAsync(monthlyPlansToAdd, true);
+                    
+                    if (monthlyPlansToAdd.Count > 0)
+                    {
+                        await _database.InsertAllAsync(monthlyPlansToAdd, true);
+                    }
 
                     plans = monthlyPlansToAdd;
                 }
