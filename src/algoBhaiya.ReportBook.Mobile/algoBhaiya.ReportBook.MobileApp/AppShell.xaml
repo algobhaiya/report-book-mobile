@@ -40,7 +40,7 @@
         <ShellContent 
             Title="Guide" 
             Icon="book_solid.svg"
-            ContentTemplate="{DataTemplate local:MainPage}" />
+            ContentTemplate="{DataTemplate views:HelpPage}" />
 
     </TabBar>
 
