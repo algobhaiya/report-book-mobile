@@ -78,9 +78,10 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<MonthlySummaryViewModel>();
             builder.Services.AddTransient<MonthlySummaryPage>();
 
-            // Register your services, view models, and pages here
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddSingleton<SettingsPage>();
+
+            builder.Services.AddSingleton<HelpPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();
