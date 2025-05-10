@@ -55,6 +55,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             await _connection.InsertOrReplaceAsync(entity);
         }
 
+        public async Task InsertAllAsync(IEnumerable<T> entries, bool runInTransaction = true)
+        {
+            await _connection.InsertAllAsync(entries, runInTransaction);
+        }
+
         public async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);

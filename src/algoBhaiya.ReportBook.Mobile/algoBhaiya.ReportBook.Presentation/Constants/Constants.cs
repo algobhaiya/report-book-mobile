@@ -8,6 +8,12 @@
             public static string Action_OnUnitSaved = "FieldUnit_Action_OnUnitSaved";
         }
 
+        public static class UnitType
+        {
+            public static string Double = "double";
+            public static string Bool = "bool";
+        }
+
         public static class FieldTemplate
         {
             public static string Item_ToEdit = "FieldTemplate_Item_ToEdit";
@@ -33,6 +39,7 @@
         public static class AppState
         {
             public static string LastCleanupDateKey = "last_cleanup_date";
+            public static string FirstRunKey = "IsSeedingInitialDataCompleted";
         }
     }
 }
