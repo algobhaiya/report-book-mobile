@@ -18,17 +18,31 @@
                 SelectionMode="Single">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.UserTappedCommand}"
-                                          CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
-                        <Label Text="{Binding UserName}" FontSize="16"/>
-                    </Frame>
+                    <Grid Padding="5" ColumnDefinitions="*, Auto">
+                        <Frame Grid.Column="0"
+                               BorderColor="Gray"
+                               Padding="10"
+                               Margin="5"
+                               CornerRadius="10">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.UserTappedCommand}"
+                                  CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                            <Label Text="{Binding UserName}" FontSize="16"/>
+                        </Frame>
+
+                        <!-- Remove Button -->
+                        <Button Grid.Column="1"
+                                Text="🗑️"
+                                BackgroundColor="Transparent"
+                                TextColor="Red"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.RemoveUserCommand}"
+                                CommandParameter="{Binding .}" />
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
+        
         <!-- New User Entry -->
         <Label Text="New or Returning User:" FontSize="18" />
         <Entry x:Name="UsernameEntry" Placeholder="Enter your name" />
