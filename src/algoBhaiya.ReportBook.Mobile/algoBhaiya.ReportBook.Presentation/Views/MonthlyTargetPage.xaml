@@ -77,6 +77,7 @@
                         <StackLayout Grid.Column="1" VerticalOptions="Center">
                             <Entry Placeholder="Enter value"
                                    Keyboard="Numeric"
+                                   HorizontalTextAlignment="Center"
                                    Text="{Binding TargetValue}" />
                         </StackLayout>
 

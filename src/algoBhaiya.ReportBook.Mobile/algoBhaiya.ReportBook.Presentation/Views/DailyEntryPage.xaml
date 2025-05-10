@@ -38,6 +38,7 @@
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
                                 <Entry Placeholder="Enter value"
                                        Keyboard="Numeric"
+                                       HorizontalTextAlignment="Center"
                                        Text="{Binding Value, Mode=TwoWay}" 
                                        IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
 
