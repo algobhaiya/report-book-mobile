@@ -4,8 +4,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
     {
-        public List<int> ModificationDurationOptions { get; } = new() { 7, 15, 20, 30, 90 };
-        public List<int> DataRemovalPeriodOptions { get; } = new() { 1, 3, 6, 12, 18, 24 };
+        public List<int> ModificationDurationOptions { get; } = new() { 7, 15, 20, 30 };
+        public List<int> DataRemovalPeriodOptions { get; } = new() { 1, 3, 6, 12, 18, 24, 30, 36 };
 
         private int _selectedModificationDuration;
         public int SelectedModificationDuration

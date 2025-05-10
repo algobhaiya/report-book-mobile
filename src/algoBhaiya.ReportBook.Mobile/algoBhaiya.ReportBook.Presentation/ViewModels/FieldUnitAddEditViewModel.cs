@@ -50,8 +50,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private readonly Dictionary<string, string> _typeMap = new()
         {
-            { "Whole Number", "int" },
-            { "Decimal Number", "double" },
+            { "Number", "double" },
             { "Yes/No (Checkbox)", "bool" }
         };
         

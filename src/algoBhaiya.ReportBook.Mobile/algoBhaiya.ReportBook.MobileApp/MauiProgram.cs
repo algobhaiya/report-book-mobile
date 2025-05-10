@@ -39,6 +39,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddScoped<IDailyEntryRepository, DailyEntryRepository>();
             builder.Services.AddScoped<IMonthlyTargetRepository, MonthlyTargetRepository>();
             builder.Services.AddScoped<IDataRetentionService, DataRetentionService>();
+            builder.Services.AddScoped<ISeedDataService, SeedDataService>();
 
             builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
 

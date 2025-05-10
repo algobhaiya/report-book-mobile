@@ -4,39 +4,55 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.LoginPage"
              xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views;assembly=algoBhaiya.ReportBook.Presentation"             
              Title="Login">
-    <VerticalStackLayout Padding="30" Spacing="20">
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
 
-        <Label Text="Welcome to Report Book!" 
-               FontSize="24" 
-               HorizontalOptions="Center" />
+            <Label Text="Welcome to Report Book!" 
+                    FontSize="24" 
+                    HorizontalOptions="Center" />
 
-        <Label Text="Previously Logged-in Users:" FontSize="18" />
+            <Label Text="Previously Logged-in Users:" FontSize="18" />
 
-        <!-- Existing Users List -->
-        <CollectionView x:Name="UserListView"
-                ItemsSource="{Binding ExistingUsers}"
-                SelectionMode="Single">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.UserTappedCommand}"
-                                          CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
-                        <Label Text="{Binding UserName}" FontSize="16"/>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <!-- Existing Users List -->
+            <CollectionView x:Name="UserListView"
+                            ItemsSource="{Binding ExistingUsers}"
+                            SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="5" ColumnDefinitions="*, Auto">
+                            <Frame Grid.Column="0"
+                                   BorderColor="Gray"
+                                   Padding="10"
+                                   Margin="5"
+                                   CornerRadius="10">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.UserTappedCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+                                <Label Text="{Binding UserName}" FontSize="16"/>
+                            </Frame>
 
-        <!-- New User Entry -->
-        <Label Text="New or Returning User:" FontSize="18" />
-        <Entry x:Name="UsernameEntry" Placeholder="Enter your name" />
+                            <!-- Remove Button -->
+                            <Button Grid.Column="1"
+                                    Text="🗑️"
+                                    BackgroundColor="Transparent"
+                                    TextColor="Red"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:LoginPage}}, Path=BindingContext.RemoveUserCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-        <Button Text="Login or Register"
-                Clicked="OnLoginClicked"
-                BackgroundColor="#2196F3"
-                TextColor="White" />
+            <!-- New User Entry -->
+            <Label Text="New or Returning User:" FontSize="18" />
+            <Entry x:Name="UsernameEntry" Placeholder="Enter your name" />
 
-    </VerticalStackLayout>
+            <Button Text="Login or Register"
+                    Clicked="OnLoginClicked"
+                    BackgroundColor="#2196F3"
+                    TextColor="White" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

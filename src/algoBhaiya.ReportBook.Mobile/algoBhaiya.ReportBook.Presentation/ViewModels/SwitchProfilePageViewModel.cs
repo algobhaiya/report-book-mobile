@@ -47,7 +47,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             var allProfiles = await _serviceProvider
                 .GetRequiredService<IRepository<AppUser>>()
-                .GetAllAsync();
+                .GetListAsync(u => !u.IsDeleted);
 
             Profiles.Clear();
             foreach (var profile in allProfiles)

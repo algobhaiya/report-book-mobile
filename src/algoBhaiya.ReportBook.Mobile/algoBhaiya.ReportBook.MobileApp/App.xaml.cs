@@ -17,6 +17,8 @@ namespace algoBhaiya.ReportBook.MobileApp
             
             NavigateToUserPage();
 
+            SeedInitialDataAsync();
+
             CleanUpData();
         }
 
@@ -48,6 +50,27 @@ namespace algoBhaiya.ReportBook.MobileApp
                     // Optional: log error
                 }
             });
+        }
+
+        private void SeedInitialDataAsync()
+        {
+            // Run cleanup task
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var seedingDataService = _serviceProvider.GetService<ISeedDataService>();
+                    if (seedingDataService != null)
+                    {
+                        await seedingDataService.SeedDefaultUnitsAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Optional: log error
+                }
+            });
+            
         }
     }
 

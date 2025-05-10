@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
-    public class MonthlyTargetFieldViewModel : INotifyPropertyChanged
+    public class MonthlyTargetFieldViewModel : BaseViewModel
     {
         public int FieldTemplateId { get; set; }
         public string FieldName { get; set; }
@@ -30,13 +30,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         public byte FieldOrder { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public class MonthlyTargetViewModel : INotifyPropertyChanged
+    public class MonthlyTargetViewModel : BaseViewModel
     {
         private readonly IMonthlyTargetRepository _repository;
         private readonly IServiceProvider _serviceProvider;
@@ -193,9 +189,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await Shell.Current.DisplayAlert("Success", "Plan submitted!", "OK");
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public async Task RefreshTargetsAsync()
+        {
+            await LoadTargetsAsync(_selectedItemDate.Year, _selectedItemDate.Month);
+        }
 
         #region Helpers
         

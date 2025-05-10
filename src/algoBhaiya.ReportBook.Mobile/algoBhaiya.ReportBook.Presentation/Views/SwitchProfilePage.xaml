@@ -6,23 +6,25 @@
              BackgroundColor="#80000000"
              Padding="40">
 
-    <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
-        <Label Text="Choose a Profile" FontSize="20" FontAttributes="Bold" />
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
+            <Label Text="Choose a Profile" FontSize="20" FontAttributes="Bold" />
 
-        <CollectionView 
-            ItemsSource="{Binding Profiles}"
-            SelectionMode="Single" >
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
-                        <Label Text="{Binding UserName}" VerticalOptions="Center" FontSize="18"/>
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:SwitchProfilePage}}, Path=BindingContext.SelectUserCommand}" 
-                                CommandParameter="{Binding .}"/>
-                        </Frame.GestureRecognizers>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </VerticalStackLayout>
+            <CollectionView 
+                ItemsSource="{Binding Profiles}"
+                SelectionMode="Single" >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
+                            <Label Text="{Binding UserName}" VerticalOptions="Center" FontSize="18"/>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:SwitchProfilePage}}, Path=BindingContext.SelectUserCommand}" 
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
