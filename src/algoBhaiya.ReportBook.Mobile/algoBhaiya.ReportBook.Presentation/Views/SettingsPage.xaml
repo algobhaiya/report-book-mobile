@@ -8,15 +8,46 @@
 
         <!-- Modification Duration Setting -->
         <Label Text="Daily Report Modification Duration (Edit Lock After)" FontAttributes="Bold"/>
-        <Picker Title="Select duration (in days)"
-                ItemsSource="{Binding ModificationDurationOptions}"
-                SelectedItem="{Binding SelectedModificationDuration}" />
-
+        <HorizontalStackLayout Spacing="10">
+            <Picker Title="Select duration (in days)"
+                    ItemsSource="{Binding ModificationDurationOptions}"
+                    SelectedItem="{Binding SelectedModificationDuration}"
+                    HorizontalTextAlignment="Center"/>
+            <Label Text="Days" 
+                   VerticalOptions="Center"
+                   FontAttributes="Italic"/>
+            
+            <!-- Info Icon -->
+            <Label Text="ℹ️"
+                   FontSize="18"
+                   VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnModificationDurationInfoTapped" />
+                    </Label.GestureRecognizers>
+            </Label>
+        </HorizontalStackLayout>
+        
         <!-- Data Removal Period Setting -->
         <Label Text="Data Retention Period (Auto-removal)" FontAttributes="Bold"/>
-        <Picker Title="Select period (in months)"
-                ItemsSource="{Binding DataRemovalPeriodOptions}"
-                SelectedItem="{Binding SelectedDataRemovalPeriod}" />
+
+        <HorizontalStackLayout Spacing="10">
+            <Picker Title="Select period (in months)"
+                    ItemsSource="{Binding DataRemovalPeriodOptions}"
+                    SelectedItem="{Binding SelectedDataRemovalPeriod}"
+                    HorizontalTextAlignment="Center"/>
+            <Label Text="Months" 
+                   VerticalOptions="Center"
+                   FontAttributes="Italic"/>
+
+            <!-- Info Icon -->
+            <Label Text="ℹ️"
+                   FontSize="18"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnDataRemovalPeriodInfoTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+        </HorizontalStackLayout>
 
         <Button Text="Save Settings"
                 Command="{Binding SaveSettingsCommand}"
