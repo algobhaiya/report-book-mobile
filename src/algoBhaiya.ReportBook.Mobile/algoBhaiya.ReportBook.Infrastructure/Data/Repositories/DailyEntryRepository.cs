@@ -266,7 +266,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         };
                         monthlyPlansToAdd.Add(plan);
                     }
-                    await _database.InsertAllAsync(monthlyPlansToAdd, true);
+                    
+                    if (monthlyPlansToAdd.Count > 0)
+                    {
+                        await _database.InsertAllAsync(monthlyPlansToAdd, true);
+                    }
 
                     plans = monthlyPlansToAdd;
                 }
@@ -326,6 +330,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     result.Add(new MonthlySummaryItem
                     {
                         ItemName = template.FieldName,
+                        UnitName = string.Concat("(", unit.UnitName, ")"),
                         TotalDays = ItemSummaries.Count.ToString(),
                         AverageValue = Math.Round(sum / ItemSummaries.Count, 2).ToString(),
                         TotalSum = sum.ToString(),

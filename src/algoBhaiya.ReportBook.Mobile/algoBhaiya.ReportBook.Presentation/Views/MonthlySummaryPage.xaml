@@ -77,7 +77,12 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Item Name -->
-                            <Label Text="{Binding ItemName}" VerticalOptions="Center" />
+                            <HorizontalStackLayout Spacing="5">
+                                <Label Text="{Binding ItemName}" VerticalOptions="Center" />
+                                <Label Text="{Binding UnitName}" 
+                                       VerticalOptions="Center"
+                                       FontAttributes="Italic"/>
+                            </HorizontalStackLayout>
 
                             <!-- Days Badge -->
                             <Frame Grid.Column="1"
