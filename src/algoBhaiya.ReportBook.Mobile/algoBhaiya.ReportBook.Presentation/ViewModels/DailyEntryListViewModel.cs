@@ -17,19 +17,21 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
 
-        private string _currentMonthLabel;
-        public string CurrentMonthLabel 
+        private string _selectedMonthLabel;
+        public string SelectedMonthLabel 
         {
-            get => _currentMonthLabel;
+            get => _selectedMonthLabel;
             set
             {
-                if (_currentMonthLabel != value)
+                if (_selectedMonthLabel != value)
                 {
-                    _currentMonthLabel = value;
-                    OnPropertyChanged(nameof(CurrentMonthLabel));
+                    _selectedMonthLabel = value;
+                    OnPropertyChanged(nameof(SelectedMonthLabel));
                 }
             }
         }
+
+        private DateTime _selectedMonthDate = DateTime.Today;
 
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
@@ -63,8 +65,6 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isNavigating = false;
                 }
             });
-
-            LoadDailySummariesAsync(DateTime.Today.Year, DateTime.Today.Month);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -72,13 +72,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
 
-        private async void LoadDailySummariesAsync(int year, int month)
+        private async Task LoadDailySummariesAsync(int year, int month)
         {
             DailySummaries.Clear();
             byte userId = (byte) Preferences.Get("CurrentUserId", 0);
             if (userId == 0) return;
 
-            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
+            _selectedMonthDate = new DateTime(year, month, 1);
+
+            SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
             
             var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
             
@@ -104,7 +106,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public async Task LoadEntriesMonthlyAsync(int year, int month)
         {
-            LoadDailySummariesAsync(year, month);            
+            await LoadDailySummariesAsync(year, month);            
+        }
+
+        public async Task RefreshDailyEntriesAsync()
+        {
+            await LoadDailySummariesAsync(_selectedMonthDate.Year, _selectedMonthDate.Month);
         }
     }
 
