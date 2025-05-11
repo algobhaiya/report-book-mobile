@@ -7,11 +7,13 @@
     <ScrollView>
         <VerticalStackLayout Padding="30" Spacing="20">
 
-            <Label Text="Welcome to Report Book!" 
+            <Label Text="Daily Report Book!" 
                     FontSize="24" 
                     HorizontalOptions="Center" />
 
-            <Label Text="Previously Logged-in Users:" FontSize="18" />
+            <Label Text="Previously Logged-in User Profiles:" 
+                   FontSize="16"
+                   FontAttributes="Italic"/>
 
             <!-- Existing Users List -->
             <CollectionView x:Name="UserListView"
@@ -45,7 +47,9 @@
             </CollectionView>
 
             <!-- New User Entry -->
-            <Label Text="New or Returning User:" FontSize="18" />
+            <Label Text="New or Returning User:" 
+                   FontSize="18"
+                   FontAttributes="Italic"/>
             <Entry x:Name="UsernameEntry" Placeholder="Enter your name" />
 
             <Button Text="Login or Register"

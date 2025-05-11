@@ -11,7 +11,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         public MonthlyTargetRepository(SQLiteAsyncConnection connection) : base(connection)
         {
             _db = connection;
-            _db.CreateTableAsync<MonthlyTarget>().Wait();
         }
 
         public Task<List<MonthlyTarget>> GetMonthlyTargetsAsync(int userId, int year, int month) =>

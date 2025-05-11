@@ -12,7 +12,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         public Repository(SQLiteAsyncConnection connection)
         {
             _connection = connection;
-            _connection.CreateTableAsync<T>().Wait();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()

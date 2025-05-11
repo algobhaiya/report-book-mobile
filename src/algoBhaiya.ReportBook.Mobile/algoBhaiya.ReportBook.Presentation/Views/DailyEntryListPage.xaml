@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
-             Title="{Binding CurrentMonthLabel}">
+             Title="{Binding SelectedMonthLabel}">
 
     <Grid RowDefinitions="Auto,*" Padding="10">
         <!-- Header -->
@@ -48,6 +48,18 @@
                         CornerRadius="20"
                         Padding="10,5"
                         FontSize="14" />
+
+                <!-- Refresh Button -->
+                <Button Text="🔄"
+                        FontAttributes="Bold"
+                        Clicked="OnRefreshClicked"
+                        BackgroundColor="#e0f7fa"
+                        TextColor="Black"
+                        CornerRadius="20"
+                        Padding="10,5"
+                        FontSize="14"
+                        HorizontalOptions="EndAndExpand" />
+                
             </HorizontalStackLayout>
         </VerticalStackLayout>
 

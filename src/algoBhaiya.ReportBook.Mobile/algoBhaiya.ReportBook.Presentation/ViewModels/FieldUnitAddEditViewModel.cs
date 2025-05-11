@@ -50,8 +50,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private readonly Dictionary<string, string> _typeMap = new()
         {
-            { "Number", "double" },
-            { "Yes/No (Checkbox)", "bool" }
+            { "Number", Constants.Constants.UnitType.Double },
+            { "Yes/No (Checkbox)", Constants.Constants.UnitType.Bool }
         };
         
         public FieldUnit TappedUnit { get; set; }
@@ -159,8 +159,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             return backendValueType switch
             {
-                "int" => "Whole Number",
-                "double" => "Decimal Number",
+                "double" => "Number",
                 "bool" => "Yes/No (Checkbox)",
                 _ => "Unknown"
             };

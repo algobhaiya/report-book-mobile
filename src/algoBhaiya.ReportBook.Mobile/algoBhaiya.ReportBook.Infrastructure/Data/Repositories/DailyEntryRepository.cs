@@ -12,7 +12,6 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         public DailyEntryRepository(SQLiteAsyncConnection connection) : base(connection)
         {
             _database = connection;
-            _database.CreateTableAsync<DailyEntry>().Wait();
         }
 
         public async Task SaveDailyEntryAsync(DailyEntry entry)

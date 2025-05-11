@@ -1,4 +1,5 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Infrastructure.Data;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
@@ -14,12 +15,20 @@ namespace algoBhaiya.ReportBook.MobileApp
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _navigator = navigator;
-            
+
+            InitializeDatabase();
+
             NavigateToUserPage();
 
             SeedInitialDataAsync();
 
             CleanUpData();
+        }
+
+        private void InitializeDatabase()
+        {
+            var initializer = _serviceProvider.GetRequiredService<DatabaseInitializer>();
+            Task.Run(async () => await initializer.InitializeAsync()).Wait();
         }
 
         private void NavigateToUserPage()

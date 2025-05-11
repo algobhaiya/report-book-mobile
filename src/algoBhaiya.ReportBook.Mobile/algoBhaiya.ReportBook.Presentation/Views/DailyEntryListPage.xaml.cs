@@ -5,11 +5,34 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class DailyEntryListPage : ContentPage
 {
     private readonly DailyEntryListViewModel _viewModel;
+    private bool _isInitialized = false;
+
     public DailyEntryListPage(DailyEntryListViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (!_isInitialized)
+        {
+            if (BindingContext is DailyEntryListViewModel vm)
+            {
+                try
+                {
+                    await vm.RefreshDailyEntriesAsync(); // Only after page fully loaded
+                    _isInitialized = true;
+                }
+                catch (Exception ex)
+                {
+                    // Log exception
+                }
+            }
+        }
     }
 
     private async void OnTodayCalendarClicked(object sender, EventArgs e)
@@ -52,4 +75,13 @@ public partial class DailyEntryListPage : ContentPage
             "Select Date", "Enter date in yyyy-MM-dd format", initialValue: DateTime.Today.ToString("yyyy-MM-dd"));
         return DateTime.TryParse(result, out var dt) ? dt : null;
     }
+
+    private async void OnRefreshClicked(object sender, EventArgs e)
+    {
+        if (BindingContext is DailyEntryListViewModel vm)
+        {
+            await vm.RefreshDailyEntriesAsync();
+        }
+    }
+
 }
