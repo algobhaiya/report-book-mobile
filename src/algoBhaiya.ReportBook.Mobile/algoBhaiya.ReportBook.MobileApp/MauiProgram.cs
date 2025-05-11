@@ -1,4 +1,5 @@
 ﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Infrastructure.Data;
 using algoBhaiya.ReportBook.Infrastructure.Data.Repositories;
 using algoBhaiya.ReportBook.MobileApp.Services;
 using algoBhaiya.ReportBook.Presentation.Helpers;
@@ -32,6 +33,8 @@ namespace algoBhaiya.ReportBook.MobileApp
                 string dbPath = Path.Combine(FileSystem.AppDataDirectory, "ReportBookClient.db");
                 return new SQLiteAsyncConnection(dbPath);
             });
+
+            builder.Services.AddSingleton<DatabaseInitializer>();
 
             // Register the generic repository for scoped lifetime
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
