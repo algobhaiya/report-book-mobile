@@ -51,8 +51,8 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*" />
                     <ColumnDefinition Width="1.0*" />
-                    <ColumnDefinition Width="1.2*" />
-                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.3*" />
+                    <ColumnDefinition Width="1.3*" />
                     <ColumnDefinition Width="1.0*" />
                 </Grid.ColumnDefinitions>
 
@@ -71,18 +71,22 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="3*" />
                                 <ColumnDefinition Width="1.0*" />
-                                <ColumnDefinition Width="1.2*" />
-                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="1.3*" />
+                                <ColumnDefinition Width="1.3*" />
                                 <ColumnDefinition Width="1.0*" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Item Name -->
-                            <HorizontalStackLayout Spacing="5">
-                                <Label Text="{Binding ItemName}" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding ItemName}"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center" />
                                 <Label Text="{Binding UnitName}" 
-                                       VerticalOptions="Center"
-                                       FontAttributes="Italic"/>
-                            </HorizontalStackLayout>
+                                       FontAttributes="Italic"
+                                       FontSize="12"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="1" />
+                            </VerticalStackLayout>
 
                             <!-- Days Badge -->
                             <Frame Grid.Column="1"
