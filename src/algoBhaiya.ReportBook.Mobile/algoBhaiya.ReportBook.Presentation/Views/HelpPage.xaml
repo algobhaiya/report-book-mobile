@@ -240,21 +240,55 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame CornerRadius="20" BackgroundColor="#FFF8E1" Padding="15">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Contact Info"
-                           FontSize="18"
-                           FontAttributes="Bold" />
+            <Frame CornerRadius="20"
+                   BackgroundColor="#FFF8E1"
+                   Padding="15"
+                   HasShadow="True"
+                   BorderColor="#FFD54F">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="📞 Contact Info / যোগাযোগ"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#FF6F00"
+                           HorizontalOptions="Center" />
 
-                    <HorizontalStackLayout>
-                        <Label Text="📧 "
-                                FontSize="16" />
-                        <Label Text="algobhaiya@gmail.com"
-                                FontSize="16" />
+                    <Label Text="আপনার যেকোন ফিডব্যাক, ইস্যু, বাগ অথবা নতুন ফিচারের আইডিয়া আমাদের জানাতে পারেন:"
+                           FontSize="16"
+                           TextColor="Black"
+                           LineBreakMode="WordWrap" />
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="📧"
+                               FontSize="18"
+                               VerticalOptions="Center" />
+                        <Label Text="Email: algobhaiya@gmail.com"
+                               FontSize="16"
+                               TextColor="#0D47A1"
+                               VerticalOptions="Center" />
+                        <Button Text="📋"
+                                FontSize="14"
+                                BackgroundColor="Transparent"
+                                Clicked="OnCopyEmailClicked"
+                                VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="🔗"
+                               FontSize="18"
+                               VerticalOptions="Center" />
+                        <Label Text="FB: fb/groups/reportbookapp"
+                               FontSize="16"
+                               TextColor="#1E88E5"
+                               VerticalOptions="Center" />
+                        <Button Text="📋"
+                                FontSize="14"
+                                BackgroundColor="Transparent"
+                                Clicked="OnCopyFacebookClicked"
+                                VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Frame>
-
+           
         </VerticalStackLayout>
     </ScrollView>
 
