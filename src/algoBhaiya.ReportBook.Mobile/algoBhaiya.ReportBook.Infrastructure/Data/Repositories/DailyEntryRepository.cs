@@ -292,7 +292,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     ItemSummaries ??= new List<DailyEntry>();
 
                     // Skip deleted field, if it has no daily report entries.
-                    if (planItem.IsDeleted && entriesByItem.Count == 0)
+                    if (planItem.IsDeleted && ItemSummaries.Count == 0)
                     {
                         continue;
                     }

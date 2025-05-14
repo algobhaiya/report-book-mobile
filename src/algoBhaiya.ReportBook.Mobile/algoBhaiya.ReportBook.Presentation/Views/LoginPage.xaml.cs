@@ -99,17 +99,17 @@ public partial class LoginPage : ContentPage
             $"Remove user '{user.UserName}'?",
             "Cancel",
             null,
-            "Hide User (Soft Delete)",
-            "Delete Permanently");
+            Constants.Constants.LogIn.SoftDeleteBtn,
+            Constants.Constants.LogIn.HardDeleteBtn);
 
         switch (action)
         {
-            case "Hide User (Soft Delete)":
+            case Constants.Constants.LogIn.SoftDeleteBtn:
                 user.IsDeleted = true; // You need to add this flag in your AppUser entity
                 await _repository.UpdateAsync(user);
                 break;
 
-            case "Delete Permanently":
+            case Constants.Constants.LogIn.HardDeleteBtn:
                 await DeleteUserPermanentlyAsync(user);
                 break;
         }
