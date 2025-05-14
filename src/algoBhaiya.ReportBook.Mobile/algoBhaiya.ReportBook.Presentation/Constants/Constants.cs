@@ -41,5 +41,11 @@
             public static string LastCleanupDateKey = "last_cleanup_date";
             public static string FirstRunKey = "IsSeedingInitialDataCompleted";
         }
+
+        public static class LogIn
+        {
+            public const string SoftDeleteBtn = "Hide/Remove User (Soft Delete)";
+            public const string HardDeleteBtn = "Delete Permanently (Everything from device)";
+        }
     }
 }
