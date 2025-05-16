@@ -52,7 +52,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             if (page == null) return;
 
             string action = await page.DisplayActionSheet("Menu", "Cancel", null,
-                "Monthly Summary", "Settings", "Change Profile", "Logout");
+                "Monthly Summary", "Settings", "Switch Profile", "Logout");
 
             switch (action)
             {
@@ -62,7 +62,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 case "Settings":
                     await _appNavigator.NavigateToAsync<SettingsPage>();
                     break;
-                case "Change Profile":
+                case "Switch Profile":
                     await _appNavigator.PushModalAsync(() =>
                     {
                         var page = _serviceProvider.GetRequiredService<SwitchProfilePage>();

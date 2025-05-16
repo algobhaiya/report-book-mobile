@@ -7,7 +7,6 @@ using algoBhaiya.ReportBook.Presentation.Services;
 using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
-using Microsoft.Extensions.Logging;
 using SQLite;
 
 
@@ -85,10 +84,6 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddSingleton<SettingsPage>();
 
             builder.Services.AddSingleton<HelpPage>();
-
-#if DEBUG
-            builder.Logging.AddDebug();
-#endif
 
             return builder.Build();
         }

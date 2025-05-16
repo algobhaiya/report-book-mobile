@@ -4,7 +4,7 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.YearMonthPickerPopup"
              BackgroundColor="#80000000"
              Padding="40">
-    <Frame CornerRadius="20" Padding="20" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
+    <Frame CornerRadius="20" Padding="20" VerticalOptions="Center" HorizontalOptions="Center">
         <VerticalStackLayout Spacing="20">
 
             <Label Text="Select Year and Month" FontSize="20" HorizontalOptions="Center" />

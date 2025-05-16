@@ -8,7 +8,9 @@
         <VerticalStackLayout Padding="20" Spacing="15">
 
             <!-- Welcome Section -->
-            <Frame CornerRadius="20" BackgroundColor="#E3F2FD" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="👋 Productivity Tracker App!"
                            FontSize="20"
@@ -18,7 +20,9 @@
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#FFF8E1" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="Features (ফিচারস)"
                            FontSize="18"
@@ -33,7 +37,9 @@
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#E8F5E9" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="💡 যাদের জন্য এই অ্যাপ"
                            FontSize="18"
@@ -53,7 +59,9 @@
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#F3E5F5" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="যেভাবে অ্যাপটি ইউজ করতে হবে"
                            FontSize="18"
@@ -71,7 +79,9 @@
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#E0F7FA" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E0F7FA, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="Units"
                            FontSize="18"
@@ -90,7 +100,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#FFF3E0" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="🧩 Items"
                            FontSize="18"
@@ -114,7 +126,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#E3F2FD" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="🎯 Monthly Plan / Target"
                            FontSize="18"
@@ -131,7 +145,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Form -->
-            <Frame CornerRadius="20" BackgroundColor="#FFF8E1" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="📅 Daily Form"
                            FontSize="18"
@@ -155,7 +171,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#E8F5E9" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="📋 Menu Items"
                            FontSize="18"
@@ -170,7 +188,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Form -->
-            <Frame CornerRadius="20" BackgroundColor="#F3E5F5" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="📊 Monthly Summary"
                            FontSize="18"
@@ -192,7 +212,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Form -->
-            <Frame CornerRadius="20" BackgroundColor="#E0F7FA" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E0F7FA, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="⚙️ Settings"
                            FontSize="18"
@@ -206,7 +228,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#FFF3E0" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#FFF3E0, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="🔁 Change Profile"
                            FontSize="18"
@@ -216,7 +240,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#E3F2FD" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="🔒 Logout"
                            FontSize="18"
@@ -226,7 +252,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <!-- Daily Data Entry -->
-            <Frame CornerRadius="20" BackgroundColor="#F3E5F5" Padding="15">
+            <Frame CornerRadius="20" 
+                   BackgroundColor="{AppThemeBinding Light=#F3E5F5, Dark=#424242}"
+                   Padding="15">
                 <VerticalStackLayout>
                     <Label Text="🔐 Log In"
                            FontSize="18"
@@ -241,9 +269,9 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
             </Frame>
 
             <Frame CornerRadius="20"
-                   BackgroundColor="#FFF8E1"
                    Padding="15"
                    HasShadow="True"
+                   BackgroundColor="{AppThemeBinding Light=#FFF8E1, Dark=#424242}"
                    BorderColor="#FFD54F">
                 <VerticalStackLayout Spacing="5">
                     <Label Text="📞 Contact Info / যোগাযোগ"
@@ -254,7 +282,6 @@ DELETE : 🗑️ আইকন ক্লিক করে ডিলিট কর�
 
                     <Label Text="আপনার যেকোন ফিডব্যাক, ইস্যু, বাগ অথবা নতুন ফিচারের আইডিয়া আমাদের জানাতে পারেন:"
                            FontSize="16"
-                           TextColor="Black"
                            LineBreakMode="WordWrap" />
 
                     <HorizontalStackLayout Spacing="8">

@@ -5,7 +5,9 @@
              BackgroundColor="#80000000"
              Padding="30">
 
-    <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
+    <VerticalStackLayout Padding="20" Spacing="15" 
+                         BackgroundColor="{AppThemeBinding Light=White, Dark=#404040}" 
+                         VerticalOptions="Center" HorizontalOptions="Center">
         <Label Text="{Binding DisplayMonthTitle}" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
 
         <!-- Calendar Grid -->
