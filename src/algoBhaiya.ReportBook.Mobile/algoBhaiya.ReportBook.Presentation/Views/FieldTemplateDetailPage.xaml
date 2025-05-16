@@ -7,7 +7,6 @@
 
     <Frame CornerRadius="20"
            Padding="20"
-           BackgroundColor="White"
            VerticalOptions="Center"
            HorizontalOptions="Center"
            WidthRequest="{OnPlatform Android=0, iOS=0, WinUI=0}"

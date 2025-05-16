@@ -7,7 +7,9 @@
              Padding="40">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
+        <VerticalStackLayout Padding="20" Spacing="15" 
+                             BackgroundColor="{AppThemeBinding Light=White, Dark=#404040}" 
+                             VerticalOptions="Center" HorizontalOptions="Center">
             <Label Text="Choose a Profile" FontSize="20" FontAttributes="Bold" />
 
             <CollectionView 
