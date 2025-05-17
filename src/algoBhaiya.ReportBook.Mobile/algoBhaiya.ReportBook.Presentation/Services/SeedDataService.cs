@@ -38,7 +38,8 @@ namespace algoBhaiya.ReportBook.Presentation.Services
                         new FieldUnit { UnitName = "Count", ValueType = Constants.Constants.UnitType.Double },
                         new FieldUnit { UnitName = "Persons", ValueType = Constants.Constants.UnitType.Double },
                         new FieldUnit { UnitName = "Kg", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Km", ValueType = Constants.Constants.UnitType.Double }
+                        new FieldUnit { UnitName = "Km", ValueType = Constants.Constants.UnitType.Double },
+                        new FieldUnit { UnitName = "Times", ValueType = Constants.Constants.UnitType.Double }
                     };
 
                     if (defaultUnits.Count > 0 )
