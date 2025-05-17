@@ -18,14 +18,12 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Resources\Images\bars_solid.svg" />
+	  <None Remove="Resources\Images\house_solid.svg" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\bars_solid.svg" />
 	  <MauiImage Include="Resources\Images\book_solid.svg" />
 	  <MauiImage Include="Resources\Images\calendar_check_regular.svg" />
-	  <MauiImage Include="Resources\Images\house_solid.svg">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </MauiImage>
 	</ItemGroup>	
 
 	<ItemGroup>
