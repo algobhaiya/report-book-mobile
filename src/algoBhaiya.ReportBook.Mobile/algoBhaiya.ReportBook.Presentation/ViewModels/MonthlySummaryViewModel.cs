@@ -28,6 +28,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private DateTime _currentMonthDate;
+
         private bool _isNavigating = false;
         public ICommand ShowCalendarCommand { get; }
 
@@ -73,7 +75,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 MonthlySummaries.Add(record);
             }
-            
+
+            _currentMonthDate = new DateTime(year, month, 1);
             CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
         }
 
@@ -81,7 +84,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             await _appNavigator.PushModalAsync(() =>
             {
-                var page = new FilledDatesCalendarPage(item.FilledDates);
+                var page = new FilledDatesCalendarPage(item.FilledDates, _currentMonthDate);
                 return page;
             });
         }

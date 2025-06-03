@@ -12,10 +12,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private readonly Page _page;
 
-        public FilledDatesCalendarViewModel(List<DateTime> filledDates, Page page)
+        public FilledDatesCalendarViewModel(List<DateTime> filledDates, DateTime firstMonthDate, Page page)
         {
             _page = page;
-            DisplayMonth = DateTime.Today;
+            DisplayMonth = firstMonthDate;
             FilledDates = filledDates.Select(d => d.Date).ToHashSet();
 
             CloseCommand = new Command(async () => await _page.Navigation.PopModalAsync());
