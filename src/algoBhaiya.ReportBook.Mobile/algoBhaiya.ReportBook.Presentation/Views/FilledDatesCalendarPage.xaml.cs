@@ -4,10 +4,10 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 
 public partial class FilledDatesCalendarPage : ContentPage
 {
-    public FilledDatesCalendarPage(List<DateTime> filledDates)
+    public FilledDatesCalendarPage(List<DateTime> filledDates, DateTime firstMonthDate)
     {
         InitializeComponent();
-        var viewModel = new FilledDatesCalendarViewModel(filledDates, this);
+        var viewModel = new FilledDatesCalendarViewModel(filledDates, firstMonthDate, this);
         BindingContext = viewModel;
 
         GenerateCalendar(viewModel.DisplayMonth, viewModel.FilledDates);
