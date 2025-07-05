@@ -6,5 +6,5 @@
                android:supportsRtl="true" 
                android:label="Report Book"></application>	
 
-	<uses-sdk android:targetSdkVersion="34" />
+	<uses-sdk android:targetSdkVersion="35" />
 </manifest>

@@ -17,12 +17,12 @@
 		<ApplicationId>com.algobhaiya.reportbook.mobileapp</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationVersion>12</ApplicationVersion>  <!-- Internal platform version (required). Integer only -->
+		<ApplicationVersion>13</ApplicationVersion>  <!-- Internal platform version (required). Integer only -->
 		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion> <!-- Optional User-visible version. Semantic version (1.0.0) -->
-		<ApplicationVersionCode>12</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
+		<ApplicationVersionCode>13</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
 
-    <AndroidTargetSdkVersion>34</AndroidTargetSdkVersion>
-    <AndroidCompileSdkVersion>34</AndroidCompileSdkVersion>
+    <AndroidTargetSdkVersion>35</AndroidTargetSdkVersion>
+    <AndroidCompileSdkVersion>35</AndroidCompileSdkVersion>
     <AndroidMinSdkVersion>29</AndroidMinSdkVersion>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     
