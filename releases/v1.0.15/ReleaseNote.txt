@@ -1,0 +1,2 @@
+
+Updated the mobile app to .NET 9 for Android, including release packaging adjustments for Play Store bundles and Android build compatibility.
