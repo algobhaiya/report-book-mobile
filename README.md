@@ -33,6 +33,13 @@ Report Book Mobile is a productivity tracking application that helps users recor
 | v1.0.15 | [Download APK](https://github.com/algobhaiya/report-book-mobile/releases/download/v1.0.15/com.algobhaiya.reportbook.mobileapp_1.0.15.apk) | 09 July, 2026 |
 | v1.0.0 | [Download APK](https://github.com/algobhaiya/report-book-mobile/releases/download/v1.0.0/com.algobhaiya.reportbook.mobileapp_1.0.0.apk) | 10 July, 2025 |
 
+* Google Play: https://play.google.com/store/apps/details?id=com.algobhaiya.reportbook.mobileapp
+
+### 🎥 App Demo
+
+Watch the application demo on YouTube:
+https://www.youtube.com/watch?v=CDoREHWIV0M
+
 ### ⚠️ Notes
 
 * This is an ad-hoc release intended for testing and evaluation.
