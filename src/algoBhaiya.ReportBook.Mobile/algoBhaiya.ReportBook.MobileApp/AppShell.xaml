@@ -67,13 +67,31 @@
                     FontSize="14" 
                     TextColor="White"
                     VerticalOptions="Center" />
-                <ImageButton 
-                    Source="bars_solid.svg"
-                    Command="{Binding OpenMenuCommand}"
+                
+                <Border
+                    Stroke="#80FFFFFF"
+                    StrokeThickness="2"
                     BackgroundColor="Transparent"
-                    HeightRequest="24"
-                    WidthRequest="24"
-                    VerticalOptions="Center" />
+                    StrokeShape="RoundRectangle 4"
+                    HeightRequest="28"
+                    WidthRequest="28"
+                    Padding="0">
+
+                    <ImageButton
+                        Command="{Binding OpenMenuCommand}"
+                        BackgroundColor="Transparent"
+                        HeightRequest="24"
+                        WidthRequest="24"
+                        MinimumHeightRequest="24"
+                        MinimumWidthRequest="24"
+                        Padding="0"
+                        CornerRadius="4"
+                        Aspect="AspectFit">
+                        <ImageButton.Source>
+                            <FontImageSource Glyph="&#x2630;" Color="White" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                </Border>
             </HorizontalStackLayout>
         </Grid>
     </Shell.TitleView>
