@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
              Title="{Binding SelectedMonthLabel}">
-
     <Grid RowDefinitions="Auto,*" Padding="10">
         <!-- Header -->
         <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="0,5">
@@ -21,7 +20,8 @@
             </HorizontalStackLayout>
 
             <!-- Filter Buttons Row -->
-            <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+            <HorizontalStackLayout Spacing="4"
+                                   HorizontalOptions="Center">
                 <Button Text="📍 Today"
                         FontAttributes="Bold"
                         Clicked="OnTodayCalendarClicked"
