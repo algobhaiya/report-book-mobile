@@ -86,14 +86,30 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             
             foreach (var item in entries)
             {
+                var isCompleted = item.FilledCount >= item.TotalFields && item.TotalFields > 0;
+                var isIncomplete = item.FilledCount > 0 && item.FilledCount < item.TotalFields;
+
                 DailySummaries.Add(new DailyEntrySummaryViewModel
                 {
                     Date = item.Date,
                     DateString = item.Date.ToString("dd MMMM yyyy"),
                     FilledCount = item.FilledCount,
                     TotalCount = item.TotalFields,
-                    StatusText = item.FilledCount > 0 ? $"Filled: {item.FilledCount}/{item.TotalFields}" : $"Pending: 0/{item.TotalFields}",
-                    StatusIcon = item.FilledCount > 0 ? "green_check_mark.svg" : "pending_gray_status.png"
+                    StatusText = isCompleted
+                        ? $"Done: {item.FilledCount}/{item.TotalFields}"
+                        : isIncomplete
+                            ? $"Filled: {item.FilledCount}/{item.TotalFields}"
+                            : $"Pending: 0/{item.TotalFields}",
+                    StatusSupportText = isCompleted
+                        ? "Great job"
+                        : isIncomplete
+                            ? "Keep going"
+                            : "Start now",
+                    StatusIcon = isCompleted
+                        ? "green_check_mark.svg"
+                        : isIncomplete
+                            ? "list_check_solid.svg"
+                            : "pending_gray_status.svg"
                 });
             }
         }
