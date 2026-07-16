@@ -14,6 +14,7 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\bars_solid.svg" />
 	  <None Remove="Resources\Images\house_solid.svg" />
+	  <None Remove="Resources\Images\partial_half_circle.svg" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\book_solid.svg" />
@@ -25,6 +26,7 @@
 	  <MauiImage Include="Resources\Images\green_check_mark.svg" />
 	  <MauiImage Include="Resources\Images\layer_group_solid.svg" />
 	  <MauiImage Include="Resources\Images\list_check_solid.svg" />
+	  <MauiImage Include="Resources\Images\partial_half_circle.svg" />
 	  <MauiImage Include="Resources\Images\pending_gray_status.svg" />
 	</ItemGroup>
 

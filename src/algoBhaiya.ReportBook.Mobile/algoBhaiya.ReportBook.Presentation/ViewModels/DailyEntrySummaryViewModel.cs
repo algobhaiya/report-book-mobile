@@ -26,7 +26,7 @@
         public string StatusBadgeText => StatusState switch
         {
             DailyEntryStatusState.Completed => "Done",
-            DailyEntryStatusState.Incomplete => "Incomplete",
+            DailyEntryStatusState.Incomplete => "Partial",
             _ => "Pending"
         };
 
@@ -40,23 +40,24 @@
         public Color StatusBadgeBackgroundColor => StatusState switch
         {
             DailyEntryStatusState.Completed => Color.FromArgb("#E8F5E9"),
-            DailyEntryStatusState.Incomplete => Color.FromArgb("#EAF4FF"),
+            DailyEntryStatusState.Incomplete => Color.FromArgb("#EEF6FF"),
             _ => Color.FromArgb("#FFF8E1")
         };
 
         public Color StatusBadgeBorderColor => StatusState switch
         {
             DailyEntryStatusState.Completed => Color.FromArgb("#43A047"),
-            DailyEntryStatusState.Incomplete => Color.FromArgb("#7AAEE6"),
+            DailyEntryStatusState.Incomplete => Color.FromArgb("#8CBFEA"),
             _ => Color.FromArgb("#F9A825")
         };
 
         public Color StatusBadgeTextColor => StatusState switch
         {
             DailyEntryStatusState.Completed => Color.FromArgb("#1B5E20"),
-            DailyEntryStatusState.Incomplete => Color.FromArgb("#1E5FAF"),
+            DailyEntryStatusState.Incomplete => Color.FromArgb("#2A6DB0"),
             _ => Color.FromArgb("#7A5A00")
         };
+
     }
 
 }
