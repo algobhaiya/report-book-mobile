@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using algoBhaiya.ReportBook.Presentation.ViewModels;
 
 namespace algoBhaiya.ReportBook.Presentation.Views;
@@ -7,10 +6,10 @@ public partial class MenuSheetPage : ContentPage
 {
     private readonly AppShellViewModel _viewModel;
 
-    public MenuSheetPage(IServiceProvider serviceProvider)
+    public MenuSheetPage(AppShellViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = _viewModel = serviceProvider.GetRequiredService<AppShellViewModel>();
+        BindingContext = _viewModel = viewModel;
     }
 
     protected override async void OnAppearing()
@@ -30,9 +29,16 @@ public partial class MenuSheetPage : ContentPage
         }
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel.NotifyMenuClosed();
+    }
+
     private async Task CloseAsync()
     {
         await this.FadeTo(0, 100, Easing.CubicIn);
+        _viewModel.NotifyMenuClosed();
         await Shell.Current.Navigation.PopModalAsync();
     }
 

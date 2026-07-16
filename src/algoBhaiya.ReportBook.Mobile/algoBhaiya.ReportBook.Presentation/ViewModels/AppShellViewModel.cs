@@ -12,6 +12,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IAppNavigator _appNavigator;
+        private bool _isMenuOpen;
 
         public ICommand OpenMenuCommand { get; }
 
@@ -47,8 +48,28 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task OpenMenuAsync()
         {
-            await _appNavigator.PushModalAsync(() =>
-                new MenuSheetPage(_serviceProvider));
+            if (_isMenuOpen)
+            {
+                return;
+            }
+
+            _isMenuOpen = true;
+
+            try
+            {
+                await _appNavigator.PushModalAsync(() =>
+                    new MenuSheetPage(this));
+            }
+            catch
+            {
+                _isMenuOpen = false;
+                throw;
+            }
+        }
+
+        public void NotifyMenuClosed()
+        {
+            _isMenuOpen = false;
         }
 
         public async Task NavigateToMonthlySummaryAsync()
