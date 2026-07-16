@@ -69,21 +69,21 @@
                     VerticalOptions="Center" />
                 
                 <Border
-                    Stroke="#80FFFFFF"
+                    Stroke="#4DFFFFFF"
                     StrokeThickness="2"
-                    BackgroundColor="Transparent"
+                    BackgroundColor="#1AFFFFFF"
                     StrokeShape="RoundRectangle 4"
                     HeightRequest="28"
-                    WidthRequest="28"
+                    WidthRequest="32"
                     Padding="0">
 
                     <ImageButton
                         Command="{Binding OpenMenuCommand}"
                         BackgroundColor="Transparent"
                         HeightRequest="24"
-                        WidthRequest="24"
+                        WidthRequest="26"
                         MinimumHeightRequest="24"
-                        MinimumWidthRequest="24"
+                        MinimumWidthRequest="26"
                         Padding="0"
                         CornerRadius="4"
                         Aspect="AspectFit">

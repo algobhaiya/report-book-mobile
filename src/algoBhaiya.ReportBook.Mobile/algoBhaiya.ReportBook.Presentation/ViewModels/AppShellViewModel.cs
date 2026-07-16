@@ -38,49 +38,51 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _serviceProvider = serviceProvider;
             _appNavigator = appNavigator;
 
-            OpenMenuCommand = new Command(OpenMenu);
+            OpenMenuCommand = new Command(async () => await OpenMenuAsync());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private async void OpenMenu()
+        private async Task OpenMenuAsync()
+        {
+            await _appNavigator.PushModalAsync(() =>
+                new MenuSheetPage(_serviceProvider));
+        }
+
+        public async Task NavigateToMonthlySummaryAsync()
+        {
+            await _appNavigator.NavigateToAsync<MonthlySummaryPage>();
+        }
+
+        public async Task NavigateToSettingsAsync()
+        {
+            await _appNavigator.NavigateToAsync<SettingsPage>();
+        }
+
+        public async Task NavigateToSwitchProfileAsync()
+        {
+            await _appNavigator.PushModalAsync(() =>
+                _serviceProvider.GetRequiredService<SwitchProfilePage>());
+        }
+
+        public async Task LogoutAsync()
         {
             var page = Shell.Current?.CurrentPage;
-
-            if (page == null) return;
-
-            string action = await page.DisplayActionSheet("Menu", "Cancel", null,
-                "Monthly Summary", "Settings", "Switch Profile", "Logout");
-
-            switch (action)
+            if (page == null)
             {
-                case "Monthly Summary":
-                    await _appNavigator.NavigateToAsync<MonthlySummaryPage>();
-                    break;
-                case "Settings":
-                    await _appNavigator.NavigateToAsync<SettingsPage>();
-                    break;
-                case "Switch Profile":
-                    await _appNavigator.PushModalAsync(() =>
-                    {
-                        var page = _serviceProvider.GetRequiredService<SwitchProfilePage>();
-                        return page;
-                    });
-                    break;
-                case "Logout":
-                    // Optional: Confirm logout first
-                    bool confirm = await page.DisplayAlert("Confirm", "Logout?", "Yes", "No");
-                    if (confirm)
-                    {
-                        // Handle logout logic
-                        Preferences.Set("CurrentUserId", 0);
-
-                        _appNavigator.NavigateToLogin();
-                    }
-                    break;
+                return;
             }
+
+            bool confirm = await page.DisplayAlert("Logout", "Do you want to log out now?", "Yes", "No");
+            if (!confirm)
+            {
+                return;
+            }
+
+            Preferences.Set("CurrentUserId", 0);
+            _appNavigator.NavigateToLogin();
         }
 
         public async Task LoadUserNameAsync()
