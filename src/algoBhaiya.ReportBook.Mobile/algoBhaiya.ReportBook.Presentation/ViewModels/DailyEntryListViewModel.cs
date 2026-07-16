@@ -108,7 +108,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     StatusIcon = isCompleted
                         ? "green_check_mark.svg"
                         : isIncomplete
-                            ? "list_check_solid.svg"
+                            ? "partial_half_circle.svg"
                             : "pending_gray_status.svg"
                 });
             }
