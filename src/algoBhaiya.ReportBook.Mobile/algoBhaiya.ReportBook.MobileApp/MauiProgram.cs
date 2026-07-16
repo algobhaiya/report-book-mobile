@@ -80,6 +80,8 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<MonthlySummaryViewModel>();
             builder.Services.AddTransient<MonthlySummaryPage>();
 
+            builder.Services.AddTransient<MenuSheetPage>();
+
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddSingleton<SettingsPage>();
 

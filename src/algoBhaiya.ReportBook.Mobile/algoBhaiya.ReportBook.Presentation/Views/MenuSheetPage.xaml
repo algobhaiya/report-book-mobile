@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.MenuSheetPage"
+             BackgroundColor="#80000000"
+             Padding="0">
+    <Grid RowDefinitions="*,Auto">
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnBackdropTapped" />
+        </Grid.GestureRecognizers>
+
+        <Border Grid.Row="1"
+                Margin="0"
+                Padding="18,14,18,24"
+                BackgroundColor="{AppThemeBinding Light=White, Dark=#102A43}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24,24,0,0"
+                VerticalOptions="End">
+            <Border.Shadow>
+                <Shadow Brush="#33000000"
+                        Offset="0,-8"
+                        Radius="20"
+                        Opacity="0.30" />
+            </Border.Shadow>
+
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Menu"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#123B77, Dark=White}" />
+
+                <Border BackgroundColor="{AppThemeBinding Light=#F4F8FF, Dark=#17324A}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18">
+                    <VerticalStackLayout Padding="10" Spacing="8">
+                        <Border BackgroundColor="White"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="40,*,Auto"
+                                  Padding="14,14">
+                                <Label Text="📊"
+                                       FontSize="21"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="Monthly Summary"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="2"
+                                       Text="›"
+                                       FontSize="22"
+                                       TextColor="#90A4AE"
+                                       VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnMonthlySummaryTapped" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+
+                        <Border BackgroundColor="White"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="40,*,Auto"
+                                  Padding="14,14">
+                                <Label Text="⚙️"
+                                       FontSize="21"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="Settings"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="2"
+                                       Text="›"
+                                       FontSize="22"
+                                       TextColor="#90A4AE"
+                                       VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSettingsTapped" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+
+                        <Border BackgroundColor="White"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="40,*,Auto"
+                                  Padding="14,14">
+                                <Label Text="👤"
+                                       FontSize="21"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="Switch Profile"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="2"
+                                       Text="›"
+                                       FontSize="22"
+                                       TextColor="#90A4AE"
+                                       VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSwitchProfileTapped" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+
+                        <Border BackgroundColor="White"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16">
+                            <Grid ColumnDefinitions="40,*,Auto"
+                                  Padding="14,14">
+                                <Label Text="🚪"
+                                       FontSize="21"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center" />
+                                <Label Grid.Column="1"
+                                       Text="Logout"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="#B3261E"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="2"
+                                       Text="›"
+                                       FontSize="22"
+                                       TextColor="#D16A62"
+                                       VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnLogoutTapped" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
