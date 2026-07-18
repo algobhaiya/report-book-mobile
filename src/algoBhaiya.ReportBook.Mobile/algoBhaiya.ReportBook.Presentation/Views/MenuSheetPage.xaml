@@ -33,24 +33,26 @@
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 18">
                     <VerticalStackLayout Padding="10" Spacing="8">
-                        <Border BackgroundColor="White"
+                        <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#0F2236}"
                                 StrokeThickness="0"
                                 StrokeShape="RoundRectangle 16">
                             <Grid ColumnDefinitions="40,*,Auto"
                                   Padding="14,14">
                                 <Label Text="📊"
                                        FontSize="21"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#E5EEF8}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="Monthly Summary"
                                        FontAttributes="Bold"
                                        FontSize="16"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#F9FAFB}"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="2"
                                        Text="›"
                                        FontSize="22"
-                                       TextColor="#90A4AE"
+                                       TextColor="{AppThemeBinding Light=#90A4AE, Dark=#94A3B8}"
                                        VerticalOptions="Center" />
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnMonthlySummaryTapped" />
@@ -58,24 +60,26 @@
                             </Grid>
                         </Border>
 
-                        <Border BackgroundColor="White"
+                        <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#0F2236}"
                                 StrokeThickness="0"
                                 StrokeShape="RoundRectangle 16">
                             <Grid ColumnDefinitions="40,*,Auto"
                                   Padding="14,14">
                                 <Label Text="⚙️"
                                        FontSize="21"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#E5EEF8}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="Settings"
                                        FontAttributes="Bold"
                                        FontSize="16"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#F9FAFB}"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="2"
                                        Text="›"
                                        FontSize="22"
-                                       TextColor="#90A4AE"
+                                       TextColor="{AppThemeBinding Light=#90A4AE, Dark=#94A3B8}"
                                        VerticalOptions="Center" />
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnSettingsTapped" />
@@ -83,24 +87,26 @@
                             </Grid>
                         </Border>
 
-                        <Border BackgroundColor="White"
+                        <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#0F2236}"
                                 StrokeThickness="0"
                                 StrokeShape="RoundRectangle 16">
                             <Grid ColumnDefinitions="40,*,Auto"
                                   Padding="14,14">
                                 <Label Text="👤"
                                        FontSize="21"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#E5EEF8}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="Switch Profile"
                                        FontAttributes="Bold"
                                        FontSize="16"
+                                       TextColor="{AppThemeBinding Light=#123B77, Dark=#F9FAFB}"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="2"
                                        Text="›"
                                        FontSize="22"
-                                       TextColor="#90A4AE"
+                                       TextColor="{AppThemeBinding Light=#90A4AE, Dark=#94A3B8}"
                                        VerticalOptions="Center" />
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnSwitchProfileTapped" />
@@ -108,25 +114,26 @@
                             </Grid>
                         </Border>
 
-                        <Border BackgroundColor="White"
+                        <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#0F2236}"
                                 StrokeThickness="0"
                                 StrokeShape="RoundRectangle 16">
                             <Grid ColumnDefinitions="40,*,Auto"
                                   Padding="14,14">
                                 <Label Text="🚪"
                                        FontSize="21"
+                                       TextColor="{AppThemeBinding Light=#B3261E, Dark=#FCA5A5}"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="Logout"
                                        FontAttributes="Bold"
                                        FontSize="16"
-                                       TextColor="#B3261E"
+                                       TextColor="{AppThemeBinding Light=#B3261E, Dark=#FCA5A5}"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="2"
                                        Text="›"
                                        FontSize="22"
-                                       TextColor="#D16A62"
+                                       TextColor="{AppThemeBinding Light=#D16A62, Dark=#FCA5A5}"
                                        VerticalOptions="Center" />
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnLogoutTapped" />
