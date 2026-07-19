@@ -26,8 +26,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public SettingsViewModel()
         {
             // Load from Preferences or a config service
-            SelectedModificationDuration = Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
-            SelectedDataRemovalPeriod = Preferences.Get(Constants.Constants.Setting.DataRemovalPeriod, 6);
+            SelectedModificationDuration = Preferences.Get(Constants.Constants.Setting.ModificationDuration, 7);
+            SelectedDataRemovalPeriod = Preferences.Get(Constants.Constants.Setting.DataRemovalPeriod, 24);
 
             SaveSettingsCommand = new Command(SaveSettings);
         }
