@@ -10,10 +10,38 @@ public partial class LoginPage : ContentPage
     private readonly IRepository<AppUser> _repository;
     private readonly IServiceProvider _serviceProvider;
     private readonly IAppNavigator _appNavigator;
+    private bool _isLoading;
+    private bool _hasExistingUsers;
 
     public ObservableCollection<AppUser> ExistingUsers { get; set; } = new ();
     public Command<AppUser> UserTappedCommand { get; }
     public Command<AppUser> RemoveUserCommand { get; }
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            if (_isLoading == value)
+                return;
+
+            _isLoading = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool HasExistingUsers
+    {
+        get => _hasExistingUsers;
+        set
+        {
+            if (_hasExistingUsers == value)
+                return;
+
+            _hasExistingUsers = value;
+            OnPropertyChanged();
+        }
+    }
 
     public LoginPage(
         IRepository<AppUser> repository,
@@ -31,7 +59,7 @@ public partial class LoginPage : ContentPage
         {
             if (selectedUser != null)
             {
-                Preferences.Set("CurrentUserId", selectedUser.Id);
+                Preferences.Set(Constants.Constants.AppUser.CurrentUserId, selectedUser.Id);
 
                 await Navigation.PopAsync();
 
@@ -46,14 +74,9 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
 
-        ExistingUsers.Clear();
-
-        var users = await _repository.GetListAsync(u => !u.IsDeleted);        
-        foreach (var user in users)
-            ExistingUsers.Add(user);
+        await RefreshUsersAsync();
     }
 
-    // Login or register using input field
     private async void OnLoginClicked(object sender, EventArgs e)
     {
         string username = UsernameEntry.Text?.Trim();
@@ -86,11 +109,11 @@ public partial class LoginPage : ContentPage
             await _repository.UpdateAsync(user);
         }
 
-        Preferences.Set("CurrentUserId", user.Id);
+        Preferences.Set(Constants.Constants.AppUser.CurrentUserId, user.Id);
 
         await Navigation.PopAsync();
 
-        _appNavigator.NavigateToMainShell(); // ?? Login done, show shell
+        _appNavigator.NavigateToMainShell();
     }
 
     private async Task OnRemoveUserClicked(AppUser user)
@@ -114,12 +137,26 @@ public partial class LoginPage : ContentPage
                 break;
         }
 
-        // Refresh the user list        
-        ExistingUsers.Clear();
+        await RefreshUsersAsync();
+    }
 
-        var users = await _repository.GetListAsync(u => !u.IsDeleted);
-        foreach (var u in users)
-            ExistingUsers.Add(u);
+    private async Task RefreshUsersAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            ExistingUsers.Clear();
+
+            var users = await _repository.GetListAsync(u => !u.IsDeleted);
+            foreach (var user in users)
+                ExistingUsers.Add(user);
+
+            HasExistingUsers = ExistingUsers.Count > 0;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task DeleteUserPermanentlyAsync(AppUser user)
@@ -127,13 +164,6 @@ public partial class LoginPage : ContentPage
         var confirm = await DisplayAlert("Sure!", $"Delete '{user.UserName}' Permanently?", "Yes", "No");
         if (confirm)
         {
-            /*
-             delete daily items
-             delete monthly plans
-             delete Field templates
-             delete users
-             */
-
             var dailyRepo = _serviceProvider.GetRequiredService<IRepository<DailyEntry>>();
             var planRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
             var fieldRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
