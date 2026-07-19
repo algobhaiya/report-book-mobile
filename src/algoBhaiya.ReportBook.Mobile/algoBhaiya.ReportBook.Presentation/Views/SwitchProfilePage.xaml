@@ -2,31 +2,192 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             xmlns:helpers="clr-namespace:algoBhaiya.ReportBook.Presentation.Helpers;assembly=algoBhaiya.ReportBook.Presentation"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.SwitchProfilePage"
-             BackgroundColor="#80000000"
-             Padding="40">
+             x:Name="SwitchProfileRoot"
+             BackgroundColor="#99000000"
+             Padding="24">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15" 
-                             BackgroundColor="{AppThemeBinding Light=White, Dark=#404040}" 
-                             VerticalOptions="Center" HorizontalOptions="Center">
-            <Label Text="Choose a Profile" FontSize="20" FontAttributes="Bold" />
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:UserInitialsConverter x:Key="UserInitialsConverter" />
+            <local:ProfileSelectionConverter x:Key="ProfileSelectionConverter" />
+            <local:ProfileAccentColorConverter x:Key="ProfileAccentColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-            <CollectionView 
-                ItemsSource="{Binding Profiles}"
-                SelectionMode="Single" >
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="Gray" Padding="10" Margin="5" CornerRadius="10">
-                            <Label Text="{Binding UserName}" VerticalOptions="Center" FontSize="18"/>
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:SwitchProfilePage}}, Path=BindingContext.SelectUserCommand}" 
-                                    CommandParameter="{Binding .}"/>
-                            </Frame.GestureRecognizers>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
-    </ScrollView>
+    <Grid VerticalOptions="Center" HorizontalOptions="Center">
+        <Frame Padding="0"
+               CornerRadius="28"
+               HasShadow="True"
+               BackgroundColor="{AppThemeBinding Light=White, Dark=#202124}"
+               BorderColor="{AppThemeBinding Light=#E5E7EB, Dark=#3A3A3A}"
+               WidthRequest="360"
+               MaximumWidthRequest="420"
+               MinimumHeightRequest="560"
+               MaximumHeightRequest="680">
+
+            <Grid RowDefinitions="Auto,*,Auto" Padding="22" RowSpacing="16">
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Frame WidthRequest="52"
+                           HeightRequest="52"
+                           CornerRadius="26"
+                           Padding="0"
+                           HasShadow="False"
+                           BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#2A2F45}"
+                           BorderColor="Transparent"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center">
+                        <Label Text="&#x21C4;"
+                               FontSize="24"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#334155, Dark=#E5E7EB}" />
+                    </Frame>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                        <Label Text="Switch profile"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=White}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <CollectionView ItemsSource="{Binding Profiles}"
+                                    SelectionMode="None"
+                                    IsVisible="{Binding HasProfiles}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,12"
+                                        Padding="8"
+                                        StrokeShape="RoundRectangle 18"
+                                        Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#454B54}"
+                                        BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#23272E}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsCurrentProfile}" Value="True">
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#EFF6FF, Dark=#172554}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference SwitchProfileRoot}, Path=BindingContext.SelectUserCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                            <Grid WidthRequest="48"
+                                              HeightRequest="48"
+                                              VerticalOptions="Center">
+                                            <Frame CornerRadius="24"
+                                                   Padding="0"
+                                                   HasShadow="False"
+                                                   BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#334155}"
+                                                   BorderColor="Transparent">
+                                                <Label Text="{Binding UserName, Converter={StaticResource UserInitialsConverter}}"
+                                                       FontSize="16"
+                                                       FontAttributes="Bold"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"
+                                                       TextColor="{AppThemeBinding Light=#1D4ED8, Dark=White}" />
+                                            </Frame>
+
+                                            <Frame WidthRequest="18"
+                                                   HeightRequest="18"
+                                                   CornerRadius="9"
+                                                   Padding="0"
+                                                   HasShadow="False"
+                                                   BorderColor="White"
+                                                   BackgroundColor="#22C55E"
+                                                   HorizontalOptions="End"
+                                                   VerticalOptions="End">
+                                                <Frame.IsVisible>
+                                                    <Binding Path="IsCurrentProfile" />
+                                                </Frame.IsVisible>
+                                            </Frame>
+                                        </Grid>
+
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                                <Label Text="{Binding UserName}"
+                                                   FontSize="17"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{AppThemeBinding Light=#111827, Dark=White}" />
+
+                                            <Border StrokeShape="RoundRectangle 10"
+                                                    BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3A8A}"
+                                                    Padding="8,2">
+                                                <Border.IsVisible>
+                                                    <Binding Path="IsCurrentProfile" />
+                                                </Border.IsVisible>
+                                                <Label Text="Current"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+
+                                        <Label Grid.Column="2"
+                                               Text="&#x203A;"
+                                               FontSize="28"
+                                               TextColor="{AppThemeBinding Light=#94A3B8, Dark=#737373}"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="End" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <VerticalStackLayout IsVisible="{Binding ShowEmptyState}"
+                                         Spacing="14"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Padding="20">
+                        <Label Text="No profiles found"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=White}" />
+                        <Label Text="Create a profile from the login screen before switching."
+                               FontSize="13"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light=#6B7280, Dark=#A1A1AA}" />
+                        <Button Text="Refresh"
+                                Command="{Binding RefreshCommand}"
+                                BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#3B82F6}"
+                                TextColor="White"
+                                CornerRadius="14"
+                                Padding="18,12" />
+                    </VerticalStackLayout>
+
+                    <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                       IsRunning="{Binding IsLoading}"
+                                       Color="{AppThemeBinding Light=#2563EB, Dark=#60A5FA}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                </Grid>
+
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <Border StrokeShape="RoundRectangle 8"
+                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#252A31}"
+                            Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#3F4752}"
+                            Padding="12,8">
+                        <Label Text="Pick a profile to continue."
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}" />
+                    </Border>
+                    <Button Grid.Column="1"
+                            Text="Cancel"
+                            Clicked="OnCancelClicked"
+                            BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#334155}"
+                            TextColor="{AppThemeBinding Light=#111827, Dark=White}"
+                            CornerRadius="14"
+                            Padding="16,10" />
+                </Grid>
+            </Grid>
+        </Frame>
+    </Grid>
 </ContentPage>
