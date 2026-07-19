@@ -11,6 +11,9 @@ namespace algoBhaiya.ReportBook.Core.Entities
         public string UserName { get; set; }
         public string PasswordHash { get; set; } // Simplified login for local
         public bool IsDeleted { get; set; } = false;
+
+        [Ignore]
+        public bool IsCurrentProfile { get; set; }
     }
 
 }

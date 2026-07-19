@@ -5,6 +5,7 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class MenuSheetPage : ContentPage
 {
     private readonly AppShellViewModel _viewModel;
+    private bool _isClosingOrNavigating;
 
     public MenuSheetPage(AppShellViewModel viewModel)
     {
@@ -35,36 +36,59 @@ public partial class MenuSheetPage : ContentPage
         _viewModel.NotifyMenuClosed();
     }
 
-    private async Task CloseAsync()
+    private async Task<bool> TryCloseAsync()
     {
-        await this.FadeTo(0, 100, Easing.CubicIn);
-        _viewModel.NotifyMenuClosed();
-        await Shell.Current.Navigation.PopModalAsync();
+        if (_isClosingOrNavigating)
+        {
+            return false;
+        }
+
+        _isClosingOrNavigating = true;
+
+        try
+        {
+            await this.FadeTo(0, 100, Easing.CubicIn);
+            _viewModel.NotifyMenuClosed();
+            await Shell.Current.Navigation.PopModalAsync();
+            return true;
+        }
+        finally
+        {
+            _isClosingOrNavigating = false;
+        }
     }
 
-    private async void OnBackdropTapped(object sender, TappedEventArgs e) => await CloseAsync();
+    private async void OnBackdropTapped(object sender, TappedEventArgs e) => await TryCloseAsync();
 
     private async void OnMonthlySummaryTapped(object sender, TappedEventArgs e)
     {
-        await CloseAsync();
-        await _viewModel.NavigateToMonthlySummaryAsync();
+        if (await TryCloseAsync())
+        {
+            await _viewModel.NavigateToMonthlySummaryAsync();
+        }
     }
 
     private async void OnSettingsTapped(object sender, TappedEventArgs e)
     {
-        await CloseAsync();
-        await _viewModel.NavigateToSettingsAsync();
+        if (await TryCloseAsync())
+        {
+            await _viewModel.NavigateToSettingsAsync();
+        }
     }
 
     private async void OnSwitchProfileTapped(object sender, TappedEventArgs e)
     {
-        await CloseAsync();
-        await _viewModel.NavigateToSwitchProfileAsync();
+        if (await TryCloseAsync())
+        {
+            await _viewModel.NavigateToSwitchProfileAsync();
+        }
     }
 
     private async void OnLogoutTapped(object sender, TappedEventArgs e)
     {
-        await CloseAsync();
-        await _viewModel.LogoutAsync();
+        if (await TryCloseAsync())
+        {
+            await _viewModel.LogoutAsync();
+        }
     }
 }
