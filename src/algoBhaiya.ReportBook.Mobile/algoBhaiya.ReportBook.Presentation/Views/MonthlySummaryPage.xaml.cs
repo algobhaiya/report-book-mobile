@@ -4,11 +4,32 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 
 public partial class MonthlySummaryPage : ContentPage
 {
+    private bool _isInitialized = false;
+
 	public MonthlySummaryPage(MonthlySummaryViewModel vm)
 	{
 		InitializeComponent();
 		BindingContext = vm;
 	}
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (_isInitialized)
+        {
+            return;
+        }
+
+        if (BindingContext is MonthlySummaryViewModel vm)
+        {
+            _isInitialized = true;
+            if (!vm.HasLoadedMonth)
+            {
+                await vm.LoadDataAsync(DateTime.Today.Year, DateTime.Today.Month);
+            }
+        }
+    }
 
     private async void OnMonthCalendarClicked(object sender, EventArgs e)
     {

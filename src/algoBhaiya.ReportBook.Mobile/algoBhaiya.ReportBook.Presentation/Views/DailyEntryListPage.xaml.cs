@@ -5,13 +5,16 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class DailyEntryListPage : ContentPage
 {
     private readonly DailyEntryListViewModel _viewModel;
+    private readonly IServiceProvider _serviceProvider;
     private bool _isInitialized = false;
+    private bool _isOpeningMonthlySummary = false;
 
-    public DailyEntryListPage(DailyEntryListViewModel viewModel)
+    public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async void OnAppearing()
@@ -81,6 +84,31 @@ public partial class DailyEntryListPage : ContentPage
         if (BindingContext is DailyEntryListViewModel vm)
         {
             await vm.RefreshDailyEntriesAsync();
+        }
+    }
+
+    private async void OnMonthlySummaryClicked(object sender, EventArgs e)
+    {
+        if (_isOpeningMonthlySummary)
+        {
+            return;
+        }
+
+        try
+        {
+            _isOpeningMonthlySummary = true;
+
+            var monthlySummaryPage = _serviceProvider.GetRequiredService<MonthlySummaryPage>();
+            if (monthlySummaryPage.BindingContext is MonthlySummaryViewModel monthlySummaryVm)
+            {
+                await monthlySummaryVm.LoadDataAsync(_viewModel.SelectedMonthDate.Year, _viewModel.SelectedMonthDate.Month);
+            }
+
+            await Shell.Current.Navigation.PushAsync(monthlySummaryPage);
+        }
+        finally
+        {
+            _isOpeningMonthlySummary = false;
         }
     }
 
