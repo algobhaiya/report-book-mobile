@@ -50,9 +50,11 @@
 
         </VerticalStackLayout>
 
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding DailySummaries}"
-                        Margin="0,8,0,0">
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing, Mode=TwoWay}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding DailySummaries}"
+                            Margin="0,8,0,0">
             <CollectionView.Header>
                 <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
                         Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
@@ -265,7 +267,7 @@
                            FontSize="15" />
                 </StackLayout>
             </CollectionView.EmptyView>
-        </CollectionView>
+            </CollectionView>
+        </RefreshView>
     </Grid>
 </ContentPage>
-

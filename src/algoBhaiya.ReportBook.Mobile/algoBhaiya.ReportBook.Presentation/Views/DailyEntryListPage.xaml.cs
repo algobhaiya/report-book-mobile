@@ -36,6 +36,21 @@ public partial class DailyEntryListPage : ContentPage
                 }
             }
         }
+        else if (_viewModel.IsRefreshRequested)
+        {
+            try
+            {
+                await _viewModel.RefreshDailyEntriesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+            }
+            finally
+            {
+                _viewModel.ClearRefreshRequested();
+            }
+        }
     }
 
     private async void OnTodayCalendarClicked(object sender, EventArgs e)

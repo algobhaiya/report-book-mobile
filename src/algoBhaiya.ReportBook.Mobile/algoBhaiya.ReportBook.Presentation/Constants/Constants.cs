@@ -23,6 +23,7 @@
         public static class DailyEntry
         {
             public const string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
+            public const string Action_RefreshListOnReturn = "DailyEntry_Action_RefreshListOnReturn";
         }
 
         public static class AppUser
