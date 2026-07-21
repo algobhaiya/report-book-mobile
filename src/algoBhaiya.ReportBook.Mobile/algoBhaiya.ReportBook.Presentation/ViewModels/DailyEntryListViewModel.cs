@@ -16,6 +16,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
+        private const string RefreshFlagKey = Constants.Constants.DailyEntry.Action_RefreshListOnReturn;
 
         private string _selectedMonthLabel;
         public string SelectedMonthLabel 
@@ -214,6 +215,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
         public ICommand RefreshCommand { get; }
+        public bool IsRefreshRequested => _navDataService.Get<bool>(RefreshFlagKey);
 
         public DailyEntryListViewModel(
             IDailyEntryRepository repository,
@@ -391,6 +393,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 IsRefreshing = false;
             }
+        }
+
+        public void ClearRefreshRequested()
+        {
+            _navDataService.Remove(RefreshFlagKey);
         }
     }
 

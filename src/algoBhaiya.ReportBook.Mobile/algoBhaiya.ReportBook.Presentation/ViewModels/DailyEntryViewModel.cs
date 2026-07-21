@@ -158,6 +158,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 await _repository.SaveDailyEntryAsync(entry);
             }
 
+            _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
             
             await Shell.Current.Navigation.PopAsync();
