@@ -31,7 +31,171 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private int _completedDaysCount;
+        public int CompletedDaysCount
+        {
+            get => _completedDaysCount;
+            private set
+            {
+                if (_completedDaysCount != value)
+                {
+                    _completedDaysCount = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CompletedDaysText));
+                    OnPropertyChanged(nameof(HasCompletedDays));
+                }
+            }
+        }
+
+        private int _incompleteDaysCount;
+        public int IncompleteDaysCount
+        {
+            get => _incompleteDaysCount;
+            private set
+            {
+                if (_incompleteDaysCount != value)
+                {
+                    _incompleteDaysCount = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IncompleteDaysText));
+                    OnPropertyChanged(nameof(HasIncompleteDays));
+                }
+            }
+        }
+
+        private int _pendingDaysCount;
+        public int PendingDaysCount
+        {
+            get => _pendingDaysCount;
+            private set
+            {
+                if (_pendingDaysCount != value)
+                {
+                    _pendingDaysCount = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(PendingDaysText));
+                    OnPropertyChanged(nameof(HasPendingDays));
+                }
+            }
+        }
+
+        public string CompletedDaysText => CompletedDaysCount > 0 ? $"Completed: {CompletedDaysCount}" : string.Empty;
+        public string IncompleteDaysText => IncompleteDaysCount > 0 ? $"Partial: {IncompleteDaysCount}" : string.Empty;
+        public string PendingDaysText => PendingDaysCount > 0 ? $"Pending: {PendingDaysCount}" : string.Empty;
+        public bool HasCompletedDays => CompletedDaysCount > 0;
+        public bool HasIncompleteDays => IncompleteDaysCount > 0;
+        public bool HasPendingDays => PendingDaysCount > 0;
+
+        private int _todayFilledCount;
+        public int TodayFilledCount
+        {
+            get => _todayFilledCount;
+            private set
+            {
+                if (_todayFilledCount != value)
+                {
+                    _todayFilledCount = value;
+                    OnPropertyChanged(nameof(TodayProgressPercentText));
+                    OnPropertyChanged(nameof(TodayProgressRatio));
+                }
+            }
+        }
+
+        private int _todayTotalCount;
+        public int TodayTotalCount
+        {
+            get => _todayTotalCount;
+            private set
+            {
+                if (_todayTotalCount != value)
+                {
+                    _todayTotalCount = value;
+                    OnPropertyChanged(nameof(TodayProgressPercentText));
+                    OnPropertyChanged(nameof(TodayProgressRatio));
+                    OnPropertyChanged(nameof(HasTodayData));
+                }
+            }
+        }
+
+        public bool HasTodayData => TodayTotalCount > 0;
+        public double TodayProgressRatio => TodayTotalCount > 0
+            ? Math.Clamp((double)TodayFilledCount / TodayTotalCount, 0d, 1d)
+            : 0d;
+        public string TodayProgressPercentText => HasTodayData
+            ? $"{TodayProgressRatio:P0}"
+            : "0%";
+
+        private Color _todayProgressColor = Color.FromArgb("#8CBFEA");
+        public Color TodayProgressColor
+        {
+            get => _todayProgressColor;
+            private set
+            {
+                if (_todayProgressColor != value)
+                {
+                    _todayProgressColor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private Color _todayTrackColor = Color.FromArgb("#FFF8E1");
+        public Color TodayTrackColor
+        {
+            get => _todayTrackColor;
+            private set
+            {
+                if (_todayTrackColor != value)
+                {
+                    _todayTrackColor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _todayStatusText = "No entry yet";
+        public string TodayStatusText
+        {
+            get => _todayStatusText;
+            private set
+            {
+                if (_todayStatusText != value)
+                {
+                    _todayStatusText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _todayStatusSupportText = "Start now";
+        public string TodayStatusSupportText
+        {
+            get => _todayStatusSupportText;
+            private set
+            {
+                if (_todayStatusSupportText != value)
+                {
+                    _todayStatusSupportText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private DateTime _selectedMonthDate = DateTime.Today;
+        public DateTime SelectedMonthDate => _selectedMonthDate;
+        private bool _isCurrentMonth = true;
+        public bool IsCurrentMonth
+        {
+            get => _isCurrentMonth;
+            private set
+            {
+                if (_isCurrentMonth != value)
+                {
+                    _isCurrentMonth = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
@@ -76,20 +240,60 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             DailySummaries.Clear();
             byte userId = (byte) Preferences.Get("CurrentUserId", 0);
-            if (userId == 0) return;
+            if (userId == 0)
+            {
+                _selectedMonthDate = new DateTime(year, month, 1);
+                SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
+                IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
+                    && _selectedMonthDate.Month == DateTime.Today.Month;
+                CompletedDaysCount = 0;
+                IncompleteDaysCount = 0;
+                PendingDaysCount = 0;
+                TodayFilledCount = 0;
+                TodayTotalCount = 0;
+                TodayProgressColor = Color.FromArgb("#8CBFEA");
+                TodayTrackColor = Color.FromArgb("#FFF8E1");
+                TodayStatusText = "No entry yet";
+                TodayStatusSupportText = "Start now";
+                return;
+            }
 
             _selectedMonthDate = new DateTime(year, month, 1);
+            IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
+                && _selectedMonthDate.Month == DateTime.Today.Month;
 
             SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
             
             var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
+            var completedDays = 0;
+            var incompleteDays = 0;
+            var pendingDays = 0;
+            DailyEntrySummaryViewModel todayEntry = null;
             
             foreach (var item in entries)
             {
                 var isCompleted = item.FilledCount >= item.TotalFields && item.TotalFields > 0;
                 var isIncomplete = item.FilledCount > 0 && item.FilledCount < item.TotalFields;
+                var statusState = isCompleted
+                    ? DailyEntryStatusState.Completed
+                    : isIncomplete
+                        ? DailyEntryStatusState.Incomplete
+                        : DailyEntryStatusState.Pending;
 
-                DailySummaries.Add(new DailyEntrySummaryViewModel
+                switch (statusState)
+                {
+                    case DailyEntryStatusState.Completed:
+                        completedDays++;
+                        break;
+                    case DailyEntryStatusState.Incomplete:
+                        incompleteDays++;
+                        break;
+                    default:
+                        pendingDays++;
+                        break;
+                }
+
+                var summaryItem = new DailyEntrySummaryViewModel
                 {
                     Date = item.Date,
                     DateString = item.Date.ToString("dd MMMM yyyy"),
@@ -110,9 +314,43 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                         : isIncomplete
                             ? "partial_half_circle.svg"
                             : "pending_gray_status.svg"
-                });
+                };
+
+                if (item.Date.Date == DateTime.Today.Date)
+                {
+                    todayEntry = summaryItem;
+                }
+
+                DailySummaries.Add(summaryItem);
             }
+
+            CompletedDaysCount = completedDays;
+            IncompleteDaysCount = incompleteDays;
+            PendingDaysCount = pendingDays;
+
+            UpdateTodaySummary(todayEntry);
         }
+
+        private void UpdateTodaySummary(DailyEntrySummaryViewModel todayEntry)
+        {
+        if (todayEntry == null)
+        {
+            TodayFilledCount = 0;
+            TodayTotalCount = 0;
+            TodayProgressColor = Color.FromArgb("#8CBFEA");
+            TodayTrackColor = Color.FromArgb("#FFF8E1");
+            TodayStatusText = "No entry yet";
+            TodayStatusSupportText = "Start now";
+            return;
+        }
+
+        TodayFilledCount = todayEntry.FilledCount;
+        TodayTotalCount = todayEntry.TotalCount;
+        TodayProgressColor = todayEntry.StatusBadgeBorderColor;
+        TodayTrackColor = Color.FromArgb("#FFF8E1");
+        TodayStatusText = todayEntry.StatusText;
+        TodayStatusSupportText = todayEntry.StatusSupportText;
+    }
 
         public async Task OpenEntryAsync(DateTime date)
         {

@@ -29,6 +29,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         private DateTime _currentMonthDate;
+        private bool _hasLoadedMonth;
+        public bool HasLoadedMonth => _hasLoadedMonth;
 
         private bool _isNavigating = false;
         public ICommand ShowCalendarCommand { get; }
@@ -56,12 +58,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isNavigating = false;
                 }
             });
-
-            LoadDataAsync(DateTime.Today.Year, DateTime.Today.Month);            
         }
 
         public async Task LoadDataAsync(int year, int month)
         {
+            _hasLoadedMonth = true;
             MonthlySummaries.Clear();
 
             byte userId = (byte)Preferences.Get("CurrentUserId", 0);
