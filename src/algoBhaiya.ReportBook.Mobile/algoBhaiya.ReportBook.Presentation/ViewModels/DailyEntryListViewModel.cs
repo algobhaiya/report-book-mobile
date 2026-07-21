@@ -1,4 +1,4 @@
-﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBook.Presentation.Views;
 using System.Collections.ObjectModel;
@@ -197,8 +197,23 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private bool _isRefreshing = false;
+        public bool IsRefreshing
+        {
+            get => _isRefreshing;
+            private set
+            {
+                if (_isRefreshing != value)
+                {
+                    _isRefreshing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
+        public ICommand RefreshCommand { get; }
 
         public DailyEntryListViewModel(
             IDailyEntryRepository repository,
@@ -229,6 +244,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isNavigating = false;
                 }
             });
+
+            RefreshCommand = new Command(async () => await RefreshDailyEntriesAsync());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -365,7 +382,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public async Task RefreshDailyEntriesAsync()
         {
-            await LoadDailySummariesAsync(_selectedMonthDate.Year, _selectedMonthDate.Month);
+            IsRefreshing = true;
+            try
+            {
+                await LoadDailySummariesAsync(_selectedMonthDate.Year, _selectedMonthDate.Month);
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
         }
     }
 
