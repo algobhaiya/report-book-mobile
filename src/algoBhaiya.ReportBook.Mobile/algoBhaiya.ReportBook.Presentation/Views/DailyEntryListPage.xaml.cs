@@ -1,4 +1,4 @@
-using algoBhaiya.ReportBook.Presentation.ViewModels;
+﻿using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Helpers;
 using AppConstants = algoBhaiya.ReportBook.Presentation.Constants.Constants;
 
@@ -98,14 +98,6 @@ public partial class DailyEntryListPage : ContentPage
         return DateTime.TryParse(result, out var dt) ? dt : null;
     }
 
-    private async void OnRefreshClicked(object sender, EventArgs e)
-    {
-        if (BindingContext is DailyEntryListViewModel vm)
-        {
-            await vm.RefreshDailyEntriesAsync();
-        }
-    }
-
     private async void OnMonthlySummaryClicked(object sender, EventArgs e)
     {
         if (_isOpeningMonthlySummary)
@@ -132,3 +124,4 @@ public partial class DailyEntryListPage : ContentPage
     }
 
 }
+
