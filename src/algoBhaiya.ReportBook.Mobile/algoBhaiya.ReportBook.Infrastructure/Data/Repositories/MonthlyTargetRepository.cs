@@ -7,6 +7,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
     public class MonthlyTargetRepository : Repository<MonthlyTarget>, IMonthlyTargetRepository
     {
         private readonly SQLiteAsyncConnection _db;
+        private static readonly SemaphoreSlim _saveGate = new(1, 1);
 
         public MonthlyTargetRepository(SQLiteAsyncConnection connection) : base(connection)
         {
@@ -20,18 +21,31 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
         public async Task SaveMonthlyTargetAsync(MonthlyTarget target)
         {
-            var existing = await _db.Table<MonthlyTarget>()
-                .FirstOrDefaultAsync(t => t.UserId == target.UserId && t.FieldTemplateId == target.FieldTemplateId &&
-                                          t.Month == target.Month && t.Year == target.Year);
+            await _saveGate.WaitAsync();
+            try
+            {
+                var existing = await _db.Table<MonthlyTarget>()
+                    .Where(t => t.UserId == target.UserId &&
+                                t.FieldTemplateId == target.FieldTemplateId &&
+                                t.Month == target.Month &&
+                                t.Year == target.Year)
+                    .OrderByDescending(t => t.Id)
+                    .FirstOrDefaultAsync();
 
-            if (existing != null)
-            {
-                existing.TargetValue = target.TargetValue;
-                await _db.UpdateAsync(existing);
-            }
-            else
-            {
+                if (existing != null)
+                {
+                    existing.TargetValue = target.TargetValue;
+                    existing.FieldOrder = target.FieldOrder;
+                    existing.IsDeleted = target.IsDeleted;
+                    await _db.UpdateAsync(existing);
+                    return;
+                }
+
                 await _db.InsertAsync(target);
+            }
+            finally
+            {
+                _saveGate.Release();
             }
         }
 

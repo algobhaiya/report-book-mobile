@@ -1,4 +1,6 @@
 using algoBhaiya.ReportBook.Presentation.ViewModels;
+using algoBhaiya.ReportBook.Presentation.Helpers;
+using AppConstants = algoBhaiya.ReportBook.Presentation.Constants.Constants;
 
 namespace algoBhaiya.ReportBook.Presentation.Views;
 
@@ -6,15 +8,17 @@ public partial class DailyEntryListPage : ContentPage
 {
     private readonly DailyEntryListViewModel _viewModel;
     private readonly IServiceProvider _serviceProvider;
+    private readonly NavigationDataService _navDataService;
     private bool _isInitialized = false;
     private bool _isOpeningMonthlySummary = false;
 
-    public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider)
+    public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider, NavigationDataService navDataService)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
         _serviceProvider = serviceProvider;
+        _navDataService = navDataService;
     }
 
     protected override async void OnAppearing()
@@ -36,7 +40,7 @@ public partial class DailyEntryListPage : ContentPage
                 }
             }
         }
-        else if (_viewModel.IsRefreshRequested)
+        else if (_navDataService.Get<bool>(AppConstants.DailyEntry.Action_RefreshListOnReturn))
         {
             try
             {
@@ -48,7 +52,7 @@ public partial class DailyEntryListPage : ContentPage
             }
             finally
             {
-                _viewModel.ClearRefreshRequested();
+                _navDataService.Remove(AppConstants.DailyEntry.Action_RefreshListOnReturn);
             }
         }
     }

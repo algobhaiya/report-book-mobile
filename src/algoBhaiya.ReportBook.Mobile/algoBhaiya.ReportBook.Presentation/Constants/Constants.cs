@@ -18,6 +18,7 @@
         {
             public const string Item_ToEdit = "FieldTemplate_Item_ToEdit";
             public const string Action_OnUnitSaved = "FieldTemplate_Action_OnUnitSaved";
+            public const string Action_RefreshOnReturn = "FieldTemplate_Action_RefreshOnReturn";
         }
 
         public static class DailyEntry

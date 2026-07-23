@@ -77,6 +77,7 @@ public partial class FieldTemplatePage : ContentPage
                 }
 
                 Templates.Remove(field);
+                SetRefreshOnReturn();
             }
         });
        
@@ -162,6 +163,7 @@ public partial class FieldTemplatePage : ContentPage
                 await _repository.UpdateAsync(template); 
                 
                 await ChangeCurrentMonthlyTarget(template, !requestedState);
+                SetRefreshOnReturn();
             }
             else
             {
@@ -199,6 +201,7 @@ public partial class FieldTemplatePage : ContentPage
 
         await ChangeCurrentMonthlyTarget(oldField, true);
         await ChangeCurrentMonthlyTarget(newField, false);
+        SetRefreshOnReturn();
     }
 
     private async Task ChangeCurrentMonthlyTarget(FieldTemplate field, bool isDeleted)
@@ -246,5 +249,11 @@ public partial class FieldTemplatePage : ContentPage
                 .GetRequiredService<IRepository<MonthlyTarget>>()
                 .AddAsync(plan);
         }
+    }
+
+    private void SetRefreshOnReturn()
+    {
+        _navDataService.Set(Constants.Constants.FieldTemplate.Action_RefreshOnReturn, true);
+        _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
     }
 }
