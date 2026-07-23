@@ -4,73 +4,118 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
              Title="Daily Report">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20" Spacing="15">
+                <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                        Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#1F2937}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="10,8">
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          ColumnSpacing="10"
+                          VerticalOptions="Center">
+                        <Button Text="&#x276E;"
+                                Clicked="OnPreviousDayClicked"
+                                BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1F2937}"
+                                TextColor="{AppThemeBinding Light=#1F2937, Dark=#F9FAFB}"
+                                CornerRadius="16"
+                                Padding="12,8"
+                                WidthRequest="48"
+                                HeightRequest="44"
+                                FontAttributes="Bold" />
 
-            <!-- Date Display -->
-            <Label Text="{Binding FormDate, StringFormat='Fill up for {0:MMMM dd, yyyy}'}"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="DarkSlateBlue" />
-
-            <!-- Dynamic Form Fields -->
-            <CollectionView ItemsSource="{Binding Fields}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnSpacing="10" Padding="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" />
-                                <!-- FieldName: 50% -->
-                                <ColumnDefinition Width="3*" />
-                                <!-- Input: 30% -->
-                                <ColumnDefinition Width="2*" />
-                                <!-- Unit: 20% -->
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Field Name -->
-                            <Label Grid.Column="0"
-                                   Text="{Binding FieldTemplate.FieldName}"
+                        <VerticalStackLayout Grid.Column="1"
+                                             Spacing="2"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center">
+                            <Label Text="{Binding FormDate, StringFormat='Fill up for {0:MMMM dd, yyyy}'}"
+                                   FontSize="18"
                                    FontAttributes="Bold"
-                                   VerticalOptions="Center" />
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="DarkSlateBlue" />
+                        </VerticalStackLayout>
 
-                            <!-- Input -->
-                            <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Entry Placeholder="Enter value"
-                                       Keyboard="Numeric"
-                                       HorizontalTextAlignment="Center"
-                                       Text="{Binding Value, Mode=TwoWay}" 
-                                       IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
+                        <Button Grid.Column="2"
+                                Text="&#x276F;"
+                                Clicked="OnNextDayClicked"
+                                BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1F2937}"
+                                TextColor="{AppThemeBinding Light=#1F2937, Dark=#F9FAFB}"
+                                CornerRadius="16"
+                                Padding="12,8"
+                                WidthRequest="48"
+                                HeightRequest="44"
+                                FontAttributes="Bold" />
+                    </Grid>
+                </Border>
 
-                                <CheckBox IsChecked="{Binding Value, Mode=TwoWay}"
-                                          IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=bool}" />
-                            </StackLayout>
+                <CollectionView ItemsSource="{Binding Fields}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnSpacing="10" Padding="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="2*" />
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Unit -->
-                            <Label Grid.Column="2"
-                                   Text="{Binding FieldTemplate.Unit.UnitName}"
-                                   FontAttributes="Italic"
-                                   TextColor="Gray"
-                                   VerticalOptions="Center"
-                                   HorizontalTextAlignment="Start" />
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                <Label Grid.Column="0"
+                                       Text="{Binding FieldTemplate.FieldName}"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="Center" />
 
-            <!-- Submit -->
+                                <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Entry Placeholder="Enter value"
+                                           Keyboard="Numeric"
+                                           HorizontalTextAlignment="Center"
+                                           Text="{Binding Value, Mode=TwoWay}"
+                                           IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
+
+                                    <CheckBox IsChecked="{Binding Value, Mode=TwoWay}"
+                                              IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=bool}" />
+                                </StackLayout>
+
+                                <Label Grid.Column="2"
+                                       Text="{Binding FieldTemplate.Unit.UnitName}"
+                                       FontAttributes="Italic"
+                                       TextColor="Gray"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Start" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="This entry is locked and can't be edited."
+                       HorizontalOptions="Center"
+                       TextColor="Red"
+                       FontAttributes="Italic"
+                       FontSize="12"
+                       IsVisible="{Binding IsReadOnly}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1"
+                Padding="20,12"
+                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}"
+                StrokeThickness="0">
             <Button Text="Submit Entry"
                     Command="{Binding SubmitCommand}"
                     IsEnabled="{Binding CanSubmit}"
+                    IsVisible="{Binding CanSubmit}"
                     BackgroundColor="#4CAF50"
                     TextColor="White" />
+        </Border>
 
-            <Label Text="This entry is locked and can’t be edited."
-                   TextColor="Red"
-                   FontAttributes="Italic"
-                   FontSize="12"
-                   IsVisible="{Binding IsReadOnly}" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+        <Grid Grid.RowSpan="2"
+              IsVisible="{Binding IsLoading}"
+              BackgroundColor="#66000000"
+              InputTransparent="False">
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                               IsRunning="{Binding IsLoading}"
+                               Color="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+        </Grid>
+    </Grid>
 </ContentPage>
