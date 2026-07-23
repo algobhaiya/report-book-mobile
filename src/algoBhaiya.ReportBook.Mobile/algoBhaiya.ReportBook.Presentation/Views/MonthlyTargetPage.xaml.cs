@@ -70,12 +70,4 @@ public partial class MonthlyTargetPage : ContentPage
         await Navigation.PopModalAsync();
     }
 
-    private async void OnRefreshClicked(object sender, EventArgs e)
-    {
-        if (BindingContext is MonthlyTargetViewModel vm)
-        {
-            await vm.RefreshTargetsAsync();
-        }
-    }
-
 }
