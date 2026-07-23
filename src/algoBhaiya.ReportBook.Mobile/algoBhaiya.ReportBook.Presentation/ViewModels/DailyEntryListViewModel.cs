@@ -1,5 +1,6 @@
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Helpers;
+using AppConstants = algoBhaiya.ReportBook.Presentation.Constants.Constants;
 using algoBhaiya.ReportBook.Presentation.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,7 +17,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IDailyEntryRepository _repository;
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
-        private const string RefreshFlagKey = Constants.Constants.DailyEntry.Action_RefreshListOnReturn;
+        private const string RefreshFlagKey = AppConstants.DailyEntry.Action_RefreshListOnReturn;
 
         private string _selectedMonthLabel;
         public string SelectedMonthLabel 
@@ -212,6 +213,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private bool _isLoadingData = false;
+
         private bool _isNavigating = false;
         public ICommand OpenEntryCommand { get; }
         public ICommand RefreshCommand { get; }
@@ -236,7 +239,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isNavigating = true;
 
                     // Passing the LoadingDateTime
-                    _navDataService.Set(Constants.Constants.DailyEntry.Item_SelectedDate, selectedItem.Date);
+                    _navDataService.Set(AppConstants.DailyEntry.Item_SelectedDate, selectedItem.Date);
 
                     var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
                     await Shell.Current.Navigation.PushAsync(dailyEntryPage);
@@ -257,97 +260,110 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task LoadDailySummariesAsync(int year, int month)
         {
-            DailySummaries.Clear();
-            byte userId = (byte) Preferences.Get("CurrentUserId", 0);
-            if (userId == 0)
+            if (_isLoadingData)
             {
-                _selectedMonthDate = new DateTime(year, month, 1);
-                SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
-                IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
-                    && _selectedMonthDate.Month == DateTime.Today.Month;
-                CompletedDaysCount = 0;
-                IncompleteDaysCount = 0;
-                PendingDaysCount = 0;
-                TodayFilledCount = 0;
-                TodayTotalCount = 0;
-                TodayProgressColor = Color.FromArgb("#8CBFEA");
-                TodayTrackColor = Color.FromArgb("#FFF8E1");
-                TodayStatusText = "No entry yet";
-                TodayStatusSupportText = "Start now";
                 return;
             }
 
-            _selectedMonthDate = new DateTime(year, month, 1);
-            IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
-                && _selectedMonthDate.Month == DateTime.Today.Month;
-
-            SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
-            
-            var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
-            var completedDays = 0;
-            var incompleteDays = 0;
-            var pendingDays = 0;
-            DailyEntrySummaryViewModel todayEntry = null;
-            
-            foreach (var item in entries)
+            _isLoadingData = true;
+            DailySummaries.Clear();
+            try
             {
-                var isCompleted = item.FilledCount >= item.TotalFields && item.TotalFields > 0;
-                var isIncomplete = item.FilledCount > 0 && item.FilledCount < item.TotalFields;
-                var statusState = isCompleted
-                    ? DailyEntryStatusState.Completed
-                    : isIncomplete
-                        ? DailyEntryStatusState.Incomplete
-                        : DailyEntryStatusState.Pending;
-
-                switch (statusState)
+                byte userId = (byte) Preferences.Get("CurrentUserId", 0);
+                if (userId == 0)
                 {
-                    case DailyEntryStatusState.Completed:
-                        completedDays++;
-                        break;
-                    case DailyEntryStatusState.Incomplete:
-                        incompleteDays++;
-                        break;
-                    default:
-                        pendingDays++;
-                        break;
+                    _selectedMonthDate = new DateTime(year, month, 1);
+                    SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
+                    IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
+                        && _selectedMonthDate.Month == DateTime.Today.Month;
+                    CompletedDaysCount = 0;
+                    IncompleteDaysCount = 0;
+                    PendingDaysCount = 0;
+                    TodayFilledCount = 0;
+                    TodayTotalCount = 0;
+                    TodayProgressColor = Color.FromArgb("#8CBFEA");
+                    TodayTrackColor = Color.FromArgb("#FFF8E1");
+                    TodayStatusText = "No entry yet";
+                    TodayStatusSupportText = "Start now";
+                    return;
                 }
 
-                var summaryItem = new DailyEntrySummaryViewModel
-                {
-                    Date = item.Date,
-                    DateString = item.Date.ToString("dd MMMM yyyy"),
-                    FilledCount = item.FilledCount,
-                    TotalCount = item.TotalFields,
-                    StatusText = isCompleted
-                        ? $"Done: {item.FilledCount}/{item.TotalFields}"
-                        : isIncomplete
-                            ? $"Filled: {item.FilledCount}/{item.TotalFields}"
-                            : $"Pending: 0/{item.TotalFields}",
-                    StatusSupportText = isCompleted
-                        ? "Great job"
-                        : isIncomplete
-                            ? "Keep going"
-                            : "Start now",
-                    StatusIcon = isCompleted
-                        ? "green_check_mark.svg"
-                        : isIncomplete
-                            ? "partial_half_circle.svg"
-                            : "pending_gray_status.svg"
-                };
+                _selectedMonthDate = new DateTime(year, month, 1);
+                IsCurrentMonth = _selectedMonthDate.Year == DateTime.Today.Year
+                    && _selectedMonthDate.Month == DateTime.Today.Month;
 
-                if (item.Date.Date == DateTime.Today.Date)
+                SelectedMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
+                
+                var entries = await _repository.GetMonthlyEntrySummaryAsync(userId, year, month);
+                var completedDays = 0;
+                var incompleteDays = 0;
+                var pendingDays = 0;
+                DailyEntrySummaryViewModel todayEntry = null;
+                
+                foreach (var item in entries)
                 {
-                    todayEntry = summaryItem;
+                    var isCompleted = item.FilledCount >= item.TotalFields && item.TotalFields > 0;
+                    var isIncomplete = item.FilledCount > 0 && item.FilledCount < item.TotalFields;
+                    var statusState = isCompleted
+                        ? DailyEntryStatusState.Completed
+                        : isIncomplete
+                            ? DailyEntryStatusState.Incomplete
+                            : DailyEntryStatusState.Pending;
+
+                    switch (statusState)
+                    {
+                        case DailyEntryStatusState.Completed:
+                            completedDays++;
+                            break;
+                        case DailyEntryStatusState.Incomplete:
+                            incompleteDays++;
+                            break;
+                        default:
+                            pendingDays++;
+                            break;
+                    }
+
+                    var summaryItem = new DailyEntrySummaryViewModel
+                    {
+                        Date = item.Date,
+                        DateString = item.Date.ToString("dd MMMM yyyy"),
+                        FilledCount = item.FilledCount,
+                        TotalCount = item.TotalFields,
+                        StatusText = isCompleted
+                            ? $"Done: {item.FilledCount}/{item.TotalFields}"
+                            : isIncomplete
+                                ? $"Filled: {item.FilledCount}/{item.TotalFields}"
+                                : $"Pending: 0/{item.TotalFields}",
+                        StatusSupportText = isCompleted
+                            ? "Great job"
+                            : isIncomplete
+                                ? "Keep going"
+                                : "Start now",
+                        StatusIcon = isCompleted
+                            ? "green_check_mark.svg"
+                            : isIncomplete
+                                ? "partial_half_circle.svg"
+                                : "pending_gray_status.svg"
+                    };
+
+                    if (item.Date.Date == DateTime.Today.Date)
+                    {
+                        todayEntry = summaryItem;
+                    }
+
+                    DailySummaries.Add(summaryItem);
                 }
 
-                DailySummaries.Add(summaryItem);
+                CompletedDaysCount = completedDays;
+                IncompleteDaysCount = incompleteDays;
+                PendingDaysCount = pendingDays;
+
+                UpdateTodaySummary(todayEntry);
             }
-
-            CompletedDaysCount = completedDays;
-            IncompleteDaysCount = incompleteDays;
-            PendingDaysCount = pendingDays;
-
-            UpdateTodaySummary(todayEntry);
+            finally
+            {
+                _isLoadingData = false;
+            }
         }
 
         private void UpdateTodaySummary(DailyEntrySummaryViewModel todayEntry)

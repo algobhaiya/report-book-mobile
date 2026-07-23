@@ -39,6 +39,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public Command SubmitCommand { get; }
 
+        private bool _isLoadingData = false;
         private bool _isReadOnly = false;
         public bool IsReadOnly
         {
@@ -82,38 +83,43 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             SubmitCommand = new Command(async () => await SaveTargetsAsync());
 
             _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
-
-            LoadTargetsAsync(DateTime.Today.Year, DateTime.Today.Month);
         }
 
         public async Task LoadTargetsAsync(int year, int month)
         {
-            Fields.Clear();
-            
-            if (_loggedInUser == 0) return;
-
-            _selectedItemDate = new DateTime(year, month, 1);
-
-            IsReadOnly = IsNonEditableMonth(year, month);
-
-            var templatesTask = _serviceProvider
-                .GetRequiredService<IRepository<FieldTemplate>>()
-                .GetListAsync(t => t.UserId == _loggedInUser);
-
-            var unitsTask = _serviceProvider
-                .GetRequiredService<IRepository<FieldUnit>>()
-                .GetAllAsync();
-
-            var targetsTask = _repository.GetMonthlyTargetsAsync(_loggedInUser, year, month);
-
-            await Task.WhenAll(templatesTask, unitsTask, targetsTask);
-
-            var templates = templatesTask.Result;
-            var units = unitsTask.Result;
-            var targets = targetsTask.Result;
-
-            if (IsReadOnly)
+            if (_isLoadingData)
             {
+                return;
+            }
+
+            _isLoadingData = true;
+            Fields.Clear();
+            try
+            {
+                if (_loggedInUser == 0) return;
+
+                _selectedItemDate = new DateTime(year, month, 1);
+
+                IsReadOnly = IsNonEditableMonth(year, month);
+
+                var templatesTask = _serviceProvider
+                    .GetRequiredService<IRepository<FieldTemplate>>()
+                    .GetListAsync(t => t.UserId == _loggedInUser);
+
+                var unitsTask = _serviceProvider
+                    .GetRequiredService<IRepository<FieldUnit>>()
+                    .GetAllAsync();
+
+                var targetsTask = _repository.GetMonthlyTargetsAsync(_loggedInUser, year, month);
+
+                await Task.WhenAll(templatesTask, unitsTask, targetsTask);
+
+                var templates = templatesTask.Result;
+                var units = unitsTask.Result;
+                var targets = targetsTask.Result;
+
+                if (IsReadOnly)
+                {
                 // Based on Fixed template
                 targets = targets
                     .Where(t => t.IsDeleted == false)
@@ -121,22 +127,22 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     .ToList();
 
                 foreach (var item in targets)
-                {
-                    var template = templates.FirstOrDefault(t => t.Id == item.FieldTemplateId);
-                    var unit = units.FirstOrDefault(u => u.Id == template.UnitId);                  
-
-                    Fields.Add(new MonthlyTargetFieldViewModel
                     {
-                        FieldTemplateId = item.FieldTemplateId,
-                        FieldName = template.FieldName,
-                        ValueType = template.ValueType,
-                        UnitName = unit?.UnitName ?? "",
+                        var template = templates.FirstOrDefault(t => t.Id == item.FieldTemplateId);
+                        var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
+
+                        Fields.Add(new MonthlyTargetFieldViewModel
+                        {
+                            FieldTemplateId = item.FieldTemplateId,
+                            FieldName = template.FieldName,
+                            ValueType = template.ValueType,
+                            UnitName = unit?.UnitName ?? "",
                         TargetValue = item?.TargetValue ?? ""
-                    });
+                        });
+                    }
                 }
-            }
-            else
-            {
+                else
+                {
                 // Based on Dynamic current template
                 templates = templates
                     .Where(t => 
@@ -146,23 +152,28 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     .OrderBy(t => t.FieldOrder);
 
                 foreach (var template in templates)
-                {
-                    var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
-                    var target = targets.FirstOrDefault(t => t.FieldTemplateId == template.Id);
-
-                    Fields.Add(new MonthlyTargetFieldViewModel
                     {
-                        FieldTemplateId = template.Id,
-                        FieldName = template.FieldName,
-                        ValueType = template.ValueType,
-                        FieldOrder = template.FieldOrder,
-                        UnitName = unit?.UnitName ?? "",
-                        TargetValue = target?.TargetValue ?? ""
-                    });
-                }
-            }
+                        var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
+                        var target = targets.FirstOrDefault(t => t.FieldTemplateId == template.Id);
 
-            CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";           
+                        Fields.Add(new MonthlyTargetFieldViewModel
+                        {
+                            FieldTemplateId = template.Id,
+                            FieldName = template.FieldName,
+                            ValueType = template.ValueType,
+                            FieldOrder = template.FieldOrder,
+                            UnitName = unit?.UnitName ?? "",
+                            TargetValue = target?.TargetValue ?? ""
+                        });
+                    }
+                }
+                
+                CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
+            }
+            finally
+            {
+                _isLoadingData = false;
+            }
         }
 
         public async Task SaveTargetsAsync()
