@@ -1,144 +1,222 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
-             xmlns:viewModels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlySummaryPage"
-             Title="Monthly Summary">
+             Title="Monthly Summary"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#0F172A}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="16" Spacing="12">
-            <!-- Search Row -->
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="FillAndExpand">
-                <Label Text="Search"
-                       FontAttributes="Italic"
-                       FontSize="15"
-                       VerticalOptions="Center" />
-
-                <!-- Filter Buttons Row -->
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Grid Grid.Row="0"
+              Padding="16,14,16,10"
+              RowSpacing="10">
+            <Grid ColumnDefinitions="Auto,*"
+                  ColumnSpacing="10"
+                  VerticalOptions="Center">
                 <Button Text="🗓️ By Month"
-                        FontAttributes="Bold"
                         Clicked="OnMonthCalendarClicked"
+                        FontAttributes="Bold"
                         BackgroundColor="#f0f0f0"
                         TextColor="Black"
                         CornerRadius="20"
                         Padding="10,5"
-                        FontSize="14"
-                        MaximumHeightRequest="50"/>
+                        FontSize="13"
+                        MaximumHeightRequest="50" />
 
-                <Frame CornerRadius="12"
-                       BackgroundColor="#E0F2F1"
-                       BorderColor="#4CAF50"
-                       Padding="13"
-                       HasShadow="False"
-                       Margin="0,5,0,5">
-                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
-                        <Label Text="Month:" 
-                               FontAttributes="Italic"
-                               FontSize="13"
-                               VerticalOptions="Center"
-                               TextColor="#2E7D32" />
-                        <Label Text="{Binding CurrentMonthLabel}" 
+                <Border Grid.Column="1"
+                        StrokeShape="RoundRectangle 18"
+                        Stroke="#4CAF50"
+                        BackgroundColor="#E0F2F1"
+                        Padding="10,8">
+                    <Grid ColumnDefinitions="44,*,44"
+                          ColumnSpacing="8"
+                          VerticalOptions="Center">
+                        <Button Text="‹"
+                                Command="{Binding PreviousMonthCommand}"
+                                BackgroundColor="#f0f0f0"
+                                TextColor="Black"
+                                CornerRadius="14"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                WidthRequest="44"
+                                HeightRequest="40"
+                                Padding="0" />
+
+                        <Label Grid.Column="1"
+                               Text="{Binding CurrentMonthLabel}"
+                               FontSize="16"
                                FontAttributes="Bold"
-                               FontSize="15"
-                               TextColor="#1B5E20"                          
-                               Padding="1,4" />
-                    </HorizontalStackLayout>
-                </Frame>
-            </HorizontalStackLayout>
-            
-            <!-- Title Row -->
-            <Grid ColumnSpacing="10" RowSpacing="6" Padding="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="1.0*" />
-                    <ColumnDefinition Width="1.3*" />
-                    <ColumnDefinition Width="1.3*" />
-                    <ColumnDefinition Width="1.0*" />
-                </Grid.ColumnDefinitions>
+                               TextColor="#1B5E20"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
 
-                <Label Text="Item Name" FontAttributes="Bold" />
-                <Label Text="Days" Grid.Column="1" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="Sum" Grid.Column="2" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="Avg" Grid.Column="3" FontAttributes="Bold" HorizontalOptions="Center" />
-                <Label Text="(%)" Grid.Column="4" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Button Grid.Column="2"
+                                Text="›"
+                                Command="{Binding NextMonthCommand}"
+                                BackgroundColor="#f0f0f0"
+                                TextColor="Black"
+                                CornerRadius="14"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                WidthRequest="44"
+                                HeightRequest="40"
+                                Padding="0" />
+                    </Grid>
+                </Border>
             </Grid>
+        </Grid>
 
-            <!-- Summary Rows -->
-            <CollectionView x:Name="SummaryCollectionView" ItemsSource="{Binding MonthlySummaries}" SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnSpacing="10" Padding="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="1.0*" />
-                                <ColumnDefinition Width="1.3*" />
-                                <ColumnDefinition Width="1.3*" />
-                                <ColumnDefinition Width="1.0*" />
-                            </Grid.ColumnDefinitions>
+        <Border Grid.Row="1"
+                StrokeShape="RoundRectangle 14"
+                Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#243244}"
+                BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                Padding="10,8"
+                Margin="16,0,16,8">
+            <Grid ColumnDefinitions="3*,1*,1.2*,1.2*,1*"
+                  ColumnSpacing="8">
+                <Label Text="Item Name"
+                       FontAttributes="Bold"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                <Label Grid.Column="1"
+                       Text="Days"
+                       FontAttributes="Bold"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                <Label Grid.Column="2"
+                       Text="Sum"
+                       FontAttributes="Bold"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                <Label Grid.Column="3"
+                       Text="Avg"
+                       FontAttributes="Bold"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                <Label Grid.Column="4"
+                       Text="(%)"
+                       FontAttributes="Bold"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+            </Grid>
+        </Border>
 
-                            <!-- Item Name -->
-                            <VerticalStackLayout Grid.Column="0" Spacing="2">
-                                <Label Text="{Binding ItemName}"
+        <CollectionView Grid.Row="2"
+                        x:Name="SummaryCollectionView"
+                        ItemsSource="{Binding MonthlySummaries}"
+                        SelectionMode="None"
+                        BackgroundColor="Transparent">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeShape="RoundRectangle 16"
+                            Stroke="{AppThemeBinding Light=#E5EAF2, Dark=#243244}"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}"
+                            Padding="12,10"
+                            Margin="16,0,16,8">
+                        <Grid ColumnDefinitions="3*,1*,1.2*,1.2*,1*"
+                              ColumnSpacing="8"
+                              VerticalOptions="Center">
+                            <VerticalStackLayout Spacing="2">
+                               <Label Text="{Binding ItemName}"
                                        FontAttributes="Bold"
-                                       VerticalOptions="Center" />
-                                <Label Text="{Binding UnitName}" 
-                                       FontAttributes="Italic"
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#0F172A, Dark=White}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding UnitName}"
                                        FontSize="12"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="1" />
                             </VerticalStackLayout>
 
-                            <!-- Days Badge -->
-                            <Frame Grid.Column="1"
-                                   Padding="8"
-                                   CornerRadius="30"
-                                   BackgroundColor="#BBDEFB"
-                                   BorderColor="#1976D2"
-                                   HasShadow="False"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center">
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:MonthlySummaryPage}}, Path=BindingContext.ShowCalendarCommand}" 
-                                        CommandParameter="{Binding .}"/>
-                                </Frame.GestureRecognizers>
-                                <Label Text="{Binding TotalDays}"
+                            <Border Grid.Column="1"
+                                    StrokeShape="RoundRectangle 999"
+                                    BackgroundColor="#DBEAFE"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    Padding="10,6">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:MonthlySummaryPage}}, Path=BindingContext.ShowCalendarCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                   <Label Text="{Binding TotalDays}"
                                        FontAttributes="Bold"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       TextColor="#0D47A1">
-                                </Label>
-                            </Frame>
+                                       FontSize="14"
+                                       TextColor="#1D4ED8"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
+                            </Border>
 
-                            <!-- Average -->
                             <Label Grid.Column="2"
                                    Text="{Binding TotalSum}"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center" />
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#0F172A, Dark=#E2E8F0}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
 
-                            <!-- Total Sum -->
                             <Label Grid.Column="3"
                                    Text="{Binding AverageValue}"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center" />
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=#0F172A, Dark=#E2E8F0}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
 
-                            <!-- Target -->
                             <Label Grid.Column="4"
                                    Text="{Binding Percentage}"
-                                   HorizontalOptions="End"
-                                   VerticalOptions="Center" />
+                                   FontSize="14"
+                                   TextColor="#0F766E"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
                         </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.EmptyView>
-                    <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Label Text="No records found for this month." 
-                               TextColor="Gray" 
-                               FontAttributes="Italic" 
-                               FontSize="15"/>
-                    </StackLayout>
-                </CollectionView.EmptyView>
-            </CollectionView>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24,28"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="8">
+                    <Label Text="No records found for this month."
+                           FontAttributes="Bold"
+                           FontSize="15"
+                           TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Try another month or add new entries."
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#94A3B8, Dark=#94A3B8}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <Grid Grid.RowSpan="3"
+              IsVisible="{Binding IsLoadingMonth}"
+              BackgroundColor="#66000000"
+              InputTransparent="False">
+            <Border StrokeShape="RoundRectangle 22"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}"
+                    Padding="24"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                <VerticalStackLayout Spacing="12"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding IsLoadingMonth}"
+                                       IsVisible="{Binding IsLoadingMonth}"
+                                       Color="#2563EB"
+                                       HeightRequest="44"
+                                       WidthRequest="44" />
+                    <Label Text="Loading month..."
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#0F172A, Dark=White}"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
 </ContentPage>
