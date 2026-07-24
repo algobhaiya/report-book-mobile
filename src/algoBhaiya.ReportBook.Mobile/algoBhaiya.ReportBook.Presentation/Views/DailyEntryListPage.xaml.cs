@@ -65,11 +65,19 @@ public partial class DailyEntryListPage : ContentPage
 
     private async void OnDateCalendarClicked(object sender, EventArgs e)
     {
-        var selected = await DatePickerDialog();
-        if (selected != null)
+        var popup = new DatePickerPopup();
+        await Navigation.PushModalAsync(popup);
+        var selected = await popup.ResultSource.Task;
+
+        if (Navigation.ModalStack.Count > 0)
         {
-            DateTime formDate = selected ?? throw new ArgumentNullException(nameof(selected));
-            await _viewModel.OpenEntryAsync(formDate);
+            await Navigation.PopModalAsync();
+        }
+
+        if (selected.HasValue)
+        {
+            await Task.Yield();
+            await _viewModel.OpenEntryAsync(selected.Value);
         }
     }
 
@@ -89,13 +97,6 @@ public partial class DailyEntryListPage : ContentPage
         }
 
         await Navigation.PopModalAsync();
-    }
-
-    private async Task<DateTime?> DatePickerDialog()
-    {
-        var result = await Application.Current.MainPage.DisplayPromptAsync(
-            "Select Date", "Enter date in yyyy-MM-dd format", initialValue: DateTime.Today.ToString("yyyy-MM-dd"));
-        return DateTime.TryParse(result, out var dt) ? dt : null;
     }
 
     private async void OnMonthlySummaryClicked(object sender, EventArgs e)
