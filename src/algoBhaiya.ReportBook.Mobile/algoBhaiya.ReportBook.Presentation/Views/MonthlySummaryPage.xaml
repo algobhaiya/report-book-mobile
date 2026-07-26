@@ -127,6 +127,7 @@
                                        LineBreakMode="TailTruncation" />
                                 <Label Text="{Binding UnitName}"
                                        FontSize="12"
+                                       FontAttributes="Italic"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
                                        LineBreakMode="TailTruncation"
                                        MaxLines="1" />
@@ -181,13 +182,9 @@
                                      VerticalOptions="Center"
                                      Spacing="8">
                     <Label Text="No records found for this month."
-                           FontAttributes="Bold"
+                           FontAttributes="Italic"
                            FontSize="15"
                            TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}"
-                           HorizontalTextAlignment="Center" />
-                    <Label Text="Try another month or add new entries."
-                           FontSize="12"
-                           TextColor="{AppThemeBinding Light=#94A3B8, Dark=#94A3B8}"
                            HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
