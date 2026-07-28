@@ -1,6 +1,7 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
+using AppConstants = algoBhaiya.ReportBook.Presentation.Constants.Constants;
 
 namespace algoBhaiya.ReportBook.Presentation.Services
 {
@@ -14,43 +15,57 @@ namespace algoBhaiya.ReportBook.Presentation.Services
             IDailyEntryRepository dailyEntryRepository)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException();
-            FirstRunKey = Constants.Constants.AppState.FirstRunKey;
+            FirstRunKey = AppConstants.AppState.FirstRunKey;
         }
-        
+
         public async Task SeedDefaultUnitsAsync()
         {
             bool isFirstRun = !Preferences.Get(FirstRunKey, false);
 
-            if (isFirstRun)
+            if (!isFirstRun)
+            {
+                return;
+            }
+
+            await FieldUnitSeedGate.Gate.WaitAsync();
+            try
             {
                 var unitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
 
-                if (unitRepo != null)
+                var defaultUnits = new List<FieldUnit>
                 {
-                    var defaultUnits = new List<FieldUnit>
-                    {
-                        new FieldUnit { UnitName = "Hours", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Minutes", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Days", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Checkbox", ValueType = Constants.Constants.UnitType.Bool },
-                        new FieldUnit { UnitName = "Pages", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Ayat", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Count", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Persons", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Kg", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Km", ValueType = Constants.Constants.UnitType.Double },
-                        new FieldUnit { UnitName = "Times", ValueType = Constants.Constants.UnitType.Double }
-                    };
+                    new FieldUnit { UnitName = "Hours", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Minutes", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Days", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Checkbox", ValueType = AppConstants.UnitType.Bool },
+                    new FieldUnit { UnitName = "Pages", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Ayat", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Count", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Persons", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Kg", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Km", ValueType = AppConstants.UnitType.Double },
+                    new FieldUnit { UnitName = "Times", ValueType = AppConstants.UnitType.Double }
+                };
 
-                    if (defaultUnits.Count > 0 )
-                    {
-                        await unitRepo.InsertAllAsync(defaultUnits);
-                    }
+                var existingNames = new HashSet<string>(
+                    (await unitRepo.GetAllAsync()).Select(u => u.UnitName ?? string.Empty),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var missingUnits = defaultUnits
+                    .Where(unit => !existingNames.Contains(unit.UnitName ?? string.Empty))
+                    .ToList();
+
+                if (missingUnits.Count > 0)
+                {
+                    await unitRepo.InsertAllAsync(missingUnits);
                 }
 
                 Preferences.Set(FirstRunKey, true);
             }
+            finally
+            {
+                FieldUnitSeedGate.Gate.Release();
+            }
         }
     }
-
 }

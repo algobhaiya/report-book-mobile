@@ -39,15 +39,14 @@ public partial class FieldUnitPage : ContentPage
                 bool hasActiveTemplate = false;
 
                 // Check in field templates
-                var templates = await _serviceProvider
-                    .GetRequiredService<IRepository<FieldTemplate>>()
-                    .GetListAsync(t => t.UnitId == unit.Id);                
-
-                if (templates.Count() > 0)
+                var templateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
+                var anyTemplate = await templateRepo.GetFirstOrDefaultAsync(t => t.UnitId == unit.Id);
+                if (anyTemplate != null)
                 {
                     isDeletionLocked = true;
-
-                    hasActiveTemplate = templates.Any(t => t.IsDeleted == false);
+                    hasActiveTemplate = await templateRepo.GetFirstOrDefaultAsync(t =>
+                        t.UnitId == unit.Id &&
+                        t.IsDeleted == false) != null;
                 }
 
                 // NoDelete: if unit is used in active field.

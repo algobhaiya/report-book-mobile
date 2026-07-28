@@ -1,5 +1,6 @@
 ﻿
 using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.MobileApp;
 using algoBhaiya.ReportBook.Presentation.Views;
 
 namespace algoBhaiya.ReportBook.MobileApp.Services
@@ -23,6 +24,12 @@ namespace algoBhaiya.ReportBook.MobileApp.Services
         {
             var loginPage = _sp.GetRequiredService<LoginPage>();
             Application.Current.MainPage = new NavigationPage(loginPage);
+        }
+
+        public void NavigateToPlanner()
+        {
+            var plannerPage = _sp.GetRequiredService<PlannerTemplatePage>();
+            Application.Current.MainPage = new NavigationPage(plannerPage);
         }
 
         public async Task NavigateToAsync<TPage>()

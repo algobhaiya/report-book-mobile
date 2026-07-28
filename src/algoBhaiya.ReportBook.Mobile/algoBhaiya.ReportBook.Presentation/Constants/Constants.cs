@@ -21,6 +21,11 @@
             public const string Action_RefreshOnReturn = "FieldTemplate_Action_RefreshOnReturn";
         }
 
+        public static class Planner
+        {
+            public const string Item_ToOpen = "Planner_Item_ToOpen";
+        }
+
         public static class DailyEntry
         {
             public const string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
@@ -42,6 +47,7 @@
         {
             public const string LastCleanupDateKey = "last_cleanup_date";
             public const string FirstRunKey = "IsSeedingInitialDataCompleted";
+            public const string PlannerBypassGateKey = "Planner_BypassGate";
         }
 
         public static class LogIn

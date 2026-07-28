@@ -41,24 +41,18 @@ public partial class FieldTemplatePage : ContentPage
                 bool isDeletionLocked = false;
 
                 // Check in monthly plan
-                var monthlyPlans = await _serviceProvider
-                    .GetRequiredService<IRepository<MonthlyTarget>>()
-                    .GetListAsync(t => 
-                        t.FieldTemplateId == field.Id &&
-                        t.UserId == _loggedInUser);
-
-                isDeletionLocked = monthlyPlans.Count() > 0;
+                var monthlyTargetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
+                isDeletionLocked = await monthlyTargetRepo.GetFirstOrDefaultAsync(t =>
+                    t.FieldTemplateId == field.Id &&
+                    t.UserId == _loggedInUser) != null;
 
                 // Check in daily report
                 if (!isDeletionLocked)
                 {
-                    var dailyReports = await _serviceProvider
-                        .GetRequiredService<IRepository<DailyEntry>>()
-                        .GetListAsync(d => 
-                            d.FieldTemplateId == field.Id &&
-                            d.UserId == _loggedInUser);
-
-                    isDeletionLocked = dailyReports.Count() > 0;
+                    var dailyEntryRepo = _serviceProvider.GetRequiredService<IRepository<DailyEntry>>();
+                    isDeletionLocked = await dailyEntryRepo.GetFirstOrDefaultAsync(d =>
+                        d.FieldTemplateId == field.Id &&
+                        d.UserId == _loggedInUser) != null;
                 }
                 
                 // SoftDelete: if field is in Use.
@@ -220,7 +214,7 @@ public partial class FieldTemplatePage : ContentPage
                     (today.Year < t.Year)  
                 ));
 
-        if (associatedPlans.Count() > 0)
+        if (associatedPlans.Any())
         {
             foreach (var associatedPlan in associatedPlans )
             {
