@@ -66,3 +66,9 @@ Main projects:
 
 - Treat this file as a living context guide for the solution.
 - When answering future questions, use the code in this solution as the source of truth rather than assumptions from MAUI conventions.
+
+## Codex Memory Docs
+
+- Before working on this solution, read `src/algoBhaiya.ReportBook.Mobile/doc/README.md` first.
+- Use the linked docs in that folder as the business-memory source of truth for the app.
+- Prefer the memory docs for stable product context, and then confirm implementation details in the source code.
