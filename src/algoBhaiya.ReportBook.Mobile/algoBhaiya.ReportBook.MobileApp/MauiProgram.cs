@@ -42,6 +42,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddScoped<IMonthlyTargetRepository, MonthlyTargetRepository>();
             builder.Services.AddScoped<IDataRetentionService, DataRetentionService>();
             builder.Services.AddScoped<ISeedDataService, SeedDataService>();
+            builder.Services.AddScoped<IPlannerCatalogService, PlannerCatalogService>();
 
             builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
 
@@ -65,6 +66,8 @@ namespace algoBhaiya.ReportBook.MobileApp
             builder.Services.AddTransient<FieldTemplateDetailPage>();
 
             builder.Services.AddTransient<FieldTemplatePage>();
+            builder.Services.AddTransient<PlannerTemplatePage>();
+            builder.Services.AddTransient<PlannerTemplateDetailPage>();
 
             builder.Services.AddTransient<FieldUnitAddEditViewModel>();
             builder.Services.AddTransient<FieldUnitAddEditPage>();

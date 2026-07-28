@@ -1,0 +1,127 @@
+[
+  {
+    "Id": 1,
+    "Name": "Quran in a Month",
+    "Category": "Read Complete Quran",
+    "Summary": "Finish the Quran in 30 days.",
+    "Description": "A focused plan for users who want a fast daily rhythm during Ramadan or a dedicated month of worship.",
+    "AccentHex": "#4A90D6",
+    "SortOrder": 1,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Pages Recited",
+        "UnitName": "Pages",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Reflection Minutes",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Ayat Reviewed",
+        "UnitName": "Ayat",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "Name": "Quran in 4 Months",
+    "Category": "Read Complete Quran",
+    "Summary": "A steadier pace for consistent progress.",
+    "Description": "A balanced reading route that spreads the journey across four months while keeping the daily habit light.",
+    "AccentHex": "#3B7C5C",
+    "SortOrder": 2,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Pages Recited",
+        "UnitName": "Pages",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Study Minutes",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Revision Sessions",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "Quran in a Year",
+    "Category": "Read Complete Quran",
+    "Summary": "A year-long journey with an easy daily target.",
+    "Description": "A slower plan for long-term reflection, ideal for users who want a manageable daily reading streak.",
+    "AccentHex": "#58799A",
+    "SortOrder": 3,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Pages Recited",
+        "UnitName": "Pages",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Study Minutes",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "Name": "Journey Of Reflection",
+    "Category": "Understand Quran",
+    "Summary": "Read, reflect, and record insights.",
+    "Description": "A shorter plan built around mindful study, notes, and reflection instead of page count.",
+    "AccentHex": "#B58A4A",
+    "SortOrder": 4,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Reflection Minutes",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Notes Written",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Pages Reviewed",
+        "UnitName": "Pages",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "Name": "Blank Template",
+    "Category": "Manual Setup",
+    "Summary": "Start with an empty form and add your own fields later.",
+    "Description": "No preset fields are created here. This path opens the daily list immediately so you can build the form manually.",
+    "AccentHex": "#5A6775",
+    "SortOrder": 5,
+    "IsBlank": true,
+    "Fields": []
+  }
+]

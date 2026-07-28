@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.PlannerTemplatePage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#173047}"
+                StrokeThickness="0"
+                Padding="15,17,15,15">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalOptions="Center">
+                <Border WidthRequest="46"
+                        HeightRequest="46"
+                        StrokeShape="RoundRectangle 14"
+                        BackgroundColor="{AppThemeBinding Light=#E2E8F0, Dark=#10212F}"
+                        StrokeThickness="0"
+                        VerticalOptions="Center">
+                    <Label Text="Menu"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#0F172A, Dark=#E8EEF6}"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center" />
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Planner"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#0F172A, Dark=#F4F7FB}" />
+                    <Label Text="Pick a preset or start from a blank template."
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#475569, Dark=#AFC0D0}" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <CollectionView ItemsSource="{Binding PresetGroups}"
+                            IsGrouped="True"
+                            SelectionMode="None"
+                            BackgroundColor="Transparent"
+                            Margin="15,5,5,16">
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Label Text="{Binding Title}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#2563EB, Dark=#5DA7E8}"
+                               Margin="0,15,0,10" />
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="18" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 18"
+                                Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#243244}"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#111827}"
+                                StrokeThickness="1"
+                                Padding="12">
+                            <Grid ColumnDefinitions="100,*,Auto"
+                                  RowDefinitions="Auto,Auto"
+                                  ColumnSpacing="10">
+                                <Border Grid.RowSpan="2"
+                                        WidthRequest="90"
+                                        HeightRequest="100"
+                                        StrokeShape="RoundRectangle 18"
+                                        BackgroundColor="{Binding AccentHex}"
+                                        StrokeThickness="0">
+                                    <VerticalStackLayout Padding="12"
+                                                         Spacing="6"
+                                                         VerticalOptions="Center">
+                                        <Label Text="{Binding FieldCountText}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="Center"
+                                               TextColor="White"
+                                               LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="6"
+                                                     VerticalOptions="Center">
+                                    <Label Text="{Binding Name}"
+                                           FontSize="15"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#0F172A, Dark=#F4F7FB}" />
+                                    <Label Text="{Binding Summary}"
+                                           FontSize="13"
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#B5C3D3}"
+                                           LineBreakMode="WordWrap" />
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="2"
+                                        Grid.RowSpan="2"
+                                        Text="Start"
+                                        BackgroundColor="{AppThemeBinding Light=#DBEAFE, Dark=#1E3B55}"
+                                        TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#5DA7E8}"
+                                        FontAttributes="Bold"
+                                        CornerRadius="22"
+                                        Padding="18,12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type views:PlannerTemplatePage}}, Path=StartCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center" />
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type views:PlannerTemplatePage}}, Path=OpenDetailCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+            <Border IsVisible="{Binding IsLoading}"
+                    BackgroundColor="{AppThemeBinding Light=#66FFFFFF, Dark=#80000000}"
+                    StrokeThickness="0">
+                <Border StrokeShape="RoundRectangle 22"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#111827}"
+                        Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#243244}"
+                        Padding="24"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Spacing="12">
+                        <ActivityIndicator IsRunning="True"
+                                           Color="{AppThemeBinding Light=#2563EB, Dark=#5DA7E8}"
+                                           WidthRequest="42"
+                                           HeightRequest="42" />
+                        <Label Text="Preparing your templates..."
+                               TextColor="{AppThemeBinding Light=#0F172A, Dark=White}"
+                               FontAttributes="Bold"
+                               FontSize="15"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

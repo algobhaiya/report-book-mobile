@@ -12,6 +12,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IAppNavigator _appNavigator;
+        private readonly IPlannerCatalogService _plannerCatalogService;
         private bool _isMenuOpen;
 
         public ICommand OpenMenuCommand { get; }
@@ -34,10 +35,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public AppShellViewModel(
             IServiceProvider serviceProvider,
-            IAppNavigator appNavigator)
+            IAppNavigator appNavigator,
+            IPlannerCatalogService plannerCatalogService)
         {
             _serviceProvider = serviceProvider;
             _appNavigator = appNavigator;
+            _plannerCatalogService = plannerCatalogService;
 
             OpenMenuCommand = new Command(async () => await OpenMenuAsync());
         }
@@ -109,10 +112,29 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public async Task LoadUserNameAsync()
         {
             byte loggedInUserId = (byte)Preferences.Get("CurrentUserId", 0);
+            if (loggedInUserId == 0)
+            {
+                LoggedInUserName = string.Empty;
+                return;
+            }
 
-            LoggedInUserName = (await _serviceProvider
+            var user = await _serviceProvider
                 .GetRequiredService<IRepository<AppUser>>()
-                .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId)).UserName;
+                .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId);
+
+            LoggedInUserName = user?.UserName ?? string.Empty;
+
+            if (Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false))
+            {
+                Preferences.Set(Constants.Constants.AppState.PlannerBypassGateKey, false);
+                return;
+            }
+
+            var hasActiveFields = await _plannerCatalogService.HasActiveFieldsAsync(loggedInUserId);
+            if (!hasActiveFields)
+            {
+                _appNavigator.NavigateToPlanner();
+            }
         }
     }
 }
