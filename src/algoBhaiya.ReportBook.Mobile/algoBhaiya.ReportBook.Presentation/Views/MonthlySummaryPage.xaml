@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlySummaryPage"
-             Title="Monthly Summary"
+             Title="Summary"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#0F172A}">
 
     <Grid RowDefinitions="Auto,Auto,*">
