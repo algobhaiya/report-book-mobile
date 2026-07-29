@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlyTargetPage"
-             Title="Set Monthly Targets">
+             Title="Monthly Plans">
 
     <Grid Padding="10" RowSpacing="12">
         <Grid.RowDefinitions>

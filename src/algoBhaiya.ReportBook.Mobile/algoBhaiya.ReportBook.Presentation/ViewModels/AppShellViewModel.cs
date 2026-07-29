@@ -31,7 +31,19 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
-        public string PageTitle => "Daily Report";
+        private string _pageTitle = "Daily Report";
+        public string PageTitle
+        {
+            get => _pageTitle;
+            private set
+            {
+                if (_pageTitle != value)
+                {
+                    _pageTitle = value;
+                    OnPropertyChanged(nameof(PageTitle));
+                }
+            }
+        }
 
         public AppShellViewModel(
             IServiceProvider serviceProvider,
@@ -73,6 +85,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public void NotifyMenuClosed()
         {
             _isMenuOpen = false;
+        }
+
+        public void UpdatePageTitle(string? title)
+        {
+            PageTitle = string.IsNullOrWhiteSpace(title) ? "Daily Report" : title.Trim();
         }
 
         public async Task NavigateToMonthlySummaryAsync()

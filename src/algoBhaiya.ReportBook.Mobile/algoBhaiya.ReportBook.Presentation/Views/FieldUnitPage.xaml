@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldUnitPage"
-             Title="Field Units">
+             Title="Units">
 
     <Grid>
         <!-- Add Button at Top Right -->

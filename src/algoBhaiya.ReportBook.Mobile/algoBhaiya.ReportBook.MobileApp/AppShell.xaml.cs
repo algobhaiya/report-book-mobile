@@ -11,15 +11,18 @@ namespace algoBhaiya.ReportBook.MobileApp
         {
             InitializeComponent();
             BindingContext = viewModel;
+            Navigated += OnShellNavigated;
 
             Routing.RegisterRoute(nameof(MonthlySummaryPage), typeof(MonthlySummaryPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(SwitchProfilePage), typeof(SwitchProfilePage));
+            UpdatePageTitle();
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            UpdatePageTitle();
 
             if (!_isInitialized)
             {
@@ -36,6 +39,28 @@ namespace algoBhaiya.ReportBook.MobileApp
                     }
                 }
             }
+        }
+
+        private void OnShellNavigated(object sender, ShellNavigatedEventArgs e)
+        {
+            UpdatePageTitle();
+        }
+
+        private void UpdatePageTitle()
+        {
+            if (BindingContext is not AppShellViewModel vm)
+            {
+                return;
+            }
+
+            var pageTitle = CurrentPage?.Title;
+
+            if (string.IsNullOrWhiteSpace(pageTitle))
+            {
+                pageTitle = CurrentItem?.CurrentItem?.CurrentItem?.Title ?? CurrentItem?.Title;
+            }
+
+            vm.UpdatePageTitle(pageTitle);
         }
     }
 }
