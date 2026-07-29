@@ -1,126 +1,948 @@
 [
   {
     "Id": 1,
-    "Name": "Quran in a Month",
-    "Category": "Read Complete Quran",
-    "Summary": "Finish the Quran in 30 days.",
-    "Description": "A focused plan for users who want a fast daily rhythm during Ramadan or a dedicated month of worship.",
-    "AccentHex": "#4A90D6",
+    "Name": "Muslim Daily",
+    "Category": "Muslim Life",
+    "Summary": "Track prayers, Quran, and daily worship habits.",
+    "Description": "A simple daily planner for prayer consistency, Quran reading, dhikr, and reflection. It is designed to seed a calm, repeatable routine into the daily report flow.",
+    "AccentHex": "#2F6B55",
     "SortOrder": 1,
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Pages Recited",
-        "UnitName": "Pages",
-        "ValueType": "Double",
+        "FieldName": "Fajr Prayer",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
         "FieldOrder": 1
       },
       {
-        "FieldName": "Reflection Minutes",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
+        "FieldName": "Dhuhr Prayer",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
         "FieldOrder": 2
       },
       {
-        "FieldName": "Ayat Reviewed",
-        "UnitName": "Ayat",
-        "ValueType": "Double",
+        "FieldName": "Asr Prayer",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
         "FieldOrder": 3
+      },
+      {
+        "FieldName": "Maghrib Prayer",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Isha Prayer",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Quran Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Hadith Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
       }
     ]
   },
   {
     "Id": 2,
-    "Name": "Quran in 4 Months",
-    "Category": "Read Complete Quran",
-    "Summary": "A steadier pace for consistent progress.",
-    "Description": "A balanced reading route that spreads the journey across four months while keeping the daily habit light.",
-    "AccentHex": "#3B7C5C",
+    "Name": "Level: School",
+    "Category": "Student Life",
+    "Summary": "Track study, classes, homework, and playtime.",
+    "Description": "A practical template for students who want to record daily learning progress, class attendance, and physical activity in one place.",
+    "AccentHex": "#3C6EAA",
     "SortOrder": 2,
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Pages Recited",
-        "UnitName": "Pages",
-        "ValueType": "Double",
+        "FieldName": "Class Attendance",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
         "FieldOrder": 1
       },
       {
-        "FieldName": "Study Minutes",
+        "FieldName": "Quran Reading",
         "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 2
       },
       {
-        "FieldName": "Revision Sessions",
-        "UnitName": "Count",
+        "FieldName": "Bangla",
+        "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 3
+      },
+      {
+        "FieldName": "English",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Math",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Exercise / Playtime",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Homework Done",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 7
       }
     ]
   },
   {
     "Id": 3,
-    "Name": "Quran in a Year",
-    "Category": "Read Complete Quran",
-    "Summary": "A year-long journey with an easy daily target.",
-    "Description": "A slower plan for long-term reflection, ideal for users who want a manageable daily reading streak.",
-    "AccentHex": "#58799A",
+    "Name": "Level: SSC/HSC",
+    "Category": "Student Life",
+    "Summary": "Track study, classes, homework, and playtime.",
+    "Description": "A practical template for students who want to record daily learning progress, class attendance, and physical activity in one place.",
+    "AccentHex": "#3C6EAA",
     "SortOrder": 3,
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Pages Recited",
-        "UnitName": "Pages",
-        "ValueType": "Double",
+        "FieldName": "Class Attendance",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
         "FieldOrder": 1
       },
       {
-        "FieldName": "Study Minutes",
+        "FieldName": "Quran Reading",
         "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 2
+      },
+      {
+        "FieldName": "Physics",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Chemistry",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Math",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Biology",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Bangla",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "English",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 8
+      },
+      {
+        "FieldName": "Exercise / Playtime",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 9
+      },
+      {
+        "FieldName": "Homework Done",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 10
       }
     ]
   },
   {
     "Id": 4,
-    "Name": "Journey Of Reflection",
-    "Category": "Understand Quran",
-    "Summary": "Read, reflect, and record insights.",
-    "Description": "A shorter plan built around mindful study, notes, and reflection instead of page count.",
-    "AccentHex": "#B58A4A",
+    "Name": "Men's Routine",
+    "Category": "Lifestyle",
+    "Summary": "A balanced work, fitness, and family routine.",
+    "Description": "Built for men who want a simple day tracker covering work tasks, exercise, health habits, and family time without making the form too long.",
+    "AccentHex": "#6A4F2A",
     "SortOrder": 4,
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Reflection Minutes",
-        "UnitName": "Minutes",
+        "FieldName": "Working Time",
+        "UnitName": "Hours",
         "ValueType": "Double",
         "FieldOrder": 1
       },
       {
-        "FieldName": "Notes Written",
-        "UnitName": "Count",
+        "FieldName": "Family Time",
+        "UnitName": "Hours",
         "ValueType": "Double",
         "FieldOrder": 2
       },
       {
-        "FieldName": "Pages Reviewed",
-        "UnitName": "Pages",
+        "FieldName": "Reading",
+        "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 3
+      },
+      {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Walked Distance",
+        "UnitName": "Km",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Enjoy Sunlight",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 7
       }
     ]
   },
   {
     "Id": 5,
+    "Name": "Women's Routine",
+    "Category": "Lifestyle",
+    "Summary": "Track self-care, work, family, and wellness.",
+    "Description": "A flexible daily template for women who want to balance work or study, health, self-care, and household rhythm in one planner.",
+    "AccentHex": "#B45C87",
+    "SortOrder": 5,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Working Time",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Skincare",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Hair Care",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Enjoy Sunlight",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      }
+    ]
+  },
+  {
+    "Id": 6,
+    "Name": "Exercise Planner",
+    "Category": "Fitness",
+    "Summary": "A workout log for consistency and progress.",
+    "Description": "Use this preset to record warm-up, strength work, cardio, steps, and recovery habits. It is useful for people who want a very clear training log.",
+    "AccentHex": "#D46A3A",
+    "SortOrder": 6,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Warm Up",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Strength Training",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Cardio",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Steps",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Stretching",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Calories Burned",
+        "UnitName": "kcal",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Heart Rate",
+        "UnitName": "bpm",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Workout Done",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 7,
+    "Name": "Running & Marathon",
+    "Category": "Fitness",
+    "Summary": "Track your running performance and training progress.",
+    "Description": "Monitor distance, pace, steps, stretching, and workout completion to prepare for races and improve endurance.",
+    "AccentHex": "#F57C00",
+    "SortOrder": 7,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Running Distance",
+        "UnitName": "Km",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Running Time",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Average Pace",
+        "UnitName": "min/km",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Steps",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Stretching",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Warm-up",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Cool-down",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Workout Completed",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 8,
+    "Name": "Health Tracker",
+    "Category": "Health",
+    "Summary": "Track sleep, hydration, medicine, and basic vitals.",
+    "Description": "A lightweight health preset for people who want to follow their basic wellness habits every day and review them monthly.",
+    "AccentHex": "#4F8F72",
+    "SortOrder": 8,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Sleep",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Medicine Taken",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Walk",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Systolic BP",
+        "UnitName": "mmHg",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Diastolic BP",
+        "UnitName": "mmHg",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Sugar Level",
+        "UnitName": "mmol/L",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Weight",
+        "UnitName": "Kg",
+        "ValueType": "Double",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 9,
+    "Name": "Diabetic Care",
+    "Category": "Health",
+    "Summary": "Track glucose levels, meals, and insulin.",
+    "Description": "Designed for daily management of blood sugar levels, carbs, activity, and medication logs.",
+    "AccentHex": "#2A9D8F",
+    "SortOrder": 9,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Fasting Sugar",
+        "UnitName": "mmol/L",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Post-Meal Sugar",
+        "UnitName": "mmol/L",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Carb Intake",
+        "UnitName": "Grams",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Insulin / Meds Taken",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Daily Walk",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Foot Inspection",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      }
+    ]
+  },
+  {
+    "Id": 10,
+    "Name": "Maternity & Pregnancy",
+    "Category": "Health",
+    "Summary": "Track prenatal care, kick counts, and well-being.",
+    "Description": "A dedicated log for expecting mothers to monitor daily health, hydration, fetal movement, and prenatal supplements.",
+    "AccentHex": "#E07A5F",
+    "SortOrder": 10,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Prenatal Vitamins",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Kick Count",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Rest / Nap",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Systolic BP",
+        "UnitName": "mmHg",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Diastolic BP",
+        "UnitName": "mmHg",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Light Walk",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      }
+    ]
+  },
+  {
+    "Id": 11,
+    "Name": "PCOS Care",
+    "Category": "Health",
+    "Summary": "Track habits that support PCOS management.",
+    "Description": "Monitor exercise, nutrition, sleep, hydration, medications, and menstrual health to help manage PCOS consistently.",
+    "AccentHex": "#C96C9A",
+    "SortOrder": 11,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Walking",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Healthy Meals",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Sugar Avoided",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Sleep",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Stress Managed",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Medicine / Supplements Taken",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 8
+      },
+      {
+        "FieldName": "Weight",
+        "UnitName": "Kg",
+        "ValueType": "Double",
+        "FieldOrder": 9
+      },
+      {
+        "FieldName": "Period Logged",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 10
+      }
+    ]
+  },
+  {
+    "Id": 12,
+    "Name": "Child Care Routine",
+    "Category": "Parenting",
+    "Summary": "Track feeding, sleep, outdoor play, and growth.",
+    "Description": "A practical daily log for parents to keep track of a child's essential routines, activities, and daily care.",
+    "AccentHex": "#F4A261",
+    "SortOrder": 12,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Child Sleep",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Healthy Meals",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Milk / Hydration",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Outdoor Playtime",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Quran Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Learning",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Screen Time Limit",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Vitamins / Meds",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 13,
+    "Name": "Personal Finance",
+    "Category": "Finance",
+    "Summary": "Track income, expenses, savings, and financial discipline.",
+    "Description": "A practical daily finance tracker to monitor earnings, spending, savings, investments, and budgeting habits.",
+    "AccentHex": "#3A7A5B",
+    "SortOrder": 13,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Income",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Expenses",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Savings",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "No Unnecessary Spending",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Investment Added",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Financial Learning",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Loan Received",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Loan Repaid",
+        "UnitName": "Taka",
+        "ValueType": "Double",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 14,
+    "Name": "Weight Loss & Nutrition",
+    "Category": "Nutrition",
+    "Summary": "Track healthy eating, hydration, exercise, and weight.",
+    "Description": "A daily nutrition tracker designed to support healthy eating habits, weight management, and overall wellness.",
+    "AccentHex": "#7CB342",
+    "SortOrder": 14,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Weight",
+        "UnitName": "Kg",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Water Intake",
+        "UnitName": "Liters",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Calories Consumed",
+        "UnitName": "kcal",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Protein Intake",
+        "UnitName": "Grams",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Fruits & Vegetables",
+        "UnitName": "Servings",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Sugary Foods Avoided",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Sleep",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 15,
+    "Name": "Mental Wellness",
+    "Category": "Wellness",
+    "Summary": "Track emotional well-being and mindfulness habits.",
+    "Description": "A daily mental wellness tracker for monitoring mood, stress, mindfulness, social connection, and healthy routines.",
+    "AccentHex": "#6C8EBF",
+    "SortOrder": 15,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Mood Rating",
+        "UnitName": "/10",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Stress Level",
+        "UnitName": "/10",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Meditation",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Gratitude Journal",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Screen-Free Time",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Family/Friend Time",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Outdoor Time",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      },
+      {
+        "FieldName": "Slept Well",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 8
+      }
+    ]
+  },
+  {
+    "Id": 16,
+    "Name": "Gardening",
+    "Category": "Hobby",
+    "Summary": "Track daily gardening activities and plant care.",
+    "Description": "A simple gardening log for watering, maintenance, planting, and caring for your garden.",
+    "AccentHex": "#5E9C59",
+    "SortOrder": 16,
+    "IsBlank": false,
+    "Fields": [
+      {
+        "FieldName": "Plants Watered",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
+        "FieldName": "Fertilizer Applied",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Weeding",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Pruning",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "New Plants Added",
+        "UnitName": "Count",
+        "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Pest Inspection",
+        "UnitName": "Checkbox",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Gardening Time",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 7
+      }
+    ]
+  },
+  {
+    "Id": 17,
     "Name": "Blank Template",
     "Category": "Manual Setup",
-    "Summary": "Start with an empty form and add your own fields later.",
-    "Description": "No preset fields are created here. This path opens the daily list immediately so you can build the form manually.",
+    "Summary": "Start empty and add your own fields later.",
+    "Description": "No fields are seeded here. This preset simply lets the user enter the app and build a custom report structure manually.",
     "AccentHex": "#5A6775",
-    "SortOrder": 5,
+    "SortOrder": 17,
     "IsBlank": true,
     "Fields": []
   }
