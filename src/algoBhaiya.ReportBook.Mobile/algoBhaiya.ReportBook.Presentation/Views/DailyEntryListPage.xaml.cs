@@ -151,7 +151,7 @@ public partial class DailyEntryListPage : ContentPage
                 CelebrationCard.FadeTo(1, 180, Easing.CubicOut),
                 CelebrationCard.ScaleTo(1, 220, Easing.CubicOut));
 
-            await Task.Delay(2500);
+            await Task.Delay(1800);
 
             await Task.WhenAll(
                 CelebrationCard.FadeTo(0, 180, Easing.CubicIn),
