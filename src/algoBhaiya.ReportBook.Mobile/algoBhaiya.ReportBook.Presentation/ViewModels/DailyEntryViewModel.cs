@@ -182,15 +182,44 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SubmitAsync()
         {
+            var isCompleted = IsEntryFullyCompletedFromFields();
+
             foreach (var entry in Fields)
             {
                 await _repository.SaveDailyEntryAsync(entry);
             }
 
             _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
+            _navDataService.Set(Constants.Constants.DailyEntry.Action_ShowCompletionCelebration, isCompleted);
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
             
             await Shell.Current.Navigation.PopAsync();
+        }
+
+        private bool IsEntryFullyCompletedFromFields()
+        {
+            if (Fields.Count == 0)
+            {
+                return false;
+            }
+
+            return Fields.All(IsSaveableFieldValue);
+        }
+
+        private static bool IsSaveableFieldValue(DailyEntry entry)
+        {
+            if (entry == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(entry.Value))
+            {
+                return false;
+            }
+
+            return !string.Equals(entry.Value, "0", StringComparison.Ordinal)
+                && !string.Equals(entry.Value, "False", StringComparison.Ordinal);
         }
     }
 
