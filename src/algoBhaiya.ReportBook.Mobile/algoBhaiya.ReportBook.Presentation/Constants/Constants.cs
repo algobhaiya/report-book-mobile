@@ -30,6 +30,7 @@
         {
             public const string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
             public const string Action_RefreshListOnReturn = "DailyEntry_Action_RefreshListOnReturn";
+            public const string Action_ShowCompletionCelebration = "DailyEntry_Action_ShowCompletionCelebration";
         }
 
         public static class AppUser

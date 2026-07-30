@@ -11,6 +11,7 @@ public partial class DailyEntryListPage : ContentPage
     private readonly NavigationDataService _navDataService;
     private bool _isInitialized = false;
     private bool _isOpeningMonthlySummary = false;
+    private bool _isCelebrationVisible = false;
 
     public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider, NavigationDataService navDataService)
     {
@@ -42,9 +43,14 @@ public partial class DailyEntryListPage : ContentPage
         }
         else if (_navDataService.Get<bool>(AppConstants.DailyEntry.Action_RefreshListOnReturn))
         {
+            var showCelebration = _navDataService.Get<bool>(AppConstants.DailyEntry.Action_ShowCompletionCelebration);
             try
             {
                 await _viewModel.RefreshDailyEntriesAsync();
+                if (showCelebration)
+                {
+                    await ShowCelebrationAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -53,6 +59,7 @@ public partial class DailyEntryListPage : ContentPage
             finally
             {
                 _navDataService.Remove(AppConstants.DailyEntry.Action_RefreshListOnReturn);
+                _navDataService.Remove(AppConstants.DailyEntry.Action_ShowCompletionCelebration);
             }
         }
     }
@@ -121,6 +128,40 @@ public partial class DailyEntryListPage : ContentPage
         finally
         {
             _isOpeningMonthlySummary = false;
+        }
+    }
+
+    private async Task ShowCelebrationAsync()
+    {
+        if (_isCelebrationVisible || CelebrationOverlay == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _isCelebrationVisible = true;
+            CelebrationOverlay.IsVisible = true;
+            CelebrationOverlay.Opacity = 0;
+            CelebrationCard.Scale = 0.85;
+            CelebrationCard.Opacity = 0;
+
+            await Task.WhenAll(
+                CelebrationOverlay.FadeTo(1, 180, Easing.CubicOut),
+                CelebrationCard.FadeTo(1, 180, Easing.CubicOut),
+                CelebrationCard.ScaleTo(1, 220, Easing.CubicOut));
+
+            await Task.Delay(1800);
+
+            await Task.WhenAll(
+                CelebrationCard.FadeTo(0, 180, Easing.CubicIn),
+                CelebrationOverlay.FadeTo(0, 200, Easing.CubicIn));
+
+            CelebrationOverlay.IsVisible = false;
+        }
+        finally
+        {
+            _isCelebrationVisible = false;
         }
     }
 
