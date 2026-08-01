@@ -39,6 +39,10 @@ namespace algoBhaiya.ReportBook.MobileApp
                     }
                 }
             }
+            else
+            {
+                await RefreshStreakAsync();
+            }
         }
 
         private void OnShellNavigated(object sender, ShellNavigatedEventArgs e)
@@ -61,6 +65,23 @@ namespace algoBhaiya.ReportBook.MobileApp
             }
 
             vm.UpdatePageTitle(pageTitle);
+        }
+
+        private async Task RefreshStreakAsync()
+        {
+            if (BindingContext is not AppShellViewModel vm)
+            {
+                return;
+            }
+            
+            try
+            {
+                await vm.RefreshStreakAsync();
+            }
+            catch
+            {
+
+            }
         }
     }
 }

@@ -56,6 +56,22 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return list;
         }
 
+        public async Task<List<DailyEntry>> GetEntriesForUserThroughDateAsync(int userId, DateTime toDate)
+        {
+            var list = new List<DailyEntry>();
+            try
+            {
+                list = await _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date <= toDate.Date)
+                    .ToListAsync();
+            }
+            catch
+            {
+            }
+
+            return list;
+        }
+
         public Task<DailyEntry> GetEntryByDateAsync(DateTime date)
         {
             return _database.Table<DailyEntry>()

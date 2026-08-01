@@ -1,5 +1,5 @@
-﻿using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Helpers;
+using algoBhaiya.ReportBook.Presentation.ViewModels;
 using AppConstants = algoBhaiya.ReportBook.Presentation.Constants.Constants;
 
 namespace algoBhaiya.ReportBook.Presentation.Views;
@@ -33,6 +33,7 @@ public partial class DailyEntryListPage : ContentPage
                 try
                 {
                     await vm.RefreshDailyEntriesAsync(); // Only after page fully loaded
+                    await RefreshShellHeaderAsync();
                     _isInitialized = true;
                 }
                 catch (Exception ex)
@@ -47,6 +48,7 @@ public partial class DailyEntryListPage : ContentPage
             try
             {
                 await _viewModel.RefreshDailyEntriesAsync();
+                await RefreshShellHeaderAsync();
                 if (showCelebration)
                 {
                     await ShowCelebrationAsync();
@@ -61,6 +63,14 @@ public partial class DailyEntryListPage : ContentPage
                 _navDataService.Remove(AppConstants.DailyEntry.Action_RefreshListOnReturn);
                 _navDataService.Remove(AppConstants.DailyEntry.Action_ShowCompletionCelebration);
             }
+        }
+    }
+
+    private static async Task RefreshShellHeaderAsync()
+    {
+        if (Shell.Current?.BindingContext is AppShellViewModel shellViewModel)
+        {
+            await shellViewModel.RefreshStreakAsync();
         }
     }
 
@@ -164,6 +174,4 @@ public partial class DailyEntryListPage : ContentPage
             _isCelebrationVisible = false;
         }
     }
-
 }
-
