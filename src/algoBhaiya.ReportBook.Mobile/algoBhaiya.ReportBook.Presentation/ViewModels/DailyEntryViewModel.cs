@@ -66,16 +66,19 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
 
         private readonly IDailyEntryRepository _repository;
+        private readonly ITrackingStreakService _trackingStreakService;
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
 
         public DailyEntryViewModel(
             IServiceProvider serviceProvider,
             IDailyEntryRepository repository,
+            ITrackingStreakService trackingStreakService,
             NavigationDataService navDataService
             )
         {
             _repository = repository;
+            _trackingStreakService = trackingStreakService;
             _serviceProvider = serviceProvider;
             _navDataService = navDataService;
 
@@ -187,6 +190,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             foreach (var entry in Fields)
             {
                 await _repository.SaveDailyEntryAsync(entry);
+            }
+
+            byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+            if (userId != 0)
+            {
+                await _trackingStreakService.NotifyDailyEntryChangedAsync(userId, FormDate);
             }
 
             _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);

@@ -67,6 +67,28 @@
                     FontSize="14" 
                     TextColor="White"
                     VerticalOptions="Center" />
+
+                <Border
+                    Stroke="#4DFFFFFF"
+                    StrokeThickness="2"
+                    BackgroundColor="#1AFFFFFF"
+                    StrokeShape="RoundRectangle 14"
+                    HeightRequest="28"
+                    Padding="8,0">
+                    <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                        <Image
+                            Source="streak_bolt.svg"
+                            HeightRequest="14"
+                            WidthRequest="14"
+                            VerticalOptions="Center" />
+                        <Label
+                            Text="{Binding StreakText}"
+                            FontAttributes="Bold"
+                            FontSize="13"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
                 
                 <Border
                     Stroke="#4DFFFFFF"

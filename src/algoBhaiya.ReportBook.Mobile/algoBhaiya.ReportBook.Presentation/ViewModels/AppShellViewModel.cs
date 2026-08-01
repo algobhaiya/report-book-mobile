@@ -13,6 +13,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IServiceProvider _serviceProvider;
         private readonly IAppNavigator _appNavigator;
         private readonly IPlannerCatalogService _plannerCatalogService;
+        private readonly ITrackingStreakService _trackingStreakService;
         private bool _isMenuOpen;
 
         public ICommand OpenMenuCommand { get; }
@@ -45,14 +46,33 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private int _streakCount;
+        public int StreakCount
+        {
+            get => _streakCount;
+            private set
+            {
+                if (_streakCount != value)
+                {
+                    _streakCount = value;
+                    OnPropertyChanged(nameof(StreakCount));
+                    OnPropertyChanged(nameof(StreakText));
+                }
+            }
+        }
+
+        public string StreakText => StreakCount.ToString();
+
         public AppShellViewModel(
             IServiceProvider serviceProvider,
             IAppNavigator appNavigator,
-            IPlannerCatalogService plannerCatalogService)
+            IPlannerCatalogService plannerCatalogService,
+            ITrackingStreakService trackingStreakService)
         {
             _serviceProvider = serviceProvider;
             _appNavigator = appNavigator;
             _plannerCatalogService = plannerCatalogService;
+            _trackingStreakService = trackingStreakService;
 
             OpenMenuCommand = new Command(async () => await OpenMenuAsync());
         }
@@ -132,6 +152,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             if (loggedInUserId == 0)
             {
                 LoggedInUserName = string.Empty;
+                StreakCount = 0;
                 return;
             }
 
@@ -140,6 +161,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId);
 
             LoggedInUserName = user?.UserName ?? string.Empty;
+            await RefreshStreakAsync(loggedInUserId);
 
             if (Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false))
             {
@@ -152,6 +174,23 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 _appNavigator.NavigateToPlanner();
             }
+        }
+
+        public async Task RefreshStreakAsync()
+        {
+            byte loggedInUserId = (byte)Preferences.Get("CurrentUserId", 0);
+            await RefreshStreakAsync(loggedInUserId);
+        }
+
+        public async Task RefreshStreakAsync(byte userId)
+        {
+            if (userId == 0)
+            {
+                StreakCount = 0;
+                return;
+            }
+
+            StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);
         }
     }
 }

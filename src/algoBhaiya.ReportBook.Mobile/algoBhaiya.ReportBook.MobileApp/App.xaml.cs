@@ -1,4 +1,4 @@
-﻿using algoBhaiya.ReportBook.Core.Interfaces;
+using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Infrastructure.Data;
 
 namespace algoBhaiya.ReportBook.MobileApp
@@ -19,6 +19,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             InitializeDatabase();
 
             NavigateToUserPage();
+            RefreshCurrentUserStreakAsync();
 
             SeedInitialDataAsync();
 
@@ -41,9 +42,32 @@ namespace algoBhaiya.ReportBook.MobileApp
                 _navigator.NavigateToLogin();
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            RefreshCurrentUserStreakAsync();
+        }
+
+        private void RefreshCurrentUserStreakAsync()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var streakService = _serviceProvider.GetService<ITrackingStreakService>();
+                    if (streakService != null)
+                    {
+                        await streakService.RefreshForCurrentDayAsync((byte)Preferences.Get("CurrentUserId", 0));
+                    }
+                }
+                catch
+                {
+                }
+            });
+        }
+
         private void CleanUpData()
         {
-            // Run cleanup task
             Task.Run(async () =>
             {
                 try
@@ -54,16 +78,14 @@ namespace algoBhaiya.ReportBook.MobileApp
                         await dataRetentionService.PerformIncrementalCleanupAsync();
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Optional: log error
                 }
             });
         }
 
         private void SeedInitialDataAsync()
         {
-            // Run cleanup task
             Task.Run(async () =>
             {
                 try
@@ -74,13 +96,10 @@ namespace algoBhaiya.ReportBook.MobileApp
                         await seedingDataService.SeedDefaultUnitsAsync();
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Optional: log error
                 }
             });
-            
         }
     }
-
 }
