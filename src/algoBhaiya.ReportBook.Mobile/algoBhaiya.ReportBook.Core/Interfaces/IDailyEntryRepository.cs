@@ -7,6 +7,7 @@ namespace algoBhaiya.ReportBook.Core.Interfaces
     {
         Task SaveDailyEntryAsync(DailyEntry entry);        
         Task<List<DailyEntry>> GetEntriesForUserAndDateAsync(int userId, DateTime date);
+        Task<bool> HasEntriesForUserAndDateAsync(int userId, DateTime date);
         Task<List<DailyEntry>> GetEntriesForUserThroughDateAsync(int userId, DateTime toDate);
         Task<DateTime?> GetLatestTrackedDateForUserAsync(int userId, DateTime toDate);
         Task<List<DateTime>> GetTrackedDatesForUserThroughDateAsync(int userId, DateTime toDate);

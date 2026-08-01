@@ -49,11 +49,29 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .Where(e => e.UserId == userId && e.Date >= start && e.Date < end)
                     .ToListAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                
             }
             return list;
+        }
+
+        public async Task<bool> HasEntriesForUserAndDateAsync(int userId, DateTime date)
+        {
+            try
+            {
+                var start = date.Date;
+                var end = start.AddDays(1);
+
+                var count = await _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= start && e.Date < end)
+                    .CountAsync();
+
+                return count > 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<List<DailyEntry>> GetEntriesForUserThroughDateAsync(int userId, DateTime toDate)

@@ -255,8 +255,7 @@ namespace algoBhaiya.ReportBook.Presentation.Services
                 return false;
             }
 
-            var entries = await _dailyEntryRepository.GetEntriesForUserAndDateAsync(userId, date.Date);
-            return entries.Count > 0;
+            return await _dailyEntryRepository.HasEntriesForUserAndDateAsync(userId, date.Date);
         }
 
         private static int GetLength(StreakCache cache)
