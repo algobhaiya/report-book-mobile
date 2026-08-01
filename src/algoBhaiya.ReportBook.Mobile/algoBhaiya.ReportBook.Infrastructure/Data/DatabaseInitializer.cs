@@ -19,6 +19,8 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data
             await _connection.CreateTableAsync<FieldTemplate>();
             await _connection.CreateTableAsync<MonthlyTarget>();
             await _connection.CreateTableAsync<DailyEntry>();
+            await _connection.ExecuteAsync(
+                "CREATE INDEX IF NOT EXISTS IX_DailyEntry_UserId_Date ON DailyEntry(UserId, Date)");
         }
     }
 

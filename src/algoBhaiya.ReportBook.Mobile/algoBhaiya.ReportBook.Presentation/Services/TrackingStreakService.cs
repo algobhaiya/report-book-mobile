@@ -220,22 +220,23 @@ namespace algoBhaiya.ReportBook.Presentation.Services
         private async Task<StreakCache> BuildCacheAsync(byte userId)
         {
             var today = DateTime.Today.Date;
-            var todayTracked = await IsDateTrackedAsync(userId, today);
-            var anchorDate = todayTracked ? today : today.AddDays(-1);
-
-            if (!await IsDateTrackedAsync(userId, anchorDate))
+            var latestTrackedDate = await _dailyEntryRepository.GetLatestTrackedDateForUserAsync(userId, today);
+            if (!latestTrackedDate.HasValue)
             {
                 return new StreakCache();
             }
 
-            var allEntries = await _dailyEntryRepository.GetEntriesForUserThroughDateAsync(userId, today);
-            var trackedDates = allEntries
-                .GroupBy(e => e.Date.Date)
-                .Select(g => g.Key)
-                .ToHashSet();
+            var anchorDate = latestTrackedDate.Value;
+            if (anchorDate != today && anchorDate != today.AddDays(-1))
+            {
+                return new StreakCache();
+            }
+
+            var trackedDates = await _dailyEntryRepository.GetTrackedDatesForUserThroughDateAsync(userId, anchorDate);
+            var trackedDateSet = trackedDates.ToHashSet();
 
             var cursor = anchorDate;
-            while (trackedDates.Contains(cursor.AddDays(-1)))
+            while (trackedDateSet.Contains(cursor.AddDays(-1)))
             {
                 cursor = cursor.AddDays(-1);
             }

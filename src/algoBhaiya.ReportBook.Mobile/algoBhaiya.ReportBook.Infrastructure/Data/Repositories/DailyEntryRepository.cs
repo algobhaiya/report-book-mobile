@@ -72,6 +72,42 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             return list;
         }
 
+        public async Task<DateTime?> GetLatestTrackedDateForUserAsync(int userId, DateTime toDate)
+        {
+            try
+            {
+                var rows = await _database.QueryAsync<TrackedDateItem>(
+                    "SELECT DISTINCT Date FROM DailyEntry WHERE UserId = ? AND Date <= ? ORDER BY Date DESC LIMIT 1",
+                    userId,
+                    toDate.Date);
+
+                return rows.Count > 0 ? rows[0].Date.Date : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<DateTime>> GetTrackedDatesForUserThroughDateAsync(int userId, DateTime toDate)
+        {
+            try
+            {
+                var rows = await _database.QueryAsync<TrackedDateItem>(
+                    "SELECT DISTINCT Date FROM DailyEntry WHERE UserId = ? AND Date <= ? ORDER BY Date DESC",
+                    userId,
+                    toDate.Date);
+
+                return rows
+                    .Select(row => row.Date.Date)
+                    .ToList();
+            }
+            catch
+            {
+                return new List<DateTime>();
+            }
+        }
+
         public Task<DailyEntry> GetEntryByDateAsync(DateTime date)
         {
             return _database.Table<DailyEntry>()
