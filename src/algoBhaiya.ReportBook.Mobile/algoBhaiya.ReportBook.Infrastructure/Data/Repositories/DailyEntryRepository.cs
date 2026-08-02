@@ -49,11 +49,29 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                     .Where(e => e.UserId == userId && e.Date >= start && e.Date < end)
                     .ToListAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                
             }
             return list;
+        }
+
+        public async Task<bool> HasEntriesForUserAndDateAsync(int userId, DateTime date)
+        {
+            try
+            {
+                var start = date.Date;
+                var end = start.AddDays(1);
+
+                var count = await _database.Table<DailyEntry>()
+                    .Where(e => e.UserId == userId && e.Date >= start && e.Date < end)
+                    .CountAsync();
+
+                return count > 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<List<DailyEntry>> GetEntriesForUserThroughDateAsync(int userId, DateTime toDate)
@@ -70,6 +88,42 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
             }
 
             return list;
+        }
+
+        public async Task<DateTime?> GetLatestTrackedDateForUserAsync(int userId, DateTime toDate)
+        {
+            try
+            {
+                var rows = await _database.QueryAsync<TrackedDateItem>(
+                    "SELECT DISTINCT Date FROM DailyEntry WHERE UserId = ? AND Date <= ? ORDER BY Date DESC LIMIT 1",
+                    userId,
+                    toDate.Date);
+
+                return rows.Count > 0 ? rows[0].Date.Date : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<DateTime>> GetTrackedDatesForUserThroughDateAsync(int userId, DateTime toDate)
+        {
+            try
+            {
+                var rows = await _database.QueryAsync<TrackedDateItem>(
+                    "SELECT DISTINCT Date FROM DailyEntry WHERE UserId = ? AND Date <= ? ORDER BY Date DESC",
+                    userId,
+                    toDate.Date);
+
+                return rows
+                    .Select(row => row.Date.Date)
+                    .ToList();
+            }
+            catch
+            {
+                return new List<DateTime>();
+            }
         }
 
         public Task<DailyEntry> GetEntryByDateAsync(DateTime date)
@@ -110,12 +164,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         p.Year == year)
                     .ToListAsync();
 
-                var entriesTask = _database.Table<DailyEntry>()
-                    .Where(e => 
-                        e.UserId == userId && 
-                        e.Date >= startDate && 
-                        e.Date < endDate)
-                    .ToListAsync();
+                var entriesTask = _database.QueryAsync<DailyEntryMonthlyRow>(
+                    "SELECT Date, FieldTemplateId, Value FROM DailyEntry WHERE UserId = ? AND Date >= ? AND Date < ?",
+                    userId,
+                    startDate,
+                    endDate);
 
                 await Task.WhenAll(plansTask, entriesTask);
 
@@ -185,7 +238,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 {
                     var date = new DateTime(year, month, day);
                     entriesByDate.TryGetValue(date, out var dayEntries);
-                    dayEntries ??= new List<DailyEntry>();
+                    dayEntries ??= new List<DailyEntryMonthlyRow>();
 
                     var filledCount = dayEntries.Count;
                     var deletedCount = dayEntries.Count(e => deletedPlanFieldIds.Contains(e.FieldTemplateId));
@@ -238,9 +291,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
                 var unitsTask = _database.Table<FieldUnit>().ToListAsync();
 
-                var entriesTask = _database.Table<DailyEntry>()
-                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
-                    .ToListAsync();
+                var entriesTask = _database.QueryAsync<DailyEntryMonthlyRow>(
+                    "SELECT Date, FieldTemplateId, Value FROM DailyEntry WHERE UserId = ? AND Date >= ? AND Date < ?",
+                    userId,
+                    startDate,
+                    endDate);
 
                 await Task.WhenAll(plansTask, templatesTask, unitsTask, entriesTask);
 
@@ -305,7 +360,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 foreach (var planItem in plans)
                 {
                     entriesByItem.TryGetValue(planItem.FieldTemplateId, out var ItemSummaries);
-                    ItemSummaries ??= new List<DailyEntry>();
+                    ItemSummaries ??= new List<DailyEntryMonthlyRow>();
 
                     // Skip deleted field, if it has no daily report entries.
                     if (planItem.IsDeleted && ItemSummaries.Count == 0)
@@ -418,5 +473,12 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         }
 
         #endregion
+    }
+
+    internal class DailyEntryMonthlyRow
+    {
+        public DateTime Date { get; set; }
+        public int FieldTemplateId { get; set; }
+        public string Value { get; set; }
     }
 }
