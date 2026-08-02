@@ -164,12 +164,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                         p.Year == year)
                     .ToListAsync();
 
-                var entriesTask = _database.Table<DailyEntry>()
-                    .Where(e => 
-                        e.UserId == userId && 
-                        e.Date >= startDate && 
-                        e.Date < endDate)
-                    .ToListAsync();
+                var entriesTask = _database.QueryAsync<DailyEntryMonthlyRow>(
+                    "SELECT Date, FieldTemplateId, Value FROM DailyEntry WHERE UserId = ? AND Date >= ? AND Date < ?",
+                    userId,
+                    startDate,
+                    endDate);
 
                 await Task.WhenAll(plansTask, entriesTask);
 
@@ -239,7 +238,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 {
                     var date = new DateTime(year, month, day);
                     entriesByDate.TryGetValue(date, out var dayEntries);
-                    dayEntries ??= new List<DailyEntry>();
+                    dayEntries ??= new List<DailyEntryMonthlyRow>();
 
                     var filledCount = dayEntries.Count;
                     var deletedCount = dayEntries.Count(e => deletedPlanFieldIds.Contains(e.FieldTemplateId));
@@ -292,9 +291,11 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
                 var unitsTask = _database.Table<FieldUnit>().ToListAsync();
 
-                var entriesTask = _database.Table<DailyEntry>()
-                    .Where(e => e.UserId == userId && e.Date >= startDate && e.Date < endDate)
-                    .ToListAsync();
+                var entriesTask = _database.QueryAsync<DailyEntryMonthlyRow>(
+                    "SELECT Date, FieldTemplateId, Value FROM DailyEntry WHERE UserId = ? AND Date >= ? AND Date < ?",
+                    userId,
+                    startDate,
+                    endDate);
 
                 await Task.WhenAll(plansTask, templatesTask, unitsTask, entriesTask);
 
@@ -359,7 +360,7 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
                 foreach (var planItem in plans)
                 {
                     entriesByItem.TryGetValue(planItem.FieldTemplateId, out var ItemSummaries);
-                    ItemSummaries ??= new List<DailyEntry>();
+                    ItemSummaries ??= new List<DailyEntryMonthlyRow>();
 
                     // Skip deleted field, if it has no daily report entries.
                     if (planItem.IsDeleted && ItemSummaries.Count == 0)
@@ -472,5 +473,12 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
         }
 
         #endregion
+    }
+
+    internal class DailyEntryMonthlyRow
+    {
+        public DateTime Date { get; set; }
+        public int FieldTemplateId { get; set; }
+        public string Value { get; set; }
     }
 }
