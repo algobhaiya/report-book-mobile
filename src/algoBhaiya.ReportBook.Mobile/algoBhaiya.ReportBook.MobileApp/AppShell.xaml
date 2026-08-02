@@ -83,7 +83,7 @@
                            FontSize="12"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           TextColor="#5AA0E6" />
+                           TextColor="{AppThemeBinding Light=#2563EB, Dark=#8CC6FF}" />
                         <Label
                             Text="{Binding StreakText}"
                             FontAttributes="Bold"
