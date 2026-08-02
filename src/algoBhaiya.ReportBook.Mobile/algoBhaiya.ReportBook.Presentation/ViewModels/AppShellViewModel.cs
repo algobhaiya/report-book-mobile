@@ -3,6 +3,7 @@ using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -15,8 +16,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IPlannerCatalogService _plannerCatalogService;
         private readonly ITrackingStreakService _trackingStreakService;
         private bool _isMenuOpen;
+        private bool _isStreakDetailsOpen;
+        private readonly ObservableCollection<StreakWeekDayViewModel> _weeklyDays = new();
 
         public ICommand OpenMenuCommand { get; }
+        public ICommand OpenStreakDetailsCommand { get; }
+        public IReadOnlyList<StreakWeekDayViewModel> WeeklyDays => _weeklyDays;
 
         private string _loggedInUserName;
         public string LoggedInUserName
@@ -57,11 +62,17 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _streakCount = value;
                     OnPropertyChanged(nameof(StreakCount));
                     OnPropertyChanged(nameof(StreakText));
+                    OnPropertyChanged(nameof(CurrentStreakDisplay));
+                    OnPropertyChanged(nameof(NextMilestoneDisplay));
+                    OnPropertyChanged(nameof(MilestoneProgress));
                 }
             }
         }
 
         public string StreakText => StreakCount.ToString();
+        public string CurrentStreakDisplay => $"{StreakCount} Days";
+        public string NextMilestoneDisplay => $"{GetNextMilestone(StreakCount)} Days";
+        public double MilestoneProgress => GetMilestoneProgress(StreakCount);
 
         public AppShellViewModel(
             IServiceProvider serviceProvider,
@@ -75,6 +86,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _trackingStreakService = trackingStreakService;
 
             OpenMenuCommand = new Command(async () => await OpenMenuAsync());
+            OpenStreakDetailsCommand = new Command(async () => await OpenStreakDetailsAsync());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -107,9 +119,146 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _isMenuOpen = false;
         }
 
+        private async Task OpenStreakDetailsAsync()
+        {
+            if (_isStreakDetailsOpen)
+            {
+                return;
+            }
+
+            _isStreakDetailsOpen = true;
+
+            try
+            {
+                await RefreshWeeklyDaysAsync();
+                await RefreshStreakAsync();
+                await _appNavigator.PushModalAsync(() =>
+                    new StreakDetailsPopup(this));
+            }
+            catch
+            {
+                _isStreakDetailsOpen = false;
+                throw;
+            }
+        }
+
+        public void NotifyStreakDetailsClosed()
+        {
+            _isStreakDetailsOpen = false;
+        }
+
         public void UpdatePageTitle(string? title)
         {
             PageTitle = string.IsNullOrWhiteSpace(title) ? "Daily Report" : title.Trim();
+        }
+
+        public async Task RefreshWeeklyDaysAsync()
+        {
+            byte userId = (byte)Preferences.Get("CurrentUserId", 0);
+            await RefreshWeeklyDaysAsync(userId);
+        }
+
+        private async Task RefreshWeeklyDaysAsync(byte userId)
+        {
+            _weeklyDays.Clear();
+            OnPropertyChanged(nameof(WeeklyDays));
+
+            if (userId == 0)
+            {
+                BuildEmptyWeeklyDays(DateTime.Today);
+                return;
+            }
+
+            var today = DateTime.Today.Date;
+            var weekStart = today.AddDays(-6);
+            var weekEnd = today;
+
+            var entries = await _serviceProvider
+                .GetRequiredService<IDailyEntryRepository>()
+                .GetEntriesForUserThroughDateAsync(userId, weekEnd);
+
+            var countsByDate = entries
+                .GroupBy(x => x.Date.Date)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var items = new List<StreakWeekDayViewModel>();
+            for (var offset = 0; offset < 7; offset++)
+            {
+                var date = weekStart.AddDays(offset);
+                countsByDate.TryGetValue(date, out var filledCount);
+                items.Add(new StreakWeekDayViewModel
+                {                    
+                    DayLabel = GetDayLabel(date),
+                    FilledCount = filledCount,
+                    IsToday = date == today
+                });
+            }
+
+            var max = Math.Max(items.Count == 0 ? 0 : items.Max(x => x.FilledCount), 1);
+            foreach (var item in items)
+            {
+                item.BarProgress = item.FilledCount == 0 ? 0.12 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
+                item.BarHeight = 18 + (92 * item.BarProgress);
+                item.IsEmpty = item.FilledCount == 0;
+                _weeklyDays.Add(item);
+            }
+
+            OnPropertyChanged(nameof(WeeklyDays));
+        }
+
+        private void BuildEmptyWeeklyDays(DateTime today)
+        {
+            var weekStart = today.AddDays(-6);
+            for (var offset = 0; offset < 7; offset++)
+            {
+                var date = weekStart.AddDays(offset);
+                _weeklyDays.Add(new StreakWeekDayViewModel
+                {
+                    DayLabel = GetDayLabel(date),
+                    FilledCount = 0,
+                    BarProgress = 0.12,
+                    BarHeight = 29,
+                    IsToday = date == today,
+                    IsEmpty = true
+                });
+            }
+
+            OnPropertyChanged(nameof(WeeklyDays));
+        }
+
+        private static string GetDayLabel(DateTime date)
+        {
+            return date.DayOfWeek switch
+            {
+                DayOfWeek.Saturday => "S",
+                DayOfWeek.Sunday => "S",
+                DayOfWeek.Monday => "M",
+                DayOfWeek.Tuesday => "Tu",
+                DayOfWeek.Wednesday => "W",
+                DayOfWeek.Thursday => "Th",
+                DayOfWeek.Friday => "F",
+                _ => string.Empty,
+            };
+        }
+
+        private static int GetNextMilestone(int currentStreak)
+        {
+            int[] milestones = [7, 14, 21, 30, 60, 90, 120, 180, 250, 365, 730, 1000];
+            foreach (var milestone in milestones)
+            {
+                if (currentStreak < milestone)
+                {
+                    return milestone;
+                }
+            }
+
+            return milestones[^1];
+        }
+
+        private static double GetMilestoneProgress(int currentStreak)
+        {
+            var milestone = GetNextMilestone(currentStreak);
+            return milestone <= 0 ? 0 : Math.Clamp((double)currentStreak / milestone, 0, 1);
         }
 
         public async Task NavigateToMonthlySummaryAsync()

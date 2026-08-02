@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="algoBhaiya.ReportBook.Presentation.Views.StreakDetailsPopup"
+             BackgroundColor="#80000000"
+             Padding="0">
+    <Grid RowDefinitions="*,Auto">
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnBackdropTapped" />
+        </Grid.GestureRecognizers>
+
+        <Border Grid.Row="1"
+                Margin="12,0,12,16"
+                Padding="16,12,16,18"
+                BackgroundColor="#102336"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 26"
+                VerticalOptions="End">
+            <Border.Shadow>
+                <Shadow Brush="#33000000"
+                        Offset="0,-10"
+                        Radius="22"
+                        Opacity="0.30" />
+            </Border.Shadow>
+
+            <VerticalStackLayout Spacing="16">
+                <Grid RowDefinitions="Auto,Auto">
+
+                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,2,0,0">
+                        <Label Text="My Journey"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </Grid>
+
+                <Border BackgroundColor="#13283B"
+                        Stroke="#203A52"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22">
+                    <Grid Padding="18" ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                        <VerticalStackLayout Spacing="6" VerticalOptions="Center">
+                            <Label Text="Current Streak"
+                                   FontSize="14"
+                                   TextColor="#8FA7BA" />
+                            <Label Text="{Binding CurrentStreakDisplay}"
+                                   FontSize="30"
+                                   FontAttributes="Bold"
+                                   TextColor="White" />
+                        </VerticalStackLayout>
+
+                        <Grid Grid.Column="1"
+                              WidthRequest="120"
+                              HeightRequest="120"
+                              HorizontalOptions="End"
+                              VerticalOptions="Center">
+                            <Border StrokeThickness="0"
+                                    BackgroundColor="#2A4E71"
+                                    StrokeShape="Ellipse" />
+                            <Border WidthRequest="90"
+                                    HeightRequest="90"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#172A3A"
+                                    StrokeShape="Ellipse"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                <Label Text="⚡"
+                                       FontSize="34"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       TextColor="#5AA0E6" />
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border BackgroundColor="#13283B"
+                        Stroke="#203A52"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22">
+                    <VerticalStackLayout Padding="16" Spacing="14">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="This Week"
+                                   FontSize="14"
+                                   TextColor="#8FA7BA" />
+                            <Label Grid.Column="1"
+                                   Text="◔"
+                                   FontSize="26"
+                                   TextColor="#8FA7BA" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding WeeklyDays}"
+                                        SelectionMode="None"
+                                        VerticalScrollBarVisibility="Never">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal"
+                                                   ItemSpacing="4" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <VerticalStackLayout WidthRequest="35"
+                                                         Spacing="8"
+                                                         HorizontalOptions="Center"
+                                                         VerticalOptions="End">
+                                        
+                                        <Grid HeightRequest="114"
+                                              VerticalOptions="End"
+                                              HorizontalOptions="Center">
+                                            <Border WidthRequest="40"
+                                                    HeightRequest="{Binding BarHeight}"
+                                                    VerticalOptions="End"
+                                                    StrokeThickness="0"
+                                                    BackgroundColor="#4E93D4"
+                                                    StrokeShape="RoundRectangle 20">
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border"
+                                                                 Binding="{Binding IsEmpty}"
+                                                                 Value="True">
+                                                        <Setter Property="BackgroundColor" Value="#24435F" />
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="Border"
+                                                                 Binding="{Binding IsToday}"
+                                                                 Value="True">
+                                                        <Setter Property="BackgroundColor" Value="#5AA0E6" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                                <Label Text="{Binding DayLabel}"
+                                                       FontSize="12"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="End"
+                                                       Padding="0,5"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Label Text="{Binding FilledCount}"
+                                               FontSize="12"
+                                               HorizontalTextAlignment="Center"
+                                               TextColor="#8FA7BA">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label"
+                                                             Binding="{Binding IsToday}"
+                                                             Value="True">
+                                                    <Setter Property="TextColor" Value="#CDE4FA" />
+                                                    <Setter Property="FontAttributes" Value="Bold" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="#13283B"
+                        Stroke="#203A52"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22">
+                    <Grid Padding="16" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <VerticalStackLayout Spacing="0">
+                            <Label Text="{Binding CurrentStreakDisplay}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="White" />
+                            <Label Text="Streak"
+                                   FontSize="13"
+                                   TextColor="#8FA7BA" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="2" Spacing="0" HorizontalOptions="End">
+                            <Label Text="{Binding NextMilestoneDisplay}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="End" />
+                            <Label Text="Milestone"
+                                   FontSize="13"
+                                   TextColor="#8FA7BA"
+                                   HorizontalTextAlignment="End" />
+                        </VerticalStackLayout>
+
+                        <Grid Grid.Column="1" VerticalOptions="End" Margin="0,18,0,0">
+                            <ProgressBar Progress="{Binding MilestoneProgress}"
+                                 HeightRequest="10"
+                                 ProgressColor="#5AA0E6"
+                                 BackgroundColor="#203A52" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border BackgroundColor="#8A681F"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14">
+                    <Grid Padding="16,14" ColumnDefinitions="*,Auto">
+                        <Label Text="Today builds tomorrow."
+                               FontSize="14"
+                               TextColor="#F4E8D3" 
+                               HorizontalOptions="Center"/>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

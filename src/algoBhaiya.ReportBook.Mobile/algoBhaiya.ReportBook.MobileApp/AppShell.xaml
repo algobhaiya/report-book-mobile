@@ -75,12 +75,15 @@
                     StrokeShape="RoundRectangle 14"
                     HeightRequest="28"
                     Padding="8,0">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenStreakDetailsCommand}" />
+                    </Border.GestureRecognizers>
                     <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                        <Image
-                            Source="streak_bolt.svg"
-                            HeightRequest="14"
-                            WidthRequest="14"
-                            VerticalOptions="Center" />
+                        <Label Text="⚡"
+                           FontSize="12"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="#5AA0E6" />
                         <Label
                             Text="{Binding StreakText}"
                             FontAttributes="Bold"
