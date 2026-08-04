@@ -13,6 +13,7 @@ public partial class FieldTemplatePage : ContentPage
 
     private ObservableCollection<FieldTemplate> _templates = new();
     private List<FieldUnit> _availableUnits = new();
+    private bool _isAddModalOpen;
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
     private byte _loggedInUser = 0;
@@ -121,9 +122,23 @@ public partial class FieldTemplatePage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
+        if (_isAddModalOpen)
+        {
+            return;
+        }
+
+        _isAddModalOpen = true;
+
         _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Func<FieldTemplate, FieldTemplate, Task>)OnUnitSaved);
 
-        await OpenModalAsync();
+        try
+        {
+            await OpenModalAsync();
+        }
+        finally
+        {
+            _isAddModalOpen = false;
+        }
     }
 
     public Command<FieldTemplate> OpenDetailsCommand => new Command<FieldTemplate>(OnFieldTapped);

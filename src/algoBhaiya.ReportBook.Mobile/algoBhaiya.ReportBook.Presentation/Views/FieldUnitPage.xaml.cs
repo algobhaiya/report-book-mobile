@@ -12,6 +12,7 @@ public partial class FieldUnitPage : ContentPage
     private readonly NavigationDataService _navDataService;
     
     private ObservableCollection<FieldUnit> _units = new();
+    private bool _isAddModalOpen;
 
     public ObservableCollection<FieldUnit> Units => _units;
 
@@ -92,10 +93,23 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        
+        if (_isAddModalOpen)
+        {
+            return;
+        }
+
+        _isAddModalOpen = true;
+
         _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
-        
-        await OpenModalAsync();
+
+        try
+        {
+            await OpenModalAsync();
+        }
+        finally
+        {
+            _isAddModalOpen = false;
+        }
     }
 
     private async void OnUnitTapped(FieldUnit tappedUnit)

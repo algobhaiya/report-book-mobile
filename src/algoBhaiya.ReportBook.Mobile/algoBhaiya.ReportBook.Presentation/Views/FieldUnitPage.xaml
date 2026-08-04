@@ -5,25 +5,10 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldUnitPage"
              Title="Units">
 
-    <Grid>
-        <!-- Add Button at Top Right -->
-        <Button Text="➕ Add"
-                x:Name="AddUnitButton"
-                Clicked="OnAddClicked"
-                CornerRadius="20"
-                BackgroundColor="#1976D2"
-                TextColor="White"
-                FontAttributes="Bold"
-                FontSize="14"
-                Padding="10,5"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                Margin="10" />
-
-        <!-- Scrollable Content -->
+    <Grid Padding="5,5,5,0">
         <CollectionView ItemsSource="{Binding Units}"
                         SelectionMode="None"
-                        Margin="10,60,10,10">
+                        Margin="0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BorderColor="#E0E0E0"
@@ -31,13 +16,11 @@
                            Padding="15"
                            Margin="0,5"
                            HasShadow="True">
-                        <!-- Inside your existing <Frame> in DataTemplate -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
-                                <!-- Added for Delete button -->
                             </Grid.ColumnDefinitions>
 
                             <VerticalStackLayout>
@@ -46,28 +29,26 @@
                                        FontSize="16" />
                                 <Label Text="{Binding ValueType}"
                                        FontSize="13"
-                                       TextColor="Gray" />      
+                                       TextColor="Gray" />
                             </VerticalStackLayout>
 
-                            <!-- ✏️ Edit Button -->
-                            <Button Text="✏️"
+                            <Button Text="✏"
                                     FontSize="14"
                                     Padding="6"
                                     CornerRadius="6"
-                                    BackgroundColor="#eeeeee"
+                                    BackgroundColor="#EEEEEE"
                                     Grid.Column="1"
                                     VerticalOptions="Center"
                                     HorizontalOptions="End"
-                                    Margin="5,0,0,0">   
+                                    Margin="5,0,0,0">
                                 <Button.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}" 
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}"
                                         CommandParameter="{Binding .}" />
                                 </Button.GestureRecognizers>
                             </Button>
 
-                            <!-- 🗑️ Delete Button -->
-                            <Button Text="🗑️"
+                            <Button Text="🗑"
                                     FontSize="14"
                                     Padding="6"
                                     CornerRadius="6"
@@ -78,24 +59,32 @@
                                     HorizontalOptions="End"
                                     Margin="5,0,0,0">
                                 <Button.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}" 
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}"
                                         CommandParameter="{Binding .}" />
                                 </Button.GestureRecognizers>
                             </Button>
                         </Grid>
-
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label Text="No units found." 
-                           TextColor="Gray" 
-                           FontAttributes="Italic" 
-                           FontSize="15"/>
+                <StackLayout Padding="20"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+                    <Label Text="No units found."
+                           TextColor="Gray"
+                           FontAttributes="Italic"
+                           FontSize="15" />
                 </StackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <ImageButton Source="fab_add.svg"
+                     Clicked="OnAddClicked"
+                     Style="{StaticResource FloatingActionButtonStyle}"
+                     HorizontalOptions="End"
+                     VerticalOptions="End"
+                     Margin="0,0,16,24" />
     </Grid>
 </ContentPage>
