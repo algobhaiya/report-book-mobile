@@ -13,8 +13,21 @@ public partial class FieldUnitPage : ContentPage
     
     private ObservableCollection<FieldUnit> _units = new();
     private bool _isAddModalOpen;
+    private bool _isLoading;
 
     public ObservableCollection<FieldUnit> Units => _units;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        private set
+        {
+            if (_isLoading != value)
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+    }
 
     public Command<FieldUnit> OpenDetailsCommand => new Command<FieldUnit>(OnUnitTapped);
     public Command DeleteCommand { get; }
@@ -75,20 +88,28 @@ public partial class FieldUnitPage : ContentPage
             }
         });
 
-        // Load saved units
+        // Load saved units        
         LoadUnits();        
     }
 
     private async void LoadUnits()
     {
-        var units = (await _repository
-            .GetListAsync(u => u.IsDeleted == false)
-            ).OrderBy(u => u.UnitName);
+        try
+        {
+            IsLoading = true;
+            var units = (await _repository
+                .GetListAsync(u => u.IsDeleted == false)
+                ).OrderBy(u => u.UnitName);
 
-        _units.Clear();
+            _units.Clear();
 
-        foreach (var unit in units)
-            _units.Add(unit);
+            foreach (var unit in units)
+                _units.Add(unit);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async void OnAddClicked(object sender, EventArgs e)
