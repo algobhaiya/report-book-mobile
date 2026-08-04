@@ -5,78 +5,115 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldUnitPage"
              Title="Units">
 
-    <Grid Padding="5,5,5,0">
+    <Grid Padding="10,10,5,0">
         <CollectionView ItemsSource="{Binding Units}"
                         SelectionMode="None"
                         Margin="0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame BorderColor="#E0E0E0"
-                           CornerRadius="12"
-                           Padding="15"
-                           Margin="0,5"
-                           HasShadow="True">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                    <Grid ColumnDefinitions="*,Auto"
+                          ColumnSpacing="10"
+                          Margin="0,0,0,12">
+                        <Border Stroke="#E5E7EB"
+                                StrokeThickness="1"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#111827}"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}"
+                                                      CommandParameter="{Binding}" />
+                            </Border.GestureRecognizers>
 
-                            <VerticalStackLayout>
-                                <Label Text="{Binding UnitName}"
-                                       FontAttributes="Bold"
-                                       FontSize="16" />
-                                <Label Text="{Binding ValueType}"
-                                       FontSize="13"
-                                       TextColor="Gray" />
-                            </VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding UnitName}"
+                                           FontSize="16"
+                                           FontAttributes="Bold" />
 
-                            <Button Text="✏"
-                                    FontSize="14"
-                                    Padding="6"
-                                    CornerRadius="6"
-                                    BackgroundColor="#EEEEEE"
-                                    Grid.Column="1"
-                                    VerticalOptions="Center"
-                                    HorizontalOptions="End"
-                                    Margin="5,0,0,0">
-                                <Button.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=OpenDetailsCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </Button.GestureRecognizers>
-                            </Button>
+                                    <Label Text="{Binding ValueType}"
+                                           FontSize="14"
+                                           TextColor="DarkSlateGray" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
 
-                            <Button Text="🗑"
-                                    FontSize="14"
-                                    Padding="6"
-                                    CornerRadius="6"
-                                    BackgroundColor="#FFCDD2"
-                                    TextColor="DarkRed"
-                                    Grid.Column="2"
-                                    VerticalOptions="Center"
-                                    HorizontalOptions="End"
-                                    Margin="5,0,0,0">
-                                <Button.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </Button.GestureRecognizers>
-                            </Button>
-                        </Grid>
-                    </Frame>
+                        <Border Grid.Column="1"
+                                WidthRequest="34"
+                                HeightRequest="34"
+                                StrokeShape="RoundRectangle 17"
+                                BackgroundColor="{AppThemeBinding Light=#FEF2F2, Dark=#3A2225}"
+                                Stroke="{AppThemeBinding Light=#FECACA, Dark=#7F1D1D}"
+                                StrokeThickness="1"
+                                VerticalOptions="Center"
+                                HorizontalOptions="End">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldUnitPage}}, Path=DeleteCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="&#x2212;"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#B91C1C, Dark=#FCA5A5}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <StackLayout Padding="20"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center">
-                    <Label Text="No units found."
-                           TextColor="Gray"
-                           FontAttributes="Italic"
-                           FontSize="15" />
-                </StackLayout>
+                <Grid Margin="0,24,0,0">
+                    <Border IsVisible="{Binding IsLoading}"
+                            Stroke="#E5E7EB"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                            Padding="24"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+                        <VerticalStackLayout Spacing="12"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                               IsVisible="{Binding IsLoading}"
+                                               WidthRequest="28"
+                                               HeightRequest="28" />
+                            <Label Text="Loading units..."
+                                   IsVisible="{Binding IsLoading}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Stroke="#E5E7EB"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                            Padding="24"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding IsLoading}"
+                                         Value="True">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <VerticalStackLayout Spacing="12"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center">
+                            <Label Text="No units yet"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Add your first unit to start building the daily form."
+                                   TextColor="Gray"
+                                   FontSize="13"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
             </CollectionView.EmptyView>
         </CollectionView>
 

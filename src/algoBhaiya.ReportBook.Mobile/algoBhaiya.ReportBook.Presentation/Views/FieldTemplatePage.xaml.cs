@@ -14,10 +14,23 @@ public partial class FieldTemplatePage : ContentPage
     private ObservableCollection<FieldTemplate> _templates = new();
     private List<FieldUnit> _availableUnits = new();
     private bool _isAddModalOpen;
+    private bool _isLoading;
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
     private byte _loggedInUser = 0;
     private bool _isInitialized = false;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        private set
+        {
+            if (_isLoading != value)
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+    }
 
     public Command DeleteCommand { get; }
 
@@ -86,12 +99,17 @@ public partial class FieldTemplatePage : ContentPage
         {
             try
             {
+                IsLoading = true;
                 await LoadTemplatesAsync(); // Only after page fully loaded
                 _isInitialized = true;
             }
             catch (Exception ex)
             {
                 // Log exception
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
     }
