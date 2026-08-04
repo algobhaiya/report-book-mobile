@@ -11,6 +11,44 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <helpers:ValueTypeToVisibilityConverter x:Key="ValueTypeToVisibilityConverter" />
+
+            <Style x:Key="FloatingActionButtonStyle" TargetType="ImageButton">
+                <Setter Property="WidthRequest" Value="56" />
+                <Setter Property="HeightRequest" Value="56" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="CornerRadius" Value="28" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="BorderWidth" Value="0" />
+                <Setter Property="MinimumHeightRequest" Value="56" />
+                <Setter Property="MinimumWidthRequest" Value="56" />
+                <Setter Property="Aspect" Value="AspectFit" />
+                <Setter Property="SemanticProperties.Description" Value="Add new item" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Pressed">
+                                <VisualState.Setters>
+                                    <Setter Property="Scale" Value="0.96" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#66000000"
+                                Offset="0,8"
+                                Radius="14"
+                                Opacity="0.35" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

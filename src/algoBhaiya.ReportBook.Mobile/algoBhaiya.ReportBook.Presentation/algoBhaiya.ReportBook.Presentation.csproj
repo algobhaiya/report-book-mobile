@@ -17,6 +17,7 @@
 	  <None Remove="Resources\Images\partial_half_circle.svg" />
 	</ItemGroup>
 	<ItemGroup>
+	  <MauiImage Include="Resources\Images\fab_add.svg" />
 	  <MauiImage Include="Resources\Images\book_solid.svg" />
 	  <MauiImage Include="Resources\Images\calendar_check_regular.svg" />
 	</ItemGroup>	

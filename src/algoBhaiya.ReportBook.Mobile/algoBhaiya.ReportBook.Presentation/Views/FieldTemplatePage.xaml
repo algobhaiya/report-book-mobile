@@ -5,86 +5,85 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplatePage"
              Title="Items">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid Padding="5,5,5,0">
+        <CollectionView ItemsSource="{Binding Templates}"
+                        SelectionMode="None"
+                        Margin="0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="LightGray"
+                           CornerRadius="12"
+                           Margin="5"
+                           Padding="12"
+                           HasShadow="True">
+                        <Grid ColumnDefinitions="*,Auto"
+                              RowDefinitions="Auto,Auto,Auto"
+                              ColumnSpacing="10">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=OpenDetailsCommand}"
+                                                       CommandParameter="{Binding}" />
+                            </Grid.GestureRecognizers>
 
-            <CollectionView ItemsSource="{Binding Templates}" SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="LightGray"
-                               CornerRadius="12"
-                               Margin="5"
-                               Padding="12"
-                               HasShadow="True">
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="{Binding FieldName}"
+                                   FontSize="16"
+                                   FontAttributes="Bold" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="{Binding FieldOrder}"
+                                   FontSize="13"
+                                   TextColor="DarkGray" />
+                            <Label Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="{Binding Unit.UnitName}"
+                                   FontSize="13"
+                                   FontAttributes="Italic"
+                                   TextColor="DarkSlateGray" />
 
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10">
+                            <HorizontalStackLayout Grid.RowSpan="3"
+                                                   Grid.Column="1"
+                                                   VerticalOptions="Center">
+                                <Switch IsToggled="{Binding IsEnabled, Mode=OneWay}"
+                                        Margin="0,0,10,0"
+                                        Toggled="OnSwitchToggled" />
 
-                                <!-- Tappable content -->
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=OpenDetailsCommand}" CommandParameter="{Binding}" />
-                                </Grid.GestureRecognizers>
+                                <Button Text="🗑"
+                                        FontSize="14"
+                                        Padding="6"
+                                        CornerRadius="6"
+                                        BackgroundColor="#FFCDD2"
+                                        TextColor="DarkRed"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End"
+                                        Margin="5,0,0,0">
+                                    <Button.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=DeleteCommand}"
+                                                               CommandParameter="{Binding .}" />
+                                    </Button.GestureRecognizers>
+                                </Button>
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+                    <Label Text="No items found."
+                           TextColor="Gray"
+                           FontAttributes="Italic"
+                           FontSize="15" />
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
 
-                                <Label Grid.Row="0" Grid.Column="0"
-                                       Text="{Binding FieldName}"
-                                       FontSize="16"
-                                       FontAttributes="Bold" />
-                                <Label Grid.Row="1" Grid.Column="0"
-                                       Text="{Binding FieldOrder}"
-                                       FontSize="13"
-                                       TextColor="DarkGray" />
-                                <Label Grid.Row="2" Grid.Column="0"
-                                       Text="{Binding Unit.UnitName}"
-                                       FontSize="13"
-                                       FontAttributes="Italic"
-                                       TextColor="DarkSlateGray" />
-
-                                <!-- Right side actions -->
-                                <HorizontalStackLayout Grid.RowSpan="3" Grid.Column="1" VerticalOptions="Center">
-                                    <Switch IsToggled="{Binding IsEnabled, Mode=OneWay}" 
-                                            Margin="0,0,10,0"
-                                            Toggled="OnSwitchToggled"/>
-                                    
-                                    <!-- 🗑️ Delete Button -->
-                                    <Button Text="🗑️"
-                                            FontSize="14"
-                                            Padding="6"
-                                            CornerRadius="6"
-                                            BackgroundColor="#FFCDD2"
-                                            TextColor="DarkRed"
-                                            Grid.Column="2"
-                                            VerticalOptions="Center"
-                                            HorizontalOptions="End"
-                                            Margin="5,0,0,0">
-                                        <Button.GestureRecognizers>
-                                            <TapGestureRecognizer 
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:FieldTemplatePage}}, Path=DeleteCommand}" 
-                                                CommandParameter="{Binding .}" />
-                                        </Button.GestureRecognizers>
-                                    </Button>
-                                </HorizontalStackLayout>
-
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.EmptyView>
-                    <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
-                        <Label Text="No items found." 
-                               TextColor="Gray" 
-                               FontAttributes="Italic" 
-                               FontSize="15"/>
-                    </StackLayout>
-                </CollectionView.EmptyView>
-            </CollectionView>
-
-            <Button Text="➕ Add Field"
-                    BackgroundColor="#1976D2"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    CornerRadius="8"
-                    Padding="10"
-                    Clicked="OnAddClicked" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+        <ImageButton Source="fab_add.svg"
+                     Clicked="OnAddClicked"
+                     Style="{StaticResource FloatingActionButtonStyle}"
+                     HorizontalOptions="End"
+                     VerticalOptions="End"
+                     Margin="0,0,16,24" />
+    </Grid>
 </ContentPage>
