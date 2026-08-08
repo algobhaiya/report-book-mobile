@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-android</TargetFrameworks>
+		<TargetFrameworks>net9.0-android36</TargetFrameworks>
 
     <OutputType>Exe</OutputType>
 		<RootNamespace>algoBhaiya.ReportBook.MobileApp</RootNamespace>
@@ -21,8 +21,6 @@
 		<ApplicationDisplayVersion>1.0.15</ApplicationDisplayVersion> <!-- Optional User-visible version. Semantic version (1.0.0) -->
 		<ApplicationVersionCode>15</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
 
-    <AndroidTargetSdkVersion>35</AndroidTargetSdkVersion>
-    <AndroidCompileSdkVersion>35</AndroidCompileSdkVersion>
     <AndroidMinSdkVersion>29</AndroidMinSdkVersion>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <AndroidNdkVersion>28.0.12674087</AndroidNdkVersion>
@@ -30,12 +28,12 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">29.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'net9.0-android'">
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'net9.0-android36'">
 		<!-- Play requires release bundles that are built with a 16 KB-compatible native toolchain. -->
 		<AndroidPackageFormat>aab</AndroidPackageFormat>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android36|AnyCPU'">
 	  <AndroidPackageFormat>aab</AndroidPackageFormat>
 	  <AndroidUseAapt2>True</AndroidUseAapt2>
 	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
