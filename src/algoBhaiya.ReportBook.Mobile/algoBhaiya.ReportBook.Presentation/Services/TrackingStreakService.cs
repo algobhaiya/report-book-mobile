@@ -63,6 +63,7 @@ namespace algoBhaiya.ReportBook.Presentation.Services
 
             if (currentEnd < yesterday)
             {
+                ClearCache(userId);
                 SaveLastCheckedDate(userId, today);
                 return;
             }
