@@ -86,6 +86,7 @@ namespace algoBhaiya.ReportBook.MobileApp
 
             builder.Services.AddTransient<MenuSheetPage>();
             builder.Services.AddTransient<StreakDetailsPopup>();
+            builder.Services.AddTransient<StartupStreakLossPopup>();
 
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddSingleton<SettingsPage>();
