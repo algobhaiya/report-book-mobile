@@ -17,6 +17,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly ITrackingStreakService _trackingStreakService;
         private bool _isMenuOpen;
         private bool _isStreakDetailsOpen;
+        private bool _isStartupStreakLossOpen;
+        private bool _hasSeenPositiveStreakThisSession;
+        private bool _hasShownStartupStreakLossThisSession;
         private readonly ObservableCollection<StreakWeekDayViewModel> _weeklyDays = new();
 
         public ICommand OpenMenuCommand { get; }
@@ -145,6 +148,36 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public void NotifyStreakDetailsClosed()
         {
             _isStreakDetailsOpen = false;
+        }
+
+        private async Task CheckAndShowStartupStreakLossAsync()
+        {
+            if (_isStartupStreakLossOpen)
+            {
+                return;
+            }
+
+            byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+            if (userId == 0)
+            {
+                return;
+            }
+
+            _isStartupStreakLossOpen = true;
+            try
+            {
+                await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
+                _hasShownStartupStreakLossThisSession = true;
+            }
+            catch
+            {
+                _isStartupStreakLossOpen = false;                
+            }
+        }
+
+        public void NotifyStartupStreakLossClosed()
+        {
+            _isStartupStreakLossOpen = false;
         }
 
         public void UpdatePageTitle(string? title)
@@ -339,7 +372,24 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
+            var previousStreak = StreakCount;
             StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);
+
+            if (StreakCount > 0)
+            {
+                _hasSeenPositiveStreakThisSession = true;
+                return;
+            }
+
+            if (previousStreak > 0)
+            {
+                _hasSeenPositiveStreakThisSession = true;
+            }
+
+            if (_hasSeenPositiveStreakThisSession && !_hasShownStartupStreakLossThisSession)
+            {
+                await CheckAndShowStartupStreakLossAsync();
+            }
         }
     }
 }
