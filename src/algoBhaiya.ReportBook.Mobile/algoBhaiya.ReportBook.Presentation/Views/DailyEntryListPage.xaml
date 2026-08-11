@@ -61,7 +61,7 @@
                                 <Border Grid.Column="1"
                                         BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1F2937}"
                                         Stroke="{AppThemeBinding Light=#A5D6A7, Dark=#374151}"
-                                        StrokeThickness="1.5"
+                                        StrokeThickness="2"
                                         StrokeShape="RoundRectangle 4"
                                         Padding="4"
                                         VerticalOptions="Center">
