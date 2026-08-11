@@ -38,8 +38,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ObservableCollection<MonthlyTargetFieldViewModel> Fields { get; set; } = new();
 
         public Command SubmitCommand { get; }
+        public Command PreviousMonthCommand { get; }
+        public Command NextMonthCommand { get; }
 
         private bool _isLoadingData = false;
+        public bool IsLoadingMonth
+        {
+            get => _isLoadingData;
+            private set
+            {
+                if (_isLoadingData != value)
+                {
+                    _isLoadingData = value;
+                    OnPropertyChanged();
+                    PreviousMonthCommand.ChangeCanExecute();
+                    NextMonthCommand.ChangeCanExecute();
+                }
+            }
+        }
+
         private bool _isReadOnly = false;
         public bool IsReadOnly
         {
@@ -69,6 +86,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
+        private DateTime _currentMonthDate;
+        private bool _hasLoadedMonth;
+        public bool HasLoadedMonth => _hasLoadedMonth;
+
         public bool CanSubmit => !IsReadOnly;
         private byte _loggedInUser = 0;
 
@@ -81,24 +102,28 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _serviceProvider = serviceProvider;
             _repository = repository;
             SubmitCommand = new Command(async () => await SaveTargetsAsync());
+            PreviousMonthCommand = new Command(async () => await NavigateMonthAsync(-1), () => !_isLoadingData);
+            NextMonthCommand = new Command(async () => await NavigateMonthAsync(1), () => !_isLoadingData);
 
             _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
         }
 
         public async Task LoadTargetsAsync(int year, int month)
         {
-            if (_isLoadingData)
+            if (IsLoadingMonth)
             {
                 return;
             }
 
-            _isLoadingData = true;
+            IsLoadingMonth = true;
             Fields.Clear();
             try
             {
                 if (_loggedInUser == 0) return;
 
                 _selectedItemDate = new DateTime(year, month, 1);
+                _currentMonthDate = _selectedItemDate;
+                _hasLoadedMonth = true;
 
                 IsReadOnly = IsNonEditableMonth(year, month);
 
@@ -172,7 +197,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
             finally
             {
-                _isLoadingData = false;
+                IsLoadingMonth = false;
             }
         }
 
@@ -204,6 +229,17 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         #region Helpers
+
+        private async Task NavigateMonthAsync(int offset)
+        {
+            if (_currentMonthDate == default || IsLoadingMonth)
+            {
+                return;
+            }
+
+            var targetMonth = _currentMonthDate.AddMonths(offset);
+            await LoadTargetsAsync(targetMonth.Year, targetMonth.Month);
+        }
         
         private bool IsNonEditableMonth(int year, int month)
         {
