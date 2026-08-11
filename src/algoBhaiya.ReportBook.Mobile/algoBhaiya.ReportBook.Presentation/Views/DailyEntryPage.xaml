@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
-             Title="Daily">
+             Title="Daily"
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
 
     <Grid RowDefinitions="*,Auto">
         <ScrollView Grid.Row="0">
@@ -29,11 +30,17 @@
                                              Spacing="2"
                                              HorizontalOptions="Center"
                                              VerticalOptions="Center">
-                            <Label Text="{Binding FormDate, StringFormat='Fill up for {0:MMMM dd, yyyy}'}"
+                            <Label Text="Fill up"
                                    FontSize="18"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
-                                   TextColor="DarkSlateBlue" />
+                                   TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFDBFE}" />
+
+                            <Label Text="{Binding FormDate, StringFormat='{0:dd MMMM, yyyy}'}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}" />
                         </VerticalStackLayout>
 
                         <Button Grid.Column="2"
@@ -52,7 +59,7 @@
                 <CollectionView ItemsSource="{Binding Fields}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid ColumnSpacing="10" Padding="5">
+                            <Grid ColumnSpacing="10" Padding="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" />
                                     <ColumnDefinition Width="3*" />
@@ -62,12 +69,16 @@
                                 <Label Grid.Column="0"
                                        Text="{Binding FieldTemplate.FieldName}"
                                        FontAttributes="Bold"
-                                       VerticalOptions="Center" />
+                                       VerticalOptions="Center" 
+                                       MaxLines="2"
+                                       TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}" />
 
                                 <StackLayout Grid.Column="1" VerticalOptions="Center">
                                     <Entry Placeholder="Enter value"
                                            Keyboard="Numeric"
                                            HorizontalTextAlignment="Center"
+                                           TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}"
+                                           PlaceholderColor="{AppThemeBinding Light=#94A3B8, Dark=#6B7280}"
                                            Text="{Binding Value, Mode=TwoWay}"
                                            IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
 
@@ -78,7 +89,7 @@
                                 <Label Grid.Column="2"
                                        Text="{Binding FieldTemplate.Unit.UnitName}"
                                        FontAttributes="Italic"
-                                       TextColor="Gray"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#9CA3AF}"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Start" />
                             </Grid>
@@ -88,7 +99,7 @@
 
                 <Label Text="This entry is locked and can't be edited."
                        HorizontalOptions="Center"
-                       TextColor="Red"
+                       TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}"
                        FontAttributes="Italic"
                        FontSize="12"
                        IsVisible="{Binding IsReadOnly}" />
@@ -98,22 +109,21 @@
         <Border Grid.Row="1"
                 Padding="20,12"
                 BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}"
-                StrokeThickness="0">
+                StrokeThickness="0"
+                IsVisible="{Binding CanSubmit}">
             <Button Text="Submit Entry"
                     Command="{Binding SubmitCommand}"
-                    IsEnabled="{Binding CanSubmit}"
-                    IsVisible="{Binding CanSubmit}"
-                    BackgroundColor="#4CAF50"
+                    IsEnabled="{Binding CanSubmit}"                    
+                    BackgroundColor="{AppThemeBinding Light=#16A34A, Dark=#22C55E}"
                     TextColor="White" />
         </Border>
 
         <Grid Grid.RowSpan="2"
               IsVisible="{Binding IsLoading}"
-              BackgroundColor="#66000000"
+              BackgroundColor="{AppThemeBinding Light=#66000000, Dark=#99000000}"
               InputTransparent="False">
-            <ActivityIndicator IsVisible="{Binding IsLoading}"
-                               IsRunning="{Binding IsLoading}"
-                               Color="White"
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               Color="{AppThemeBinding Light=White, Dark=#F9FAFB}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
         </Grid>
