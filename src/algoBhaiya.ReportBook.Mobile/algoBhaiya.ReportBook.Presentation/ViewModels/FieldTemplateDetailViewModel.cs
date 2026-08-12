@@ -19,6 +19,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ObservableCollection<string> DisplayUnitNames { get; } = new();
         private byte _loggedInUser = 0;
 
+        private readonly string _newModeTitle = "Add Field";
+        private readonly string _editModeTitle = "Edit Field";
+        private readonly string _newModeSubtitle = "Choose a field name, unit, and display order.";
+        private readonly string _editModeSubtitle = "Update this field's name, unit, or display order.";
+        private readonly string _saveButtonText = "Save";
+        private readonly string _updateButtonText = "Update";
+
         private string _fieldName;
         public string FieldName
         {
@@ -29,6 +36,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _fieldName = value;
                     OnPropertyChanged();
+                    if (!string.IsNullOrWhiteSpace(_fieldName))
+                    {
+                        FieldNameError = string.Empty;
+                    }
                 }
             }
         }
@@ -43,6 +54,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _selectedUnitName = value;
                     OnPropertyChanged();
+                    if (!string.IsNullOrWhiteSpace(_selectedUnitName))
+                    {
+                        SelectedUnitError = string.Empty;
+                    }
                 }
             }
         }
@@ -57,11 +72,68 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _fieldOrder = value;
                     OnPropertyChanged();
+                    if (_fieldOrder > 0)
+                    {
+                        FieldOrderError = string.Empty;
+                    }
                 }
             }
         }
 
         public ICommand SubmitCommand { get; }
+        public string PageTitle => IsEditMode ? _editModeTitle : _newModeTitle;
+        public string PageSubtitle => IsEditMode ? _editModeSubtitle : _newModeSubtitle;
+        public string SubmitButtonText => IsEditMode ? _updateButtonText : _saveButtonText;
+        public bool IsEditMode => TappedField != null && TappedField.Id > 0;
+
+        private string _fieldNameError;
+        public string FieldNameError
+        {
+            get => _fieldNameError;
+            private set
+            {
+                if (_fieldNameError != value)
+                {
+                    _fieldNameError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasFieldNameError));
+                }
+            }
+        }
+
+        private string _selectedUnitError;
+        public string SelectedUnitError
+        {
+            get => _selectedUnitError;
+            private set
+            {
+                if (_selectedUnitError != value)
+                {
+                    _selectedUnitError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasSelectedUnitError));
+                }
+            }
+        }
+
+        private string _fieldOrderError;
+        public string FieldOrderError
+        {
+            get => _fieldOrderError;
+            private set
+            {
+                if (_fieldOrderError != value)
+                {
+                    _fieldOrderError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasFieldOrderError));
+                }
+            }
+        }
+
+        public bool HasFieldNameError => !string.IsNullOrWhiteSpace(FieldNameError);
+        public bool HasSelectedUnitError => !string.IsNullOrWhiteSpace(SelectedUnitError);
+        public bool HasFieldOrderError => !string.IsNullOrWhiteSpace(FieldOrderError);
         
         public FieldTemplate TappedField { get; set; }
 
@@ -109,15 +181,18 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             var fieldTemplate = _navDataService.Get<FieldTemplate>(Constants.Constants.FieldTemplate.Item_ToEdit);
             
             AssignEntryAsync(fieldTemplate);
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
 
             _navDataService.Remove(Constants.Constants.FieldTemplate.Item_ToEdit);
         }
 
         private async Task SubmitAsync()
         {
-            if (string.IsNullOrWhiteSpace(FieldName) || string.IsNullOrWhiteSpace(SelectedUnitName))
+            if (!ValidateFields())
             {
-                await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
                 return;
             }
 
@@ -138,10 +213,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 if (duplicateField != null)
                 {
-                    await Shell.Current.DisplayAlert(
-                        "Duplicate Name",
-                        $"The field \"{FieldName}\" already exists. Please choose a different name.",
-                        "OK");
+                    FieldNameError = $"The field \"{FieldName}\" already exists. Please choose a different name.";
                     return;
                 }
 
@@ -157,6 +229,43 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             onModalClose?.Invoke();           
+        }
+
+        private bool ValidateFields()
+        {
+            var isValid = true;
+
+            if (string.IsNullOrWhiteSpace(FieldName))
+            {
+                FieldNameError = "Field name is required.";
+                isValid = false;
+            }
+            else
+            {
+                FieldNameError = string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(SelectedUnitName))
+            {
+                SelectedUnitError = "Please select a unit.";
+                isValid = false;
+            }
+            else
+            {
+                SelectedUnitError = string.Empty;
+            }
+
+            if (FieldOrder == 0)
+            {
+                FieldOrderError = "Display order must be greater than zero.";
+                isValid = false;
+            }
+            else
+            {
+                FieldOrderError = string.Empty;
+            }
+
+            return isValid;
         }
 
         private async Task SaveAsync(FieldUnit backendUnit)
@@ -200,6 +309,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             TappedField = fieldTemplate ?? new FieldTemplate();
+            FieldNameError = string.Empty;
+            SelectedUnitError = string.Empty;
+            FieldOrderError = string.Empty;
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
         }
 
         private async Task<FieldTemplate> DeleteFieldAsync(string fieldName, byte unitId)
