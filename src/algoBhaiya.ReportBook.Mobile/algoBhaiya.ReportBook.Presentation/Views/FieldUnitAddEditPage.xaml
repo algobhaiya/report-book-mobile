@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldUnitAddEditPage"
              BackgroundColor="#80000000"
-             Padding="18"
+             Padding="20"
              Title="{Binding PageTitle}">
 
     <Grid VerticalOptions="Center"
-          HorizontalOptions="Center">
+          HorizontalOptions="Center"
+          Padding="30,0,30,0">
         <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1F2937}"
                 Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#374151}"
                 StrokeThickness="1"
                 StrokeShape="RoundRectangle 24"
                 Padding="20"
-                WidthRequest="360"
+                WidthRequest="340"
                 MaximumWidthRequest="420"
                 HeightRequest="420"
                 MaximumHeightRequest="500">
@@ -26,6 +27,7 @@
                                TextColor="{AppThemeBinding Light=#111827, Dark=White}" />
                         <Label Text="{Binding PageSubtitle}"
                                FontSize="13"
+                               FontAttributes="Italic"
                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#A1A9B5}" />
                     </VerticalStackLayout>
 
