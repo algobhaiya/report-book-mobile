@@ -12,6 +12,7 @@ public partial class LoginPage : ContentPage
     private readonly IAppNavigator _appNavigator;
     private bool _isLoading;
     private bool _hasExistingUsers;
+    private bool _isDeleteFlowActive;
 
     public ObservableCollection<AppUser> ExistingUsers { get; set; } = new ();
     public Command<AppUser> UserTappedCommand { get; }
@@ -74,6 +75,11 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
 
+        if (_isDeleteFlowActive)
+        {
+            return;
+        }
+
         await RefreshUsersAsync();
     }
 
@@ -118,26 +124,32 @@ public partial class LoginPage : ContentPage
 
     private async Task OnRemoveUserClicked(AppUser user)
     {
-        string action = await DisplayActionSheet(
-            $"Remove user '{user.UserName}'?",
-            "Cancel",
-            null,
-            Constants.Constants.LogIn.SoftDeleteBtn,
-            Constants.Constants.LogIn.HardDeleteBtn);
-
-        switch (action)
+        _isDeleteFlowActive = true;
+        try
         {
-            case Constants.Constants.LogIn.SoftDeleteBtn:
-                user.IsDeleted = true; // You need to add this flag in your AppUser entity
-                await _repository.UpdateAsync(user);
-                break;
+            var popup = new UserDeleteChoicePopup(user.UserName);
+            await Navigation.PushModalAsync(popup);
 
-            case Constants.Constants.LogIn.HardDeleteBtn:
-                await DeleteUserPermanentlyAsync(user);
-                break;
+            var choice = await popup.ResultSource.Task;
+
+            switch (choice)
+            {
+                case UserDeleteChoice.SoftDelete:
+                    user.IsDeleted = true; // You need to add this flag in your AppUser entity
+                    await _repository.UpdateAsync(user);
+                    await RefreshUsersAsync();
+                    break;
+
+                case UserDeleteChoice.HardDelete:
+                    await DeleteUserPermanentlyAsync(user);
+                    await RefreshUsersAsync();
+                    break;
+            }
         }
-
-        await RefreshUsersAsync();
+        finally
+        {
+            _isDeleteFlowActive = false;
+        }
     }
 
     private async Task RefreshUsersAsync()
