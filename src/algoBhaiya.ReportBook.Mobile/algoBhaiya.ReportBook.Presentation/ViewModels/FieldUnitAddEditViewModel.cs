@@ -18,16 +18,27 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public  Action onModalClose;
         public ObservableCollection<string> DisplayTypes { get; } = new();
 
+        private readonly string _newModeTitle = "Add Unit";
+        private readonly string _editModeTitle = "Edit Unit";
+        private readonly string _newModeSubtitle = "Choose a name and value type for this unit.";
+        private readonly string _editModeSubtitle = "Update the unit name or value type.";
+        private readonly string _saveButtonText = "Save";
+        private readonly string _updateButtonText = "Update";
+
         private string _unitName;
         public string UnitName
         {
-            get => _unitName.Trim();
+            get => _unitName?.Trim() ?? string.Empty;
             set
             {
                 if (_unitName != value)
                 {
                     _unitName = value;
                     OnPropertyChanged();
+                    if (!string.IsNullOrWhiteSpace(_unitName))
+                    {
+                        UnitNameError = string.Empty;
+                    }
                 }
             }
         }
@@ -42,11 +53,49 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _selectedDisplayType = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasDisplayTypeError));
                 }
             }
         }
 
         public ICommand SubmitCommand { get; }
+        public string PageTitle => IsEditMode ? _editModeTitle : _newModeTitle;
+        public string PageSubtitle => IsEditMode ? _editModeSubtitle : _newModeSubtitle;
+        public string SubmitButtonText => IsEditMode ? _updateButtonText : _saveButtonText;
+        public bool IsEditMode => TappedUnit != null && TappedUnit.Id > 0;
+
+        private string _unitNameError;
+        public string UnitNameError
+        {
+            get => _unitNameError;
+            private set
+            {
+                if (_unitNameError != value)
+                {
+                    _unitNameError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasUnitNameError));
+                }
+            }
+        }
+
+        private string _displayTypeError;
+        public string DisplayTypeError
+        {
+            get => _displayTypeError;
+            private set
+            {
+                if (_displayTypeError != value)
+                {
+                    _displayTypeError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasDisplayTypeError));
+                }
+            }
+        }
+
+        public bool HasUnitNameError => !string.IsNullOrWhiteSpace(UnitNameError);
+        public bool HasDisplayTypeError => !string.IsNullOrWhiteSpace(DisplayTypeError);
 
         private readonly Dictionary<string, string> _typeMap = new()
         {
@@ -72,6 +121,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             var unit = _navDataService.Get<FieldUnit>(Constants.Constants.FieldUnit.Item_ToEdit);
             AssignEntryAsync(unit);
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
 
             var onSaveAction = _navDataService.Get<Action<FieldUnit, FieldUnit>>(Constants.Constants.FieldUnit.Action_OnUnitSaved);
             if (onSaveAction != null)
@@ -90,27 +143,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SubmitAsync()
         {
-            if (string.IsNullOrWhiteSpace(UnitName) || string.IsNullOrWhiteSpace(SelectedDisplayType))
+            var isValid = ValidateFields();
+            if (!isValid)
             {
-                await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
                 return;
             }
 
             var backendType = _typeMap[SelectedDisplayType];
+            var normalizedUnitName = UnitName.Trim();
 
             // If different name, then check duplicate.
-            if (TappedUnit.UnitName != UnitName)
+            if (!string.Equals(TappedUnit.UnitName, normalizedUnitName, StringComparison.Ordinal))
             {
                 // validate unitName.
                 var duplicateUnit = await _repository.GetFirstOrDefaultAsync(
-                        u => u.UnitName == UnitName && u.IsDeleted == false);
+                        u => u.UnitName == normalizedUnitName && u.IsDeleted == false);
 
                 if (duplicateUnit != null)
                 {
-                    await Shell.Current.DisplayAlert(
-                        "Duplicate Name",
-                        $"The unit \"{UnitName}\" already exists. Please choose a different name.",
-                        "OK");
+                    UnitNameError = $"The unit \"{normalizedUnitName}\" already exists. Please choose a different name.";
                     return;
                 }
 
@@ -126,6 +177,40 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             onModalClose?.Invoke();           
+        }
+
+        private bool ValidateFields()
+        {
+            var isValid = true;
+
+            if (!ValidateUnitName())
+            {
+                isValid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(SelectedDisplayType))
+            {
+                DisplayTypeError = "Please select a value type.";
+                isValid = false;
+            }
+            else
+            {
+                DisplayTypeError = string.Empty;
+            }
+
+            return isValid;
+        }
+
+        private bool ValidateUnitName()
+        {
+            var normalizedUnitName = UnitName?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(normalizedUnitName))
+            {
+                UnitNameError = "Unit name is required.";
+                return false;
+            }
+
+            return true;
         }
 
         private async Task SaveAsync(string backendType)
@@ -153,6 +238,12 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
             
             TappedUnit = fieldUnit ?? new FieldUnit();
+            UnitNameError = string.Empty;
+            DisplayTypeError = string.Empty;
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
         }
 
         private string GetDisplayValueType(string backendValueType)
