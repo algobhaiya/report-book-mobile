@@ -4,6 +4,7 @@
              xmlns:views="clr-namespace:algoBhaiya.ReportBook.Presentation.Views;assembly=algoBhaiya.ReportBook.Presentation"
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.LoginPage"
+             NavigationPage.HasNavigationBar="False"
              BackgroundColor="{AppThemeBinding Light=#F7F8FC, Dark=#111418}">
 
     <ContentPage.Resources>
@@ -13,7 +14,7 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Padding="20,24" Spacing="18">
+        <VerticalStackLayout Padding="20,40,20,50" Spacing="18">
             <Border StrokeShape="RoundRectangle 28"
                     BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#20242B}"
                     Stroke="{AppThemeBinding Light=#E5E7EB, Dark=#3A414C}"
