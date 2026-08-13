@@ -1,4 +1,5 @@
 using System.Text.Json;
+using algoBhaiya.ReportBook.Core.Dtos;
 using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 
@@ -87,6 +88,26 @@ namespace algoBhaiya.ReportBook.Presentation.Services
                 }
             }
             SaveLastCheckedDate(userId, today);
+        }
+
+        public async Task<StreakRefreshResult> RefreshStreakForStartupAsync(byte userId)
+        {
+            if (userId == 0)
+            {
+                return new StreakRefreshResult();
+            }
+
+            var beforeRefresh = GetLength(LoadCache(userId));
+            await RefreshForCurrentDayAsync(userId);
+            var cache = await GetOrBuildCacheAsync(userId);
+            var currentStreak = GetLength(cache);
+
+            return new StreakRefreshResult
+            {
+                StreakCount = currentStreak,
+                HadPositiveStreakBeforeRefresh = beforeRefresh > 0,
+                IsStartupLoss = beforeRefresh > 0 && currentStreak == 0
+            };
         }
 
         public async Task RebuildAsync(byte userId, bool invalidateOnly = false)

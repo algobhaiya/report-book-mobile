@@ -19,7 +19,6 @@ namespace algoBhaiya.ReportBook.MobileApp
             InitializeDatabase();
 
             NavigateToUserPage();
-            RefreshCurrentUserStreakAsync();
 
             SeedInitialDataAsync();
 
@@ -44,26 +43,7 @@ namespace algoBhaiya.ReportBook.MobileApp
 
         protected override void OnResume()
         {
-            base.OnResume();
-            RefreshCurrentUserStreakAsync();
-        }
-
-        private void RefreshCurrentUserStreakAsync()
-        {
-            Task.Run(async () =>
-            {
-                try
-                {
-                    var streakService = _serviceProvider.GetService<ITrackingStreakService>();
-                    if (streakService != null)
-                    {
-                        await streakService.RefreshForCurrentDayAsync((byte)Preferences.Get("CurrentUserId", 0));
-                    }
-                }
-                catch
-                {
-                }
-            });
+            base.OnResume();           
         }
 
         private void CleanUpData()

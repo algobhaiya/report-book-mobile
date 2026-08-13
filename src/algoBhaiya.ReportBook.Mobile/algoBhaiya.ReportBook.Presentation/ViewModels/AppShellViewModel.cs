@@ -1,4 +1,5 @@
 ﻿
+using algoBhaiya.ReportBook.Core.Dtos;
 using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
@@ -18,8 +19,6 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private bool _isMenuOpen;
         private bool _isStreakDetailsOpen;
         private bool _isStartupStreakLossOpen;
-        private bool _hasSeenPositiveStreakThisSession;
-        private bool _hasShownStartupStreakLossThisSession;
         private readonly ObservableCollection<StreakWeekDayViewModel> _weeklyDays = new();
 
         public ICommand OpenMenuCommand { get; }
@@ -150,7 +149,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _isStreakDetailsOpen = false;
         }
 
-        private async Task CheckAndShowStartupStreakLossAsync()
+        public async Task ShowStartupStreakLossAsync()
         {
             if (_isStartupStreakLossOpen)
             {
@@ -167,12 +166,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             try
             {
                 await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
-                _hasShownStartupStreakLossThisSession = true;
             }
             catch
             {
                 _isStartupStreakLossOpen = false;                
             }
+        }
+
+        public async Task<StreakRefreshResult> RefreshStartupStreakAsync()
+        {
+            byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+            if (userId == 0)
+            {
+                StreakCount = 0;
+                return new StreakRefreshResult();
+            }
+
+            var refreshResult = await _trackingStreakService.RefreshStreakForStartupAsync(userId);
+            StreakCount = refreshResult.StreakCount;
+            return refreshResult;
         }
 
         public void NotifyStartupStreakLossClosed()
@@ -372,24 +384,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var previousStreak = StreakCount;
-            StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);
-
-            if (StreakCount > 0)
-            {
-                _hasSeenPositiveStreakThisSession = true;
-                return;
-            }
-
-            if (previousStreak > 0)
-            {
-                _hasSeenPositiveStreakThisSession = true;
-            }
-
-            if (_hasSeenPositiveStreakThisSession && !_hasShownStartupStreakLossThisSession)
-            {
-                await CheckAndShowStartupStreakLossAsync();
-            }
+            StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);            
         }
     }
 }

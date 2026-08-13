@@ -1,11 +1,12 @@
-﻿using algoBhaiya.ReportBook.Presentation.ViewModels;
+using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
     public partial class AppShell : Shell
     {
-        private bool _isInitialized = false;          
+        private bool _isInitialized;
+        private bool _hasShownStartupStreakLossThisSession;
 
         public AppShell(AppShellViewModel viewModel)
         {
@@ -30,12 +31,12 @@ namespace algoBhaiya.ReportBook.MobileApp
                 {
                     try
                     {
-                        await vm.LoadUserNameAsync(); // Only after page fully loaded
+                        await HandleStartupStreakLossAsync(vm);
+                        await vm.LoadUserNameAsync();
                         _isInitialized = true;
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        // Log exception
                     }
                 }
             }
@@ -73,14 +74,29 @@ namespace algoBhaiya.ReportBook.MobileApp
             {
                 return;
             }
-            
+
             try
             {
                 await vm.RefreshStreakAsync();
             }
             catch
             {
+            }
+        }
 
+        private async Task HandleStartupStreakLossAsync(AppShellViewModel vm)
+        {
+            if (_hasShownStartupStreakLossThisSession)
+            {
+                return;
+            }
+
+            var result = await vm.RefreshStartupStreakAsync();
+
+            if (result.IsStartupLoss)
+            {
+                _hasShownStartupStreakLossThisSession = true;
+                await vm.ShowStartupStreakLossAsync();
             }
         }
     }
