@@ -260,17 +260,16 @@
               VerticalOptions="Fill"
               InputTransparent="True">
             <Border x:Name="CelebrationCard"
-                    HorizontalOptions="CenterAndExpand"
+                    HorizontalOptions="Center"
                     VerticalOptions="Center"
                 BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
                 Stroke="{AppThemeBinding Light=#A5D6A7, Dark=#374151}"
                 StrokeThickness="2"
                 StrokeShape="RoundRectangle 28"
-                Padding="20,22,20,22"
+                Padding="15,17,15,17"
                 Margin="0"
-                WidthRequest="300"
-                Opacity="0"
-                Scale="0.85">
+                WidthRequest="270"
+                Opacity="0">
                 <Grid RowDefinitions="Auto,*"
                       RowSpacing="12"
                       HorizontalOptions="Center"
@@ -298,13 +297,13 @@
                                          HorizontalOptions="Center"
                                          VerticalOptions="Center">
                         <Label Text="Alhamdulillah, all done."
-                               FontSize="18"
+                               FontSize="15"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
                                TextColor="{AppThemeBinding Light=#1B5E20, Dark=#F9FAFB}" />
 
-                        <Label Text="You completed every item for this day."
-                               FontSize="13"
+                        <Label Text="You completed all items for this day."
+                               FontSize="12"
                                HorizontalTextAlignment="Center"
                                TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
                     </VerticalStackLayout>
