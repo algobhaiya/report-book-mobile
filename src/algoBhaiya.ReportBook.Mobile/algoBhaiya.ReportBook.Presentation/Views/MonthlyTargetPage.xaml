@@ -112,14 +112,27 @@
         </CollectionView>
 
         <VerticalStackLayout Grid.Row="2"
-                             Padding="16,0,16,5"
+                             Padding="20,0,20,7"
                              Spacing="8">
             <Button Text="Save Targets"
                     Command="{Binding SubmitCommand}"
-                    IsEnabled="{Binding CanSubmit}"
-                    IsVisible="{Binding CanSubmit}"
+                    IsVisible="{Binding CanShowSubmit}"                    
                     BackgroundColor="#4CAF50"
-                    TextColor="White" />
+                    TextColor="White">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.45" />
+                                    <Setter Property="BackgroundColor" Value="#9CA3AF" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
 
             <Label Text="No modification for previous month."
                    HorizontalOptions="Center"
