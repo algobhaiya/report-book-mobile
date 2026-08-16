@@ -1,4 +1,4 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
@@ -11,9 +11,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
     public class DailyEntryViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<DailyEntry> Fields { get; set; } = new();
+        public DailyEntryFieldCollection Fields { get; } = new();
 
-        public ICommand SubmitCommand { get; }
+        private readonly Command _submitCommand;
+        public ICommand SubmitCommand => _submitCommand;
 
         private bool _isLoading;
         public bool IsLoading
@@ -31,8 +32,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public DateTime LoadingDateTime { get; set; }
         private DateTime _effectiveDate;
-        public DateTime FormDate 
-        { 
+        public DateTime FormDate
+        {
             get => _effectiveDate;
             set
             {
@@ -42,9 +43,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     OnPropertyChanged();
                 }
             }
-
         }
-        
+
         private bool _isReadOnly = false;
         public bool IsReadOnly
         {
@@ -56,14 +56,18 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isReadOnly = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(CanSubmit));
+                    OnPropertyChanged(nameof(CanShowSubmit));
+                    _submitCommand.ChangeCanExecute();
                 }
             }
         }
 
+        public bool IsDirty => Fields.DirtyCount > 0;
+
         private byte _maxEditableDayCount = 15;
 
-        public bool CanSubmit => !IsReadOnly;
-
+        public bool CanSubmit => !IsReadOnly && IsDirty;
+        public bool CanShowSubmit => !IsReadOnly;
 
         private readonly IDailyEntryRepository _repository;
         private readonly ITrackingStreakService _trackingStreakService;
@@ -82,9 +86,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _serviceProvider = serviceProvider;
             _navDataService = navDataService;
 
-            _maxEditableDayCount = (byte) Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
+            _maxEditableDayCount = (byte)Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
 
-            SubmitCommand = new Command(async () => await SubmitAsync());           
+            _submitCommand = new Command(async () => await SubmitAsync(), () => CanSubmit);
+            Fields.DirtyCountChanged += OnDirtyCountChanged;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -150,15 +155,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                         ? unit
                         : new FieldUnit();
 
-                    Fields.Add(new DailyEntry
+                    var fieldVm = new DailyEntryFieldViewModel
                     {
                         Id = entry?.Id ?? 0,
                         FieldTemplate = template,
                         FieldTemplateId = template.Id,
+                        FieldName = template.FieldName,
+                        ValueType = template.ValueType,
+                        UnitName = template.Unit?.UnitName ?? string.Empty,
                         UserId = userId,
                         Date = FormDate,
-                        Value = entry?.Value ?? string.Empty
-                    });
+                        Value = entry?.Value ?? string.Empty,
+                        OriginalValue = entry?.Value ?? string.Empty
+                    };
+                    Fields.Add(fieldVm);
                 }
             }
             finally
@@ -175,12 +185,18 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private void SetLoadingTime()
         {
-            // Selected unit
             DateTime? loadingDateTime = _navDataService.Get<DateTime>(Constants.Constants.DailyEntry.Item_SelectedDate);
 
             LoadingDateTime = loadingDateTime ?? DateTime.Today;
 
             _navDataService.Remove(Constants.Constants.DailyEntry.Item_SelectedDate);
+        }
+
+        private void OnDirtyCountChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsDirty));
+            OnPropertyChanged(nameof(CanSubmit));
+            _submitCommand.ChangeCanExecute();
         }
 
         private async Task SubmitAsync()
@@ -189,7 +205,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             foreach (var entry in Fields)
             {
-                await _repository.SaveDailyEntryAsync(entry);
+                await _repository.SaveDailyEntryAsync(new DailyEntry
+                {
+                    Id = entry.Id,
+                    UserId = (byte)entry.UserId,
+                    FieldTemplateId = entry.FieldTemplateId,
+                    Date = entry.Date,
+                    Value = entry.Value,
+                    FieldTemplate = entry.FieldTemplate
+                });
             }
 
             byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
@@ -201,7 +225,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
             _navDataService.Set(Constants.Constants.DailyEntry.Action_ShowCompletionCelebration, isCompleted);
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
-            
+
             await Shell.Current.Navigation.PopAsync();
         }
 
@@ -215,7 +239,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             return Fields.All(IsSaveableFieldValue);
         }
 
-        private static bool IsSaveableFieldValue(DailyEntry entry)
+        private static bool IsSaveableFieldValue(DailyEntryFieldViewModel entry)
         {
             if (entry == null)
             {
@@ -231,5 +255,4 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 && !string.Equals(entry.Value, "False", StringComparison.Ordinal);
         }
     }
-
 }

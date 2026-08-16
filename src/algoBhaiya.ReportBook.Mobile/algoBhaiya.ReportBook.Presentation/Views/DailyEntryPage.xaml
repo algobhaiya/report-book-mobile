@@ -107,15 +107,28 @@
         </ScrollView>
 
         <Border Grid.Row="1"
-                Padding="20,12"
+                Padding="20,0,20,7"
                 BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}"
                 StrokeThickness="0"
-                IsVisible="{Binding CanSubmit}">
+                IsVisible="{Binding CanShowSubmit}">
             <Button Text="Submit Entry"
                     Command="{Binding SubmitCommand}"
-                    IsEnabled="{Binding CanSubmit}"                    
                     BackgroundColor="{AppThemeBinding Light=#16A34A, Dark=#22C55E}"
-                    TextColor="White" />
+                    TextColor="White">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.45" />
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#94A3B8, Dark=#334155}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+            </Button>
         </Border>
 
         <Grid Grid.RowSpan="2"
