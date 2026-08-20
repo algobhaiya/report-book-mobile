@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.StreakDetailsPopup"
              BackgroundColor="{AppThemeBinding Light=#66FFFFFF, Dark=#80000000}"
-             Padding="0">
+             Padding="0,0,0,24">
     <Grid RowDefinitions="*,Auto">
         <Grid.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnBackdropTapped" />
         </Grid.GestureRecognizers>
 
         <Border Grid.Row="1"
-                Margin="12,0,12,16"
+                Margin="12,0,12,28"
                 Padding="16,12,16,18"
                 BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#102336}"
                 Stroke="{AppThemeBinding Light=#D8E1EA, Dark=#203A52}"

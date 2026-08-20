@@ -5,7 +5,8 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.PlannerTemplateDetailPage"
              Title="Plan"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+             Padding="0,12,0,24">
 
     <Grid RowDefinitions="Auto,*,Auto">
         <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#173047}"
@@ -190,7 +191,7 @@
         <Border Grid.Row="2"
                 BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
                 StrokeThickness="0"
-                Padding="20,12,20,20">
+                Padding="20,5,20,28">
             <Button Text="Start Now"
                     Command="{Binding StartCommand}"
                     BackgroundColor="{AppThemeBinding Light=#2563EB, Dark=#5DA7E8}"
