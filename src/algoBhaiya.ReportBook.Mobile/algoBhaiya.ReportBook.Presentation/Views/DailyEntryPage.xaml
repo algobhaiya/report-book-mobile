@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:algoBhaiya.ReportBook.Presentation.Helpers"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryPage"
              Title="Daily"
              BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:ValueTypeToVisibilityConverter x:Key="ValueTypeToVisibilityConverter" />
+            <helpers:BoolStringConverter x:Key="BoolStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="*,Auto">
         <ScrollView Grid.Row="0">
@@ -56,8 +64,8 @@
                     </Grid>
                 </Border>
 
-                <CollectionView ItemsSource="{Binding Fields}">
-                    <CollectionView.ItemTemplate>
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Fields}">
+                    <BindableLayout.ItemTemplate>
                         <DataTemplate>
                             <Grid ColumnSpacing="10" Padding="4">
                                 <Grid.ColumnDefinitions>
@@ -69,7 +77,7 @@
                                 <Label Grid.Column="0"
                                        Text="{Binding FieldTemplate.FieldName}"
                                        FontAttributes="Bold"
-                                       VerticalOptions="Center" 
+                                       VerticalOptions="Center"
                                        MaxLines="2"
                                        TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}" />
 
@@ -82,7 +90,7 @@
                                            Text="{Binding Value, Mode=TwoWay}"
                                            IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}" />
 
-                                    <CheckBox IsChecked="{Binding Value, Mode=TwoWay}"
+                                    <CheckBox IsChecked="{Binding Value, Mode=TwoWay, Converter={StaticResource BoolStringConverter}}"
                                               IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=bool}" />
                                 </StackLayout>
 
@@ -94,8 +102,8 @@
                                        HorizontalTextAlignment="Start" />
                             </Grid>
                         </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
 
                 <Label Text="This entry is locked and can't be edited."
                        HorizontalOptions="Center"

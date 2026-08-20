@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace algoBhaiya.ReportBook.Presentation.Helpers
 {
@@ -6,8 +6,8 @@ namespace algoBhaiya.ReportBook.Presentation.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string valueType = value?.ToString()?.ToLower();
-            string param = parameter?.ToString()?.ToLower();
+            var valueType = value?.ToString()?.ToLowerInvariant();
+            var param = parameter?.ToString()?.ToLowerInvariant();
 
             if (param == "numeric")
                 return valueType == "int" || valueType == "double";
@@ -18,7 +18,7 @@ namespace algoBhaiya.ReportBook.Presentation.Helpers
             return false;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotImplementedException();
     }
-
 }
