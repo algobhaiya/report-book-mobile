@@ -7,18 +7,16 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class DailyEntryListPage : ContentPage
 {
     private readonly DailyEntryListViewModel _viewModel;
-    private readonly IServiceProvider _serviceProvider;
     private readonly NavigationDataService _navDataService;
     private bool _isInitialized = false;
     private bool _isOpeningMonthlySummary = false;
     private bool _isCelebrationVisible = false;
 
-    public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider, NavigationDataService navDataService)
+    public DailyEntryListPage(DailyEntryListViewModel viewModel, NavigationDataService navDataService)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
-        _serviceProvider = serviceProvider;
         _navDataService = navDataService;
     }
 
@@ -127,13 +125,13 @@ public partial class DailyEntryListPage : ContentPage
         {
             _isOpeningMonthlySummary = true;
 
-            var monthlySummaryPage = _serviceProvider.GetRequiredService<MonthlySummaryPage>();
-            if (monthlySummaryPage.BindingContext is MonthlySummaryViewModel monthlySummaryVm)
-            {
-                await monthlySummaryVm.LoadDataAsync(_viewModel.SelectedMonthDate.Year, _viewModel.SelectedMonthDate.Month);
-            }
-
-            await Shell.Current.Navigation.PushAsync(monthlySummaryPage);
+            await Shell.Current.GoToAsync(
+                nameof(MonthlySummaryPage),
+                new Dictionary<string, object>
+                {
+                    ["year"] = _viewModel.SelectedMonthDate.Year,
+                    ["month"] = _viewModel.SelectedMonthDate.Month
+                });
         }
         finally
         {

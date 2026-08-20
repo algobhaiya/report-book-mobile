@@ -144,7 +144,7 @@ public partial class PlannerTemplateDetailPage : ContentPage
         _navDataService = navDataService;
 
         StartCommand = new Command(async () => await StartAsync());
-        BackCommand = new Command(async () => await Navigation.PopAsync());
+        BackCommand = new Command(async () => await GoBackAsync());
 
         BindingContext = this;
     }
@@ -169,7 +169,7 @@ public partial class PlannerTemplateDetailPage : ContentPage
             var selectedPreset = _navDataService.Get<PlannerPreset>(Constants.Constants.Planner.Item_ToOpen);
             if (selectedPreset == null)
             {
-                await Navigation.PopAsync();
+                await GoBackAsync();
                 return;
             }
 
@@ -242,5 +242,25 @@ public partial class PlannerTemplateDetailPage : ContentPage
 
         await _catalogService.StartPresetAsync(userId, _selectedPreset);
         _appNavigator.NavigateToMainShell();
+    }
+
+    private static async Task GoBackAsync()
+    {
+        if (Shell.Current?.Navigation != null)
+        {
+            await Shell.Current.GoToAsync("..");
+            return;
+        }
+
+        if (Application.Current?.MainPage is NavigationPage navigationPage)
+        {
+            await navigationPage.Navigation.PopAsync();
+            return;
+        }
+
+        if (Application.Current?.MainPage?.Navigation != null)
+        {
+            await Application.Current.MainPage.Navigation.PopAsync();
+        }
     }
 }

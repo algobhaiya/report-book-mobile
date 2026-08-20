@@ -2,7 +2,10 @@ using Android.App;
 using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
+using AndroidX.Activity;
 using AndroidX.Core.View;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 
 namespace algoBhaiya.ReportBook.MobileApp;
 
@@ -23,6 +26,7 @@ public class MainActivity : MauiAppCompatActivity
         base.OnCreate(savedInstanceState);
 
         ApplySystemBarTheme();
+        OnBackPressedDispatcher.AddCallback(this, new BackNavigationCallback());
     }
 
     protected override void OnResume()
@@ -68,5 +72,55 @@ public class MainActivity : MauiAppCompatActivity
 
         // Also keep navigation-bar icons appropriate for the theme.
         controller.AppearanceLightNavigationBars = !isDarkTheme;
+    }
+
+    private sealed class BackNavigationCallback : OnBackPressedCallback
+    {
+        public BackNavigationCallback() : base(true)
+        {
+        }
+
+        public override void HandleOnBackPressed()
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var shellNavigation = Shell.Current?.Navigation;
+                if (shellNavigation is not null)
+                {
+                    if (shellNavigation.ModalStack.Count > 0)
+                    {
+                        await shellNavigation.PopModalAsync();
+                        return;
+                    }
+
+                    if (shellNavigation.NavigationStack.Count > 1)
+                    {
+                        await shellNavigation.PopAsync();
+                        return;
+                    }
+                }
+
+                var mainNavigation = global::Microsoft.Maui.Controls.Application.Current?.MainPage?.Navigation;
+                if (mainNavigation is null)
+                {
+                    global::Microsoft.Maui.Controls.Application.Current?.Quit();
+                    return;
+                }
+
+                if (mainNavigation.ModalStack.Count > 0)
+                {
+                    await mainNavigation.PopModalAsync();
+                    return;
+                }
+
+                if (mainNavigation.NavigationStack.Count > 1)
+                {
+                    await mainNavigation.PopAsync();
+                    return;
+                }
+
+                global::Microsoft.Maui.Controls.Application.Current?.Quit();
+            });
+        }
     }
 }

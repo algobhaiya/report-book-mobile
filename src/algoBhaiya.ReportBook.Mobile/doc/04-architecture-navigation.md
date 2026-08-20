@@ -25,7 +25,8 @@
 - `AppShell` is the main shell after login.
 - `NavigationPage` is used for the login page.
 - `NavigateToPlanner()` replaces the main page with the planner catalog when a profile has no active fields.
-- Shell routes exist for monthly summary, settings, and switch profile.
+- Shell routes exist for daily entry, monthly summary, settings, and switch profile.
+- The shell-hosted daily and monthly summary pages are opened through `Shell.Current.GoToAsync(...)` so Android back returns to the previous page instead of exiting the app.
 - Some flows use modal pages, especially menu and profile switching.
 - `AppShellViewModel` redirects a logged-in profile to the planner catalog unless the planner bypass gate has been set by the blank-template flow.
 

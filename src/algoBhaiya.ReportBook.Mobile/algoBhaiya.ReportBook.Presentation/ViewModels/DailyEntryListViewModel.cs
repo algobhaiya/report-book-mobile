@@ -243,8 +243,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     // Passing the LoadingDateTime
                     _navDataService.Set(AppConstants.DailyEntry.Item_SelectedDate, selectedItem.Date);
 
-                    var dailyEntryPage = _serviceProvider.GetRequiredService<DailyEntryPage>();
-                    await Shell.Current.Navigation.PushAsync(dailyEntryPage);
+                    await Shell.Current.GoToAsync(nameof(DailyEntryPage));
                 }
                 finally
                 {
