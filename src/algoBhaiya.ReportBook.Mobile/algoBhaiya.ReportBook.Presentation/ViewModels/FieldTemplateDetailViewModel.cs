@@ -288,7 +288,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 FieldName = string.Empty;
                 SelectedUnitName = string.Empty;
                 
-                // Take the max value (as default)
+                // Start new items after the current max, but never below 1.
                 var maxOrder = (await _repository
                     .GetListAsync(f =>
                         f.UserId == _loggedInUser &&
@@ -299,7 +299,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     .OrderByDescending(f => f)
                     .FirstOrDefault();
 
-                FieldOrder = byte.Min(maxOrder, byte.MaxValue);
+                FieldOrder = maxOrder == 0
+                    ? (byte)1
+                    : byte.Min((byte)(maxOrder + 1), byte.MaxValue);
             }
             else
             {
