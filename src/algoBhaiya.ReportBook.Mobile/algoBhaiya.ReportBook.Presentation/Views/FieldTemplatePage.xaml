@@ -44,10 +44,20 @@
 
                                 </VerticalStackLayout>
 
-                                <Switch Grid.Column="1"
-                                    VerticalOptions="Center"
-                                    IsToggled="{Binding IsEnabled, Mode=OneWay}"
-                                    Toggled="OnSwitchToggled"/>
+                                <Border Grid.Column="1"
+                                        Padding="2,2"
+                                        StrokeShape="RoundRectangle 14"
+                                        BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1F2937}"
+                                        Stroke="{AppThemeBinding Light=#D1D5DB, Dark=#374151}"
+                                        StrokeThickness="1"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End">
+                                    <Switch VerticalOptions="Center"
+                                            IsToggled="{Binding IsEnabled, Mode=OneWay}"
+                                            Toggled="OnSwitchToggled"
+                                            OnColor="{AppThemeBinding Light=#16A34A, Dark=#34D399}"
+                                            ThumbColor="{AppThemeBinding Light=White, Dark=#F8FAFC}" />
+                                </Border>
 
                             </Grid>
                         </Border>
@@ -107,13 +117,13 @@
                             Padding="24"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border"
-                                         Binding="{Binding IsLoading}"
-                                         Value="True">
-                                <Setter Property="IsVisible" Value="False" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding IsLoading}"
+                                             Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Border.Triggers>
                         <VerticalStackLayout Spacing="12"
                                              HorizontalOptions="Center"
                                              VerticalOptions="Center">
