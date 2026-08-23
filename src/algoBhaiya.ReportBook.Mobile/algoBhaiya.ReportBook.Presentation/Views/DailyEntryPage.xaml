@@ -96,6 +96,7 @@
 
                                 <Label Grid.Column="2"
                                        Text="{Binding FieldTemplate.Unit.UnitName}"
+                                       IsVisible="{Binding FieldTemplate.Unit.ValueType, Converter={StaticResource ValueTypeToVisibilityConverter}, ConverterParameter=numeric}"
                                        FontAttributes="Italic"
                                        TextColor="{AppThemeBinding Light=#64748B, Dark=#9CA3AF}"
                                        VerticalOptions="Center"
