@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
              Title="{Binding SelectedMonthLabel}">
-    <Grid RowDefinitions="Auto,*" Padding="10">
+    <Grid RowDefinitions="Auto,*" Padding="10,1,10,0">
         <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="0,5">
 
             <HorizontalStackLayout Spacing="4"
