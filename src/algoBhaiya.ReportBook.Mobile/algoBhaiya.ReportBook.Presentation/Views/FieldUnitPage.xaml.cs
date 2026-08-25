@@ -85,6 +85,7 @@ public partial class FieldUnitPage : ContentPage
                 }
                 
                 Units.Remove(unit);
+                _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
             }
         });
 
@@ -154,6 +155,8 @@ public partial class FieldUnitPage : ContentPage
 
     private void OnUnitSaved(FieldUnit oldUnit, FieldUnit newUnit)
     {
+        _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
+
         var existing = Units.FirstOrDefault(x => x.Id == oldUnit.Id);
         if (existing != null)
         {

@@ -47,6 +47,40 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public bool IsDirty => !string.Equals(Value ?? string.Empty, OriginalValue ?? string.Empty, StringComparison.Ordinal);
 
+        public void ApplyEntry(DailyEntry? entry, DateTime date)
+        {
+            var normalizedValue = NormalizeValue(entry?.Value);
+            Id = entry?.Id ?? 0;
+            Date = date;
+            Value = normalizedValue;
+            OriginalValue = normalizedValue;
+        }
+
+        public void RefreshValue(DailyEntry? entry, DateTime date)
+        {
+            ApplyEntry(entry, date);
+        }
+
+        private string NormalizeValue(string? value)
+        {
+            if (string.Equals(ValueType, "bool", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return string.Empty;
+                }
+
+                if (bool.TryParse(value, out var parsedBool))
+                {
+                    return parsedBool ? "True" : string.Empty;
+                }
+
+                return string.Empty;
+            }
+
+            return value ?? string.Empty;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

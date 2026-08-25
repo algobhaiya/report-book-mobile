@@ -282,5 +282,6 @@ public partial class FieldTemplatePage : ContentPage
     {
         _navDataService.Set(Constants.Constants.FieldTemplate.Action_RefreshOnReturn, true);
         _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
+        _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
     }
 }

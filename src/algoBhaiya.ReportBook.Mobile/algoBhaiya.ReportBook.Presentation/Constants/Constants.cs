@@ -31,6 +31,7 @@
             public const string Item_SelectedDate = "DailyEntry_Item_SelectedDate";
             public const string Action_RefreshListOnReturn = "DailyEntry_Action_RefreshListOnReturn";
             public const string Action_ShowCompletionCelebration = "DailyEntry_Action_ShowCompletionCelebration";
+            public const string Action_InvalidateCache = "DailyEntry_Action_InvalidateCache";
         }
 
         public static class AppUser

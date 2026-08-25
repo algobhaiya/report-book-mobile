@@ -24,10 +24,10 @@ namespace algoBhaiya.ReportBook.Presentation.Helpers
         {
             if (value is bool b)
             {
-                return b.ToString(); // return string: "True" / "False"
+                return b ? "True" : string.Empty;
             }
 
-            return "False";
+            return string.Empty;
         }
     }
 

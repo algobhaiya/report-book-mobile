@@ -7,10 +7,31 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
     public class DailyEntryFieldCollection : ObservableCollection<DailyEntryFieldViewModel>
     {
         private readonly HashSet<DailyEntryFieldViewModel> _dirtyItems = new();
+        private int _dirtyTrackingSuspensionCount;
 
         public int DirtyCount => _dirtyItems.Count;
 
         public event EventHandler? DirtyCountChanged;
+
+        public IDisposable SuspendDirtyTracking()
+        {
+            _dirtyTrackingSuspensionCount++;
+            return new DirtyTrackingScope(this);
+        }
+
+        public void RecalculateDirtyState()
+        {
+            _dirtyItems.Clear();
+            foreach (var item in this)
+            {
+                if (item.IsDirty)
+                {
+                    _dirtyItems.Add(item);
+                }
+            }
+
+            DirtyCountChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         protected override void InsertItem(int index, DailyEntryFieldViewModel item)
         {
@@ -62,6 +83,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (_dirtyTrackingSuspensionCount > 0)
+            {
+                return;
+            }
+
             if (sender is not DailyEntryFieldViewModel item)
             {
                 return;
@@ -96,6 +122,32 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             DirtyCountChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private sealed class DirtyTrackingScope : IDisposable
+        {
+            private readonly DailyEntryFieldCollection _owner;
+            private bool _disposed;
+
+            public DirtyTrackingScope(DailyEntryFieldCollection owner)
+            {
+                _owner = owner;
+            }
+
+            public void Dispose()
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+                _owner._dirtyTrackingSuspensionCount--;
+                if (_owner._dirtyTrackingSuspensionCount == 0)
+                {
+                    _owner.RecalculateDirtyState();
+                }
+            }
         }
     }
 }
