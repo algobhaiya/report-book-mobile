@@ -255,15 +255,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 SelectedUnitError = string.Empty;
             }
 
-            if (FieldOrder == 0)
-            {
-                FieldOrderError = "Display order must be greater than zero.";
-                isValid = false;
-            }
-            else
-            {
-                FieldOrderError = string.Empty;
-            }
+            FieldOrderError = string.Empty;
 
             return isValid;
         }
@@ -288,7 +280,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 FieldName = string.Empty;
                 SelectedUnitName = string.Empty;
                 
-                // Start new items after the current max, but never below 1.
+                // Start new items at the current max, including zero-based data.
                 var maxOrder = (await _repository
                     .GetListAsync(f =>
                         f.UserId == _loggedInUser &&
@@ -298,9 +290,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     .Select(f => f.FieldOrder)
                     .OrderByDescending(f => f)
                     .FirstOrDefault();
-
                 FieldOrder = maxOrder == 0
-                    ? (byte)1
+                    ? (byte)0
                     : byte.Min((byte)(maxOrder + 1), byte.MaxValue);
             }
             else

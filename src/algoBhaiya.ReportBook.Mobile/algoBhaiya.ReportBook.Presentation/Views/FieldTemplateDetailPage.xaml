@@ -85,7 +85,7 @@
                                 BackgroundColor="{AppThemeBinding Light=#F9FAFB, Dark=#2A3038}"
                                 Stroke="{AppThemeBinding Light=#D1D5DB, Dark=#3E4652}"
                                 Padding="14,7">
-                            <Entry Placeholder="e.g. 1"
+                            <Entry Placeholder="e.g. 0"
                                    Text="{Binding FieldOrder, Mode=TwoWay}"
                                    Keyboard="Numeric"
                                    FontSize="16"
@@ -93,7 +93,7 @@
                                    TextColor="{AppThemeBinding Light=#111827, Dark=White}"
                                    PlaceholderColor="{AppThemeBinding Light=#9CA3AF, Dark=#8A93A1}" />
                         </Border>
-                        <Label Text="Lower numbers appear earlier in the form."
+                        <Label Text="Lower numbers appear earlier in the form. Zero is allowed."
                                FontSize="12"
                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#A1A9B5}" />
                         <Label Text="{Binding FieldOrderError}"
