@@ -75,6 +75,8 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
 
+        await Task.Yield();
+
         if (_isDeleteFlowActive)
         {
             return;
@@ -186,9 +188,9 @@ public partial class LoginPage : ContentPage
 
             await Task.WhenAll(dailyReportsTask, plansTask, fieldsTask);
 
-            var dailyReports = dailyReportsTask.Result;
-            var plans = plansTask.Result;
-            var fields = fieldsTask.Result;
+            var dailyReports = await dailyReportsTask;
+            var plans = await plansTask;
+            var fields = await fieldsTask;
 
             foreach (var d in dailyReports)
             {

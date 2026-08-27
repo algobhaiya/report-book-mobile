@@ -210,10 +210,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             await Task.WhenAll(plannedFieldsTask, templatesTask, unitsTask, entriesTask);
 
-            var plannedFields = plannedFieldsTask.Result.OrderBy(p => p.FieldOrder);
-            var fieldTemplates = templatesTask.Result;
-            var units = unitsTask.Result;
-            var entries = entriesTask.Result;
+            var plannedFields = (await plannedFieldsTask).OrderBy(p => p.FieldOrder);
+            var fieldTemplates = await templatesTask;
+            var units = await unitsTask;
+            var entries = await entriesTask;
             var entriesLookup = entries
                 .GroupBy(e => e.FieldTemplateId)
                 .ToDictionary(g => g.Key, g => g.First());

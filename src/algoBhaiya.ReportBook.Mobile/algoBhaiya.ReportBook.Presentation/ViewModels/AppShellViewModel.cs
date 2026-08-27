@@ -350,12 +350,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var user = await _serviceProvider
+            var userTask = _serviceProvider
                 .GetRequiredService<IRepository<AppUser>>()
                 .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId);
 
-            LoggedInUserName = user?.UserName ?? string.Empty;
-            await RefreshStreakAsync(loggedInUserId);
+            var streakTask = _trackingStreakService.GetCurrentStreakAsync(loggedInUserId);
+
+            var hasActiveFieldsTask = Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false)
+                ? Task.FromResult(true)
+                : _plannerCatalogService.HasActiveFieldsAsync(loggedInUserId);
+
+            await Task.WhenAll(userTask, streakTask, hasActiveFieldsTask);
+
+            LoggedInUserName = (await userTask)?.UserName ?? string.Empty;
+            StreakCount = await streakTask;
 
             if (Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false))
             {
@@ -363,10 +371,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var hasActiveFields = await _plannerCatalogService.HasActiveFieldsAsync(loggedInUserId);
-            if (!hasActiveFields)
+            if (!await hasActiveFieldsTask)
             {
-                _appNavigator.NavigateToPlanner();
+                MainThread.BeginInvokeOnMainThread(() => _appNavigator.NavigateToPlanner());
             }
         }
 

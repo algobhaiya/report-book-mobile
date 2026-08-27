@@ -170,9 +170,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 await Task.WhenAll(templatesTask, unitsTask, targetsTask);
 
-                var templates = templatesTask.Result;
-                var units = unitsTask.Result;
-                var targets = targetsTask.Result;
+                var templates = await templatesTask;
+                var units = await unitsTask;
+                var targets = await targetsTask;
 
                 if (IsReadOnly)
                 {

@@ -26,19 +26,14 @@ namespace algoBhaiya.ReportBook.MobileApp
             base.OnAppearing();
             UpdatePageTitle();
 
+            await Task.Yield();
+
             if (!_isInitialized)
             {
                 if (BindingContext is AppShellViewModel vm)
                 {
-                    try
-                    {
-                        await HandleStartupStreakLossAsync(vm);
-                        await vm.LoadUserNameAsync();
-                        _isInitialized = true;
-                    }
-                    catch
-                    {
-                    }
+                    _isInitialized = true;
+                    _ = InitializeShellAsync(vm);
                 }
             }
             else
@@ -98,6 +93,18 @@ namespace algoBhaiya.ReportBook.MobileApp
             {
                 _hasShownStartupStreakLossThisSession = true;
                 await vm.ShowStartupStreakLossAsync();
+            }
+        }
+
+        private async Task InitializeShellAsync(AppShellViewModel vm)
+        {
+            try
+            {
+                await HandleStartupStreakLossAsync(vm);
+                await vm.LoadUserNameAsync();
+            }
+            catch
+            {
             }
         }
     }

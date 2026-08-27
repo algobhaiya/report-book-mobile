@@ -71,8 +71,8 @@ namespace algoBhaiya.ReportBook.Presentation.Services
 
             await Task.WhenAll(dailyEntriesTask, targetsTask, templatesTask);
 
-            var allTargets = targetsTask.Result;
-            var deletedTemplates = templatesTask.Result;
+            var allTargets = await targetsTask;
+            var deletedTemplates = await templatesTask;
 
             var targetTemplateIds = new HashSet<int>(allTargets.Select(t => t.FieldTemplateId));
             var deletableTemplates = deletedTemplates

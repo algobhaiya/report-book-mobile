@@ -20,6 +20,8 @@ public partial class DailyEntryPage : ContentPage
     {
         base.OnAppearing();
 
+        await Task.Yield();
+
         if (BindingContext is DailyEntryViewModel vm &&
             _navDataService.Get<bool>(AppConstants.DailyEntry.Action_InvalidateCache))
         {

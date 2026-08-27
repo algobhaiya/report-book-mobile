@@ -15,20 +15,71 @@ namespace algoBhaiya.ReportBook.MobileApp
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _navigator = navigator;
-
-            InitializeDatabase();
-
-            NavigateToUserPage();
-
-            SeedInitialDataAsync();
-
-            CleanUpData();
         }
 
-        private void InitializeDatabase()
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            var window = new Window(CreateStartupPage());
+            _ = InitializeStartupAsync();
+            return window;
+        }
+
+        private static Page CreateStartupPage()
+        {
+            var loadingIndicator = new ActivityIndicator
+            {
+                IsRunning = true,
+                Color = Colors.White,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            var overlay = new Grid
+            {
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                BackgroundColor = Colors.Transparent,
+                Children = { loadingIndicator }
+            };
+
+            var page = new ContentPage
+            {
+                Content = new Grid
+                {
+                    Children = { overlay }
+                }
+            };
+
+            page.SetAppThemeColor(Page.BackgroundColorProperty, Color.FromArgb("#66000000"), Color.FromArgb("#99000000"));
+            loadingIndicator.SetAppThemeColor(ActivityIndicator.ColorProperty, Colors.White, Color.FromArgb("#F9FAFB"));
+
+            return page;
+        }
+
+        private async Task InitializeStartupAsync()
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    await InitializeDatabaseAsync();
+                    await SeedInitialDataAsync();
+                    await CleanUpData();
+                });
+            }
+            catch
+            {
+            }
+            finally
+            {
+                MainThread.BeginInvokeOnMainThread(NavigateToUserPage);
+            }
+        }
+
+        private async Task InitializeDatabaseAsync()
         {
             var initializer = _serviceProvider.GetRequiredService<DatabaseInitializer>();
-            Task.Run(async () => await initializer.InitializeAsync()).Wait();
+            await initializer.InitializeAsync();
         }
 
         private void NavigateToUserPage()
@@ -41,45 +92,34 @@ namespace algoBhaiya.ReportBook.MobileApp
                 _navigator.NavigateToLogin();
         }
 
-        protected override void OnResume()
+        private async Task CleanUpData()
         {
-            base.OnResume();           
+            try
+            {
+                var dataRetentionService = _serviceProvider.GetService<IDataRetentionService>();
+                if (dataRetentionService != null)
+                {
+                    await dataRetentionService.PerformIncrementalCleanupAsync();
+                }
+            }
+            catch
+            {
+            }
         }
 
-        private void CleanUpData()
+        private async Task SeedInitialDataAsync()
         {
-            Task.Run(async () =>
+            try
             {
-                try
+                var seedingDataService = _serviceProvider.GetService<ISeedDataService>();
+                if (seedingDataService != null)
                 {
-                    var dataRetentionService = _serviceProvider.GetService<IDataRetentionService>();
-                    if (dataRetentionService != null)
-                    {
-                        await dataRetentionService.PerformIncrementalCleanupAsync();
-                    }
+                    await seedingDataService.SeedDefaultUnitsAsync();
                 }
-                catch
-                {
-                }
-            });
-        }
-
-        private void SeedInitialDataAsync()
-        {
-            Task.Run(async () =>
+            }
+            catch
             {
-                try
-                {
-                    var seedingDataService = _serviceProvider.GetService<ISeedDataService>();
-                    if (seedingDataService != null)
-                    {
-                        await seedingDataService.SeedDefaultUnitsAsync();
-                    }
-                }
-                catch
-                {
-                }
-            });
+            }
         }
     }
 }
