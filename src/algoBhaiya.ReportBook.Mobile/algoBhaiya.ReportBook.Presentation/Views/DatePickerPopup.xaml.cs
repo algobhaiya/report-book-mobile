@@ -37,12 +37,12 @@ public partial class DatePickerPopup : ContentPage, INotifyPropertyChanged
 
         TodayChip.StrokeShape = new RoundRectangle
         {
-            CornerRadius = new CornerRadius(6)
+            CornerRadius = new CornerRadius(5)
         };
 
         SelectedChip.StrokeShape = new RoundRectangle
         {
-            CornerRadius = new CornerRadius(6)
+            CornerRadius = new CornerRadius(5)
         };
     }
 
@@ -93,38 +93,40 @@ public partial class DatePickerPopup : ContentPage, INotifyPropertyChanged
             var currentDate = new DateTime(_displayMonth.Year, _displayMonth.Month, day);
             var isSelected = currentDate.Date == _selectedDate.Date;
             var isToday = currentDate.Date == _today.Date;
-            var cellBorder = isSelected
-                ? Color.FromArgb("#16A34A")
-                : isToday
-                    ? Color.FromArgb("#2563EB")
+            // Keep "today" visually distinct even when it is also the selected date.
+            var cellBorder = isToday
+                ? Color.FromArgb("#2563EB")
+                : isSelected
+                    ? Color.FromArgb("#16A34A")
                     : Color.FromArgb("#E2E8F0");
-            var cellBackground = isSelected
-                ? Color.FromArgb("#DCFCE7")
-                : isToday
-                    ? Color.FromArgb("#DBEAFE")
+            var cellBackground = isToday
+                ? Color.FromArgb("#DBEAFE")
+                : isSelected
+                    ? Color.FromArgb("#DCFCE7")
                     : Color.FromArgb("#F8FAFC");
-            var cellTextColor = isSelected
-                ? Color.FromArgb("#166534")
-                : isToday
-                    ? Color.FromArgb("#1D4ED8")
+            var cellTextColor = isToday
+                ? Color.FromArgb("#1D4ED8")
+                : isSelected
+                    ? Color.FromArgb("#166534")
                     : Color.FromArgb("#0F172A");
 
             var border = new Border
             {
                 StrokeShape = new RoundRectangle
                 {
-                    CornerRadius = new CornerRadius(14)
+                    CornerRadius = new CornerRadius(12)
                 },
                 Padding = new Thickness(0),
                 BackgroundColor = cellBackground,
                 Stroke = cellBorder,
-                HeightRequest = 42,
-                WidthRequest = 42,
+                HeightRequest = 38,
+                WidthRequest = 38,
                 Content = new Label
                 {
                     Text = day.ToString(),
                     HorizontalTextAlignment = TextAlignment.Center,
                     VerticalTextAlignment = TextAlignment.Center,
+                    FontSize = 12,
                     FontAttributes = FontAttributes.Bold,
                     TextColor = cellTextColor
                 }
