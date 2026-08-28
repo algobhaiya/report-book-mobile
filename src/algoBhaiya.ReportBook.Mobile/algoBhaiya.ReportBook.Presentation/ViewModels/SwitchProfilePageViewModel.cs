@@ -126,9 +126,16 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SwitchToProfile(AppUser profile)
         {
+            await WaitForStartupInitializationAsync();
             Preferences.Set(AppConstants.AppUser.CurrentUserId, profile.Id);
             await _appNavigator.PopModalAsync();
             _appNavigator.NavigateToMainShell();
+        }
+
+        private static Task WaitForStartupInitializationAsync()
+        {
+            return (Application.Current as IStartupInitializationService)?.StartupInitializationTask
+                   ?? Task.CompletedTask;
         }
     }
 }

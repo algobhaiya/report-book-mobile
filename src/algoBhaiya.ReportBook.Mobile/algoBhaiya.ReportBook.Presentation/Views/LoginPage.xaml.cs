@@ -60,10 +60,8 @@ public partial class LoginPage : ContentPage
         {
             if (selectedUser != null)
             {
+                await WaitForStartupInitializationAsync();
                 Preferences.Set(Constants.Constants.AppUser.CurrentUserId, selectedUser.Id);
-
-                await Navigation.PopAsync();
-
                 _appNavigator.NavigateToMainShell();
             }
         });
@@ -87,6 +85,8 @@ public partial class LoginPage : ContentPage
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
+        await WaitForStartupInitializationAsync();
+
         string username = UsernameEntry.Text?.Trim();
 
         if (string.IsNullOrWhiteSpace(username))
@@ -118,9 +118,6 @@ public partial class LoginPage : ContentPage
         }
 
         Preferences.Set(Constants.Constants.AppUser.CurrentUserId, user.Id);
-
-        await Navigation.PopAsync();
-
         _appNavigator.NavigateToMainShell();
     }
 
@@ -152,6 +149,12 @@ public partial class LoginPage : ContentPage
         {
             _isDeleteFlowActive = false;
         }
+    }
+
+    private static Task WaitForStartupInitializationAsync()
+    {
+        return (Application.Current as IStartupInitializationService)?.StartupInitializationTask
+               ?? Task.CompletedTask;
     }
 
     private async Task RefreshUsersAsync()

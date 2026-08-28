@@ -333,7 +333,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _navDataService.Set(Constants.Constants.DailyEntry.Action_ShowCompletionCelebration, isCompleted);
             await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
 
-            await Shell.Current.Navigation.PopAsync();
+            await Shell.Current.GoToAsync("..");
         }
 
         private bool IsEntryFullyCompletedFromFields()
