@@ -252,64 +252,6 @@
             </CollectionView>
         </RefreshView>
 
-        <Grid x:Name="CelebrationOverlay"
-              Grid.RowSpan="2"
-              IsVisible="False"
-              BackgroundColor="#AA0F172A"
-              HorizontalOptions="Fill"
-              VerticalOptions="Fill"
-              InputTransparent="True">
-            <Border x:Name="CelebrationCard"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
-                Stroke="{AppThemeBinding Light=#A5D6A7, Dark=#374151}"
-                StrokeThickness="2"
-                StrokeShape="RoundRectangle 28"
-                Padding="15,17,15,17"
-                Margin="0"
-                WidthRequest="270"
-                Opacity="0">
-                <Grid RowDefinitions="Auto,*"
-                      RowSpacing="12"
-                      HorizontalOptions="Center"
-                      VerticalOptions="Center">
-                    <Border Grid.Row="0"
-                            WidthRequest="56"
-                            HeightRequest="56"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Start"
-                            BackgroundColor="{AppThemeBinding Light=#E8F5E9, Dark=#1F2937}"
-                            Stroke="{AppThemeBinding Light=#A5D6A7, Dark=#374151}"
-                            StrokeThickness="2"
-                            StrokeShape="RoundRectangle 999">
-
-                        <Label Text="🎯"
-                               FontSize="28"
-                               HorizontalTextAlignment="Center"
-                               VerticalTextAlignment="Center"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                    </Border>
-
-                    <VerticalStackLayout Grid.Row="1"
-                                         Spacing="10"
-                                         HorizontalOptions="Center"
-                                         VerticalOptions="Center">
-                        <Label Text="Alhamdulillah, all done."
-                               FontSize="15"
-                               FontAttributes="Bold"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light=#1B5E20, Dark=#F9FAFB}" />
-
-                        <Label Text="You completed all items for this day."
-                               FontSize="12"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-        </Grid>
     </Grid>
 </ContentPage>
 

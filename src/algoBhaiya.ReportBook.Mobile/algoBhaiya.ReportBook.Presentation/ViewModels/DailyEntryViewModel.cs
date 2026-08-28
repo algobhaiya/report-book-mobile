@@ -74,6 +74,20 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
         private readonly SemaphoreSlim _loadLock = new(1, 1);
+        private bool _showCompletionCelebration;
+        public bool ShowCompletionCelebration
+        {
+            get => _showCompletionCelebration;
+            private set
+            {
+                if (_showCompletionCelebration != value)
+                {
+                    _showCompletionCelebration = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private byte _cachedUserId;
         private DateTime _cachedLoadedDate = DateTime.MinValue;
         private Dictionary<int, FieldTemplate> _cachedTemplateLookup = new();
@@ -87,6 +101,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _cachedUnitLookup.Clear();
             _fieldBlueprints.Clear();
             Fields.Clear();
+            ShowCompletionCelebration = false;
         }
 
         public DailyEntryViewModel(
@@ -166,6 +181,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 IsLoading = false;
                 _loadLock.Release();
             }
+        }
+
+        public void HideCompletionCelebration()
+        {
+            ShowCompletionCelebration = false;
         }
 
         private async Task LoadFieldsCoreAsync()
@@ -330,10 +350,19 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
-            _navDataService.Set(Constants.Constants.DailyEntry.Action_ShowCompletionCelebration, isCompleted);
-            await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
 
-            await Shell.Current.GoToAsync("..");
+            if (isCompleted)
+            {
+                ShowCompletionCelebration = true;
+                await Task.Delay(1600);
+                HideCompletionCelebration();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
+            }
+
+            await RefreshFieldValuesAsync(FormDate.Date);
         }
 
         private bool IsEntryFullyCompletedFromFields()
