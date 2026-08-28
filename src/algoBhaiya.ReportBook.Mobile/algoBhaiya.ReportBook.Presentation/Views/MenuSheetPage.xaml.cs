@@ -76,6 +76,14 @@ public partial class MenuSheetPage : ContentPage
         }
     }
 
+    private async void OnGuideTapped(object sender, TappedEventArgs e)
+    {
+        if (await TryCloseAsync())
+        {
+            await _viewModel.NavigateToGuideAsync();
+        }
+    }
+
     private async void OnSwitchProfileTapped(object sender, TappedEventArgs e)
     {
         if (await TryCloseAsync())

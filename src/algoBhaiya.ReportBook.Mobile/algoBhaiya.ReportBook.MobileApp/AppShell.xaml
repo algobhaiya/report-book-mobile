@@ -37,11 +37,6 @@
             Icon="layer_group_solid.svg"
             ContentTemplate="{DataTemplate views:FieldUnitPage}" />
 
-        <ShellContent 
-            Title="Guide" 
-            Icon="book_solid.svg"
-            ContentTemplate="{DataTemplate views:HelpPage}" />
-
     </TabBar>
 
     <Shell.TitleView>

@@ -316,6 +316,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await _appNavigator.NavigateToAsync<SettingsPage>();
         }
 
+        public async Task NavigateToGuideAsync()
+        {
+            await _appNavigator.NavigateToAsync<HelpPage>();
+        }
+
         public async Task NavigateToSwitchProfileAsync()
         {
             await _appNavigator.PushModalAsync(() =>

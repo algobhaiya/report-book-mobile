@@ -17,6 +17,7 @@ namespace algoBhaiya.ReportBook.MobileApp
             Routing.RegisterRoute(nameof(MonthlySummaryPage), typeof(MonthlySummaryPage));
             Routing.RegisterRoute(nameof(DailyEntryPage), typeof(DailyEntryPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+            Routing.RegisterRoute(nameof(HelpPage), typeof(HelpPage));
             Routing.RegisterRoute(nameof(SwitchProfilePage), typeof(SwitchProfilePage));
             UpdatePageTitle();
         }
