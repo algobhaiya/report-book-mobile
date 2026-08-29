@@ -348,7 +348,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 await _trackingStreakService.NotifyDailyEntryChangedAsync(userId, FormDate);
             }
-
+            
             _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
 
             if (isCompleted)
@@ -363,6 +363,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             await RefreshFieldValuesAsync(FormDate.Date);
+            await RefreshShellStreakAsync();
+        }
+
+        private static async Task RefreshShellStreakAsync()
+        {
+            if (Shell.Current?.BindingContext is AppShellViewModel shellViewModel)
+            {
+                await shellViewModel.RefreshStreakAsync();
+            }
         }
 
         private bool IsEntryFullyCompletedFromFields()
