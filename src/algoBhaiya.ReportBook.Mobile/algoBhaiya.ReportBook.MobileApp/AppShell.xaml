@@ -37,6 +37,11 @@
             Icon="layer_group_solid.svg"
             ContentTemplate="{DataTemplate views:FieldUnitPage}" />
 
+        <ShellContent 
+            Title="Profiles" 
+            Icon="profile_user.svg"
+            ContentTemplate="{DataTemplate views:SwitchProfilePage}" />
+
     </TabBar>
 
     <Shell.TitleView>
