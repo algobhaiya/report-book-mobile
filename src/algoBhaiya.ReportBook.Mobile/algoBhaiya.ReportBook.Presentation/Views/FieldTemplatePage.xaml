@@ -47,16 +47,16 @@
                                 <Border Grid.Column="1"
                                         Padding="2,2"
                                         StrokeShape="RoundRectangle 14"
-                                        BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#1F2937}"
-                                        Stroke="{AppThemeBinding Light=#D1D5DB, Dark=#374151}"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2937}"
+                                        Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#374151}"
                                         StrokeThickness="1"
                                         VerticalOptions="Center"
                                         HorizontalOptions="End">
                                     <Switch VerticalOptions="Center"
                                             IsToggled="{Binding IsEnabled, Mode=OneWay}"
                                             Toggled="OnSwitchToggled"
-                                            OnColor="{AppThemeBinding Light=#16A34A, Dark=#34D399}"
-                                            ThumbColor="{AppThemeBinding Light=White, Dark=#F8FAFC}" />
+                                            OnColor="{AppThemeBinding Light=#0A84FF, Dark=#4DA3FF}"
+                                            ThumbColor="{AppThemeBinding Light=#E5E7EB, Dark=#D1D5DB}" />
                                 </Border>
 
                             </Grid>
