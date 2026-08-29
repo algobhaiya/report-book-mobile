@@ -240,10 +240,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             var max = Math.Max(items.Count == 0 ? 0 : items.Max(x => x.FilledCount), 1);
+            var hasAnyFilledEntries = items.Any(x => x.FilledCount > 0);
             foreach (var item in items)
             {
                 item.BarProgress = item.FilledCount == 0 ? 0.12 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
-                item.BarHeight = 18 + (92 * item.BarProgress);
+                item.BarHeight = hasAnyFilledEntries
+                    ? 18 + (92 * item.BarProgress)
+                    : 16 + (32 * item.BarProgress);
                 item.IsEmpty = item.FilledCount == 0;
                 _weeklyDays.Add(item);
             }
@@ -262,7 +265,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     DayLabel = GetDayLabel(date),
                     FilledCount = 0,
                     BarProgress = 0.12,
-                    BarHeight = 29,
+                    BarHeight = 20,
                     IsToday = date == today,
                     IsEmpty = true
                 });
@@ -275,13 +278,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             return date.DayOfWeek switch
             {
-                DayOfWeek.Saturday => "S",
-                DayOfWeek.Sunday => "S",
-                DayOfWeek.Monday => "M",
-                DayOfWeek.Tuesday => "Tu",
-                DayOfWeek.Wednesday => "W",
-                DayOfWeek.Thursday => "Th",
-                DayOfWeek.Friday => "F",
+                DayOfWeek.Saturday => "Sat",
+                DayOfWeek.Sunday => "Sun",
+                DayOfWeek.Monday => "Mon",
+                DayOfWeek.Tuesday => "Tue",
+                DayOfWeek.Wednesday => "Wed",
+                DayOfWeek.Thursday => "Thu",
+                DayOfWeek.Friday => "Fri",
                 _ => string.Empty,
             };
         }

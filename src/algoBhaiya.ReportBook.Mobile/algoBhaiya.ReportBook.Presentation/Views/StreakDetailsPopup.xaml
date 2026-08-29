@@ -95,48 +95,18 @@
 
                         <CollectionView ItemsSource="{Binding WeeklyDays}"
                                         SelectionMode="None"
-                                        VerticalScrollBarVisibility="Never">
+                                        VerticalScrollBarVisibility="Never"
+                                        HorizontalOptions="Center">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Horizontal"
                                                    ItemSpacing="4" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <VerticalStackLayout WidthRequest="35"
-                                                         Spacing="8"
+                                    <VerticalStackLayout WidthRequest="30"
+                                                         Spacing="6"
                                                          HorizontalOptions="Center"
                                                          VerticalOptions="End">
-                                        <Grid HeightRequest="114"
-                                              VerticalOptions="End"
-                                              HorizontalOptions="Center">
-                                            <Border WidthRequest="40"
-                                                    HeightRequest="{Binding BarHeight}"
-                                                    VerticalOptions="End"
-                                                    StrokeThickness="0"
-                                                    BackgroundColor="{AppThemeBinding Light=#A9C7E8, Dark=#4E93D4}"
-                                                    StrokeShape="RoundRectangle 20">
-                                                <Border.Triggers>
-                                                    <DataTrigger TargetType="Border"
-                                                                 Binding="{Binding IsEmpty}"
-                                                                 Value="True">
-                                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#D8E2EC, Dark=#24435F}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger TargetType="Border"
-                                                                 Binding="{Binding IsToday}"
-                                                                 Value="True">
-                                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#2563EB, Dark=#5AA0E6}" />
-                                                    </DataTrigger>
-                                                </Border.Triggers>
-                                                <Label Text="{Binding DayLabel}"
-                                                       FontSize="12"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{AppThemeBinding Light=White, Dark=White}"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="End"
-                                                       Padding="0,5" />
-                                            </Border>
-                                        </Grid>
-
                                         <Label Text="{Binding FilledCount}"
                                                FontSize="12"
                                                HorizontalTextAlignment="Center"
@@ -147,6 +117,44 @@
                                                              Value="True">
                                                     <Setter Property="TextColor" Value="{AppThemeBinding Light=#1D4ED8, Dark=#CDE4FA}" />
                                                     <Setter Property="FontAttributes" Value="Bold" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+
+                                        <Grid HeightRequest="114"
+                                              VerticalOptions="End"
+                                              HorizontalOptions="Center">
+                                            <Border WidthRequest="40"
+                                                    HeightRequest="{Binding BarHeight}"
+                                                    VerticalOptions="End"
+                                                    StrokeThickness="0"
+                                                    BackgroundColor="{AppThemeBinding Light=#A9C7E8, Dark=#4E93D4}"
+                                                    StrokeShape="RoundRectangle 15">
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border"
+                                                                 Binding="{Binding IsEmpty}"
+                                                                 Value="True">
+                                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#D8E2EC, Dark=#24435F}" />
+                                                    </DataTrigger>
+                                                <DataTrigger TargetType="Border"
+                                                             Binding="{Binding IsToday}"
+                                                             Value="True">
+                                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#2563EB, Dark=#5AA0E6}" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                            </Border>
+                                        </Grid>
+
+                                        <Label Text="{Binding DayLabel}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center"
+                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#8FA7BA}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label"
+                                                             Binding="{Binding IsToday}"
+                                                             Value="True">
+                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light=#1D4ED8, Dark=#CDE4FA}" />
                                                 </DataTrigger>
                                             </Label.Triggers>
                                         </Label>
