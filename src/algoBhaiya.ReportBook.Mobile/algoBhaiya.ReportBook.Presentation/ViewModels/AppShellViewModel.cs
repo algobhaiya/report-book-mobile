@@ -6,6 +6,7 @@ using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
@@ -19,6 +20,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private bool _isMenuOpen;
         private bool _isStreakDetailsOpen;
         private bool _isStartupStreakLossOpen;
+        private readonly SemaphoreSlim _startupInitializationLock = new(1, 1);
+        private bool _isStartupInitialized;
         private readonly ObservableCollection<StreakWeekDayViewModel> _weeklyDays = new();
 
         public ICommand OpenMenuCommand { get; }
@@ -149,30 +152,6 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _isStreakDetailsOpen = false;
         }
 
-        public async Task ShowStartupStreakLossAsync()
-        {
-            if (_isStartupStreakLossOpen)
-            {
-                return;
-            }
-
-            byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
-            if (userId == 0)
-            {
-                return;
-            }
-
-            _isStartupStreakLossOpen = true;
-            try
-            {
-                await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
-            }
-            catch
-            {
-                _isStartupStreakLossOpen = false;                
-            }
-        }
-
         public async Task<StreakRefreshResult> RefreshStartupStreakAsync()
         {
             byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
@@ -187,9 +166,50 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             return refreshResult;
         }
 
+        public async Task InitializeStartupAsync()
+        {
+            if (_isStartupInitialized)
+            {
+                return;
+            }
+
+            await _startupInitializationLock.WaitAsync();
+            try
+            {
+                if (_isStartupInitialized)
+                {
+                    return;
+                }
+
+                await RunStartupStreakFlowAsync();
+                await LoadUserNameAsync(includeStreakRefresh: false);
+                _isStartupInitialized = true;
+            }
+            finally
+            {
+                _startupInitializationLock.Release();
+            }
+        }
+
         public void NotifyStartupStreakLossClosed()
         {
             _isStartupStreakLossOpen = false;
+        }
+
+        private async Task RunStartupStreakFlowAsync()
+        {
+            if (_isStartupStreakLossOpen)
+            {
+                return;
+            }
+
+            var result = await RefreshStartupStreakAsync();
+
+            if (result.IsStartupLoss)
+            {
+                _isStartupStreakLossOpen = true;
+                await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
+            }
         }
 
         public void UpdatePageTitle(string? title)
@@ -348,7 +368,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _appNavigator.NavigateToLogin();
         }
 
-        public async Task LoadUserNameAsync()
+        public async Task LoadUserNameAsync(bool includeStreakRefresh = true)
         {
             byte loggedInUserId = (byte)Preferences.Get("CurrentUserId", 0);
             if (loggedInUserId == 0)
@@ -362,7 +382,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 .GetRequiredService<IRepository<AppUser>>()
                 .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId);
 
-            var streakTask = _trackingStreakService.GetCurrentStreakAsync(loggedInUserId);
+            Task<int> streakTask = includeStreakRefresh
+                ? _trackingStreakService.GetCurrentStreakAsync(loggedInUserId)
+                : Task.FromResult(StreakCount);
 
             var hasActiveFieldsTask = Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false)
                 ? Task.FromResult(true)
@@ -371,7 +393,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await Task.WhenAll(userTask, streakTask, hasActiveFieldsTask);
 
             LoggedInUserName = (await userTask)?.UserName ?? string.Empty;
-            StreakCount = await streakTask;
+            if (includeStreakRefresh)
+            {
+                StreakCount = await streakTask;
+            }
 
             if (Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false))
             {

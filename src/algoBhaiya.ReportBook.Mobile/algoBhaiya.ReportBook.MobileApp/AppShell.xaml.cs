@@ -6,7 +6,6 @@ namespace algoBhaiya.ReportBook.MobileApp
     public partial class AppShell : Shell
     {
         private bool _isInitialized;
-        private bool _hasShownStartupStreakLossThisSession;
 
         public AppShell(AppShellViewModel viewModel)
         {
@@ -37,10 +36,6 @@ namespace algoBhaiya.ReportBook.MobileApp
                     _ = InitializeShellAsync(vm);
                 }
             }
-            else
-            {
-                await RefreshStreakAsync();
-            }
         }
 
         private void OnShellNavigated(object sender, ShellNavigatedEventArgs e)
@@ -65,44 +60,11 @@ namespace algoBhaiya.ReportBook.MobileApp
             vm.UpdatePageTitle(pageTitle);
         }
 
-        private async Task RefreshStreakAsync()
-        {
-            if (BindingContext is not AppShellViewModel vm)
-            {
-                return;
-            }
-
-            try
-            {
-                await vm.RefreshStreakAsync();
-            }
-            catch
-            {
-            }
-        }
-
-        private async Task HandleStartupStreakLossAsync(AppShellViewModel vm)
-        {
-            if (_hasShownStartupStreakLossThisSession)
-            {
-                return;
-            }
-
-            var result = await vm.RefreshStartupStreakAsync();
-
-            if (result.IsStartupLoss)
-            {
-                _hasShownStartupStreakLossThisSession = true;
-                await vm.ShowStartupStreakLossAsync();
-            }
-        }
-
         private async Task InitializeShellAsync(AppShellViewModel vm)
         {
             try
             {
-                await HandleStartupStreakLossAsync(vm);
-                await vm.LoadUserNameAsync();
+                await vm.InitializeStartupAsync();
             }
             catch
             {

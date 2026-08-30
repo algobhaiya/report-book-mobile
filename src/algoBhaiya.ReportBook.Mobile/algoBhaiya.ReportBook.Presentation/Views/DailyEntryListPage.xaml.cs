@@ -63,6 +63,7 @@ public partial class DailyEntryListPage : ContentPage
     {
         if (Shell.Current?.BindingContext is AppShellViewModel shellViewModel)
         {
+            await shellViewModel.InitializeStartupAsync();
             await shellViewModel.RefreshStreakAsync();
         }
     }
