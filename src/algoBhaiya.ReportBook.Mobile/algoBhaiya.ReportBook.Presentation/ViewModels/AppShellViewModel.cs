@@ -263,10 +263,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             var hasAnyFilledEntries = items.Any(x => x.FilledCount > 0);
             foreach (var item in items)
             {
-                item.BarProgress = item.FilledCount == 0 ? 0.12 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
+                item.BarProgress = item.FilledCount == 0 ? 0 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
                 item.BarHeight = hasAnyFilledEntries
-                    ? 18 + (92 * item.BarProgress)
-                    : 16 + (32 * item.BarProgress);
+                    ? 10 + (92 * item.BarProgress)
+                    : 7 + (32 * item.BarProgress);
                 item.IsEmpty = item.FilledCount == 0;
                 _weeklyDays.Add(item);
             }
