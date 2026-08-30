@@ -30,8 +30,8 @@ public partial class DailyEntryListPage : ContentPage
                 try
                 {
                     await vm.RefreshDailyEntriesAsync();
-                    await RefreshShellHeaderAsync();
                     _isInitialized = true;
+                    _ = RefreshShellHeaderAsync();
                 }
                 catch (Exception ex)
                 {
@@ -46,7 +46,7 @@ public partial class DailyEntryListPage : ContentPage
             try
             {
                 await _viewModel.RefreshDailyEntriesAsync();
-                await RefreshShellHeaderAsync();
+                _ = RefreshShellHeaderAsync();
             }
             catch (Exception ex)
             {
