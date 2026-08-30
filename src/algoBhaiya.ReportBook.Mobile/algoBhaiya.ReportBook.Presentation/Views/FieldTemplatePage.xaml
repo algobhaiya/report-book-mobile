@@ -5,7 +5,7 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplatePage"
              Title="Items">
 
-    <Grid Padding="10,10,5,0">
+    <Grid Padding="10,10,10,0">
         <CollectionView ItemsSource="{Binding Templates}"
                         SelectionMode="None"
                         Margin="0">
