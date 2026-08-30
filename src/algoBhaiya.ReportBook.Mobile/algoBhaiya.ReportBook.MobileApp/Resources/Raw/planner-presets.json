@@ -11,31 +11,31 @@
     "Fields": [
       {
         "FieldName": "Fajr Prayer",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 1
       },
       {
         "FieldName": "Dhuhr Prayer",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 2
       },
       {
         "FieldName": "Asr Prayer",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 3
       },
       {
         "FieldName": "Maghrib Prayer",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 4
       },
       {
         "FieldName": "Isha Prayer",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 5
       },
@@ -47,9 +47,15 @@
       },
       {
         "FieldName": "Hadith Reading",
-        "UnitName": "Minutes",
+        "UnitName": "Count",
         "ValueType": "Double",
         "FieldOrder": 7
+      },
+      {
+        "FieldName": "Book Reading",
+        "UnitName": "Pages",
+        "ValueType": "Double",
+        "FieldOrder": 8
       }
     ]
   },
@@ -65,7 +71,7 @@
     "Fields": [
       {
         "FieldName": "Class Attendance",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 1
       },
@@ -101,7 +107,7 @@
       },
       {
         "FieldName": "Homework Done",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 7
       }
@@ -119,7 +125,7 @@
     "Fields": [
       {
         "FieldName": "Class Attendance",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 1
       },
@@ -173,7 +179,7 @@
       },
       {
         "FieldName": "Homework Done",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 10
       }
@@ -221,7 +227,7 @@
       },
       {
         "FieldName": "Enjoy Sunlight",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 6
       },
@@ -244,45 +250,45 @@
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Working Time",
-        "UnitName": "Hours",
-        "ValueType": "Double",
+        "FieldName": "Enjoy Sunlight",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 1
-      },
-      {
-        "FieldName": "Reading",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
-        "FieldOrder": 2
-      },
-      {
-        "FieldName": "Skincare",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
-        "FieldOrder": 3
-      },
-      {
-        "FieldName": "Hair Care",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
-        "FieldOrder": 4
       },
       {
         "FieldName": "Exercise",
         "UnitName": "Minutes",
         "ValueType": "Double",
-        "FieldOrder": 5
+        "FieldOrder": 2
       },
       {
-        "FieldName": "Enjoy Sunlight",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
-        "FieldOrder": 6
+        "FieldName": "Working Time",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 4
       },
       {
         "FieldName": "Water Intake",
         "UnitName": "Liters",
         "ValueType": "Double",
+        "FieldOrder": 5
+      },
+      {
+        "FieldName": "Skincare",
+        "UnitName": "Check",
+        "ValueType": "Bool",
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Hair Care",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 7
       }
     ]
@@ -341,7 +347,7 @@
       },
       {
         "FieldName": "Workout Done",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 8
       }
@@ -401,7 +407,7 @@
       },
       {
         "FieldName": "Workout Completed",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 8
       }
@@ -431,7 +437,7 @@
       },
       {
         "FieldName": "Medicine Taken",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 3
       },
@@ -496,20 +502,20 @@
         "FieldOrder": 3
       },
       {
-        "FieldName": "Insulin / Meds Taken",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
-        "FieldOrder": 4
-      },
-      {
         "FieldName": "Daily Walk",
         "UnitName": "Minutes",
         "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Insulin / Meds Taken",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 5
       },
       {
         "FieldName": "Foot Inspection",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 6
       }
@@ -527,7 +533,7 @@
     "Fields": [
       {
         "FieldName": "Prenatal Vitamins",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 1
       },
@@ -580,9 +586,9 @@
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Exercise",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
+        "FieldName": "Enjoy Sunlight",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 1
       },
       {
@@ -592,21 +598,21 @@
         "FieldOrder": 2
       },
       {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
         "FieldName": "Water Intake",
         "UnitName": "Liters",
         "ValueType": "Double",
-        "FieldOrder": 3
+        "FieldOrder": 4
       },
       {
         "FieldName": "Healthy Meals",
         "UnitName": "Count",
         "ValueType": "Double",
-        "FieldOrder": 4
-      },
-      {
-        "FieldName": "Sugar Avoided",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
         "FieldOrder": 5
       },
       {
@@ -616,28 +622,34 @@
         "FieldOrder": 6
       },
       {
-        "FieldName": "Stress Managed",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
+        "FieldName": "Weight",
+        "UnitName": "Kg",
+        "ValueType": "Double",
         "FieldOrder": 7
       },
       {
         "FieldName": "Medicine / Supplements Taken",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 8
       },
       {
-        "FieldName": "Weight",
-        "UnitName": "Kg",
-        "ValueType": "Double",
+        "FieldName": "Sugar Avoided",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 9
       },
       {
-        "FieldName": "Period Logged",
-        "UnitName": "Checkbox",
+        "FieldName": "Stress Managed",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 10
+      },
+      {
+        "FieldName": "Period Logged",
+        "UnitName": "Check",
+        "ValueType": "Bool",
+        "FieldOrder": 11
       }
     ]
   },
@@ -695,7 +707,7 @@
       },
       {
         "FieldName": "Vitamins / Meds",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 8
       }
@@ -731,7 +743,7 @@
       },
       {
         "FieldName": "No Unnecessary Spending",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 4
       },
@@ -803,7 +815,7 @@
       },
       {
         "FieldName": "Sugary Foods Avoided",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 6
       },
@@ -844,40 +856,34 @@
         "FieldOrder": 2
       },
       {
-        "FieldName": "Meditation",
+        "FieldName": "Screen-Free Time",
         "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 3
       },
       {
-        "FieldName": "Gratitude Journal",
-        "UnitName": "Checkbox",
-        "ValueType": "Bool",
-        "FieldOrder": 4
-      },
-      {
-        "FieldName": "Screen-Free Time",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
-        "FieldOrder": 5
-      },
-      {
         "FieldName": "Family/Friend Time",
         "UnitName": "Minutes",
         "ValueType": "Double",
-        "FieldOrder": 6
+        "FieldOrder": 4
       },
       {
         "FieldName": "Outdoor Time",
         "UnitName": "Minutes",
         "ValueType": "Double",
-        "FieldOrder": 7
+        "FieldOrder": 5
       },
       {
         "FieldName": "Slept Well",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
-        "FieldOrder": 8
+        "FieldOrder": 6
+      },
+      {
+        "FieldName": "Gratitude Journal",
+        "UnitName": "Check",
+        "ValueType": "Bool",
+        "FieldOrder": 7
       }
     ]
   },
@@ -899,7 +905,7 @@
       },
       {
         "FieldName": "Fertilizer Applied",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 2
       },
@@ -923,7 +929,7 @@
       },
       {
         "FieldName": "Pest Inspection",
-        "UnitName": "Checkbox",
+        "UnitName": "Check",
         "ValueType": "Bool",
         "FieldOrder": 6
       },
