@@ -46,6 +46,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         private bool _isNavigating;
+        private bool _isLoggingOut;
         public ICommand SelectUserCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -134,21 +135,34 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task LogoutAsync()
         {
+            if (_isLoggingOut)
+            {
+                return;
+            }
+
+            _isLoggingOut = true;
             var page = Shell.Current?.CurrentPage;
-            if (page == null)
+            try
             {
-                return;
-            }
+                if (page == null)
+                {
+                    return;
+                }
 
-            bool confirm = await page.DisplayAlert("Logout", "Do you want to log out now?", "Yes", "No");
-            if (!confirm)
+                bool confirm = await page.DisplayAlert("Logout", "Do you want to log out now?", "Yes", "No");
+                if (!confirm)
+                {
+                    return;
+                }
+
+                Preferences.Set(AppConstants.AppUser.CurrentUserId, 0);
+                await _appNavigator.PopModalAsync();
+                _appNavigator.NavigateToLogin();
+            }
+            finally
             {
-                return;
+                _isLoggingOut = false;
             }
-
-            Preferences.Set(AppConstants.AppUser.CurrentUserId, 0);
-            await _appNavigator.PopModalAsync();
-            _appNavigator.NavigateToLogin();
         }
 
         private static Task WaitForStartupInitializationAsync()
