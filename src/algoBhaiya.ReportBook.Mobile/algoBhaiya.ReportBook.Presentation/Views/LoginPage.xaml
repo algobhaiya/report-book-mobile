@@ -50,9 +50,10 @@
                             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#252B33}"
                             Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#3E4652}"
                             Padding="12,10">
-                        <Label Text="Use profile names, not passwords."
+                        <Label Text="Use profile name only, no password."
                                FontSize="12"
                                FontAttributes="Bold"
+                               HorizontalOptions="Center"
                                TextColor="{AppThemeBinding Light=#1D4ED8, Dark=#BFD7FF}" />
                     </Border>
                 </Grid>

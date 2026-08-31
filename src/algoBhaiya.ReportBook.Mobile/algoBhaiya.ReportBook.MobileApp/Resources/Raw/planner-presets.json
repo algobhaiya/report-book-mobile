@@ -196,39 +196,39 @@
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Working Time",
-        "UnitName": "Hours",
-        "ValueType": "Double",
+        "FieldName": "Enjoy Sunlight",
+        "UnitName": "Check",
+        "ValueType": "Bool",
         "FieldOrder": 1
-      },
-      {
-        "FieldName": "Family Time",
-        "UnitName": "Hours",
-        "ValueType": "Double",
-        "FieldOrder": 2
-      },
-      {
-        "FieldName": "Reading",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
-        "FieldOrder": 3
-      },
-      {
-        "FieldName": "Exercise",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
-        "FieldOrder": 4
       },
       {
         "FieldName": "Walked Distance",
         "UnitName": "Km",
         "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
+        "FieldName": "Exercise",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 3
+      },
+      {
+        "FieldName": "Working Time",
+        "UnitName": "Hours",
+        "ValueType": "Double",
+        "FieldOrder": 4
+      },
+      {
+        "FieldName": "Family Time",
+        "UnitName": "Hours",
+        "ValueType": "Double",
         "FieldOrder": 5
       },
       {
-        "FieldName": "Enjoy Sunlight",
-        "UnitName": "Check",
-        "ValueType": "Bool",
+        "FieldName": "Reading",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
         "FieldOrder": 6
       },
       {
@@ -364,37 +364,37 @@
     "IsBlank": false,
     "Fields": [
       {
+        "FieldName": "Warm-up",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 1
+      },
+      {
         "FieldName": "Running Distance",
         "UnitName": "Km",
         "ValueType": "Double",
-        "FieldOrder": 1
+        "FieldOrder": 2
       },
       {
         "FieldName": "Running Time",
         "UnitName": "Minutes",
         "ValueType": "Double",
-        "FieldOrder": 2
+        "FieldOrder": 3
       },
       {
         "FieldName": "Average Pace",
         "UnitName": "min/km",
         "ValueType": "Double",
-        "FieldOrder": 3
+        "FieldOrder": 4
       },
       {
         "FieldName": "Steps",
         "UnitName": "Count",
         "ValueType": "Double",
-        "FieldOrder": 4
-      },
-      {
-        "FieldName": "Stretching",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
         "FieldOrder": 5
       },
       {
-        "FieldName": "Warm-up",
+        "FieldName": "Stretching",
         "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 6
@@ -430,21 +430,21 @@
         "FieldOrder": 1
       },
       {
+        "FieldName": "Walk",
+        "UnitName": "Minutes",
+        "ValueType": "Double",
+        "FieldOrder": 2
+      },
+      {
         "FieldName": "Water Intake",
         "UnitName": "Liters",
         "ValueType": "Double",
-        "FieldOrder": 2
+        "FieldOrder": 3
       },
       {
         "FieldName": "Medicine Taken",
         "UnitName": "Check",
         "ValueType": "Bool",
-        "FieldOrder": 3
-      },
-      {
-        "FieldName": "Walk",
-        "UnitName": "Minutes",
-        "ValueType": "Double",
         "FieldOrder": 4
       },
       {
@@ -484,26 +484,26 @@
     "IsBlank": false,
     "Fields": [
       {
-        "FieldName": "Fasting Sugar",
-        "UnitName": "mmol/L",
+        "FieldName": "Daily Walk",
+        "UnitName": "Minutes",
         "ValueType": "Double",
         "FieldOrder": 1
       },
       {
-        "FieldName": "Post-Meal Sugar",
+        "FieldName": "Fasting Sugar",
         "UnitName": "mmol/L",
         "ValueType": "Double",
         "FieldOrder": 2
       },
       {
-        "FieldName": "Carb Intake",
-        "UnitName": "Grams",
+        "FieldName": "Post-Meal Sugar",
+        "UnitName": "mmol/L",
         "ValueType": "Double",
         "FieldOrder": 3
       },
       {
-        "FieldName": "Daily Walk",
-        "UnitName": "Minutes",
+        "FieldName": "Carb Intake",
+        "UnitName": "Grams",
         "ValueType": "Double",
         "FieldOrder": 4
       },
@@ -523,7 +523,7 @@
   },
   {
     "Id": 10,
-    "Name": "Maternity & Pregnancy",
+    "Name": "Pregnancy Care",
     "Category": "Health",
     "Summary": "Track prenatal care, kick counts, and well-being.",
     "Description": "A dedicated log for expecting mothers to monitor daily health, hydration, fetal movement, and prenatal supplements.",
