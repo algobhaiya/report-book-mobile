@@ -10,6 +10,7 @@ public partial class DailyEntryListPage : ContentPage
     private readonly NavigationDataService _navDataService;
     private bool _isInitialized = false;
     private bool _isOpeningMonthlySummary = false;
+    private bool _isOpeningDateCalendar = false;
 
     public DailyEntryListPage(DailyEntryListViewModel viewModel, NavigationDataService navDataService)
     {
@@ -76,19 +77,32 @@ public partial class DailyEntryListPage : ContentPage
 
     private async void OnDateCalendarClicked(object sender, EventArgs e)
     {
-        var popup = new DatePickerPopup();
-        await Navigation.PushModalAsync(popup);
-        var selected = await popup.ResultSource.Task;
-
-        if (Navigation.ModalStack.Count > 0)
+        if (_isOpeningDateCalendar)
         {
-            await Navigation.PopModalAsync();
+            return;
         }
 
-        if (selected.HasValue)
+        _isOpeningDateCalendar = true;
+        try
         {
-            await Task.Yield();
-            await _viewModel.OpenEntryAsync(selected.Value);
+            var popup = new DatePickerPopup();
+            await Navigation.PushModalAsync(popup);
+            var selected = await popup.ResultSource.Task;
+
+            if (Navigation.ModalStack.Count > 0)
+            {
+                await Navigation.PopModalAsync();
+            }
+
+            if (selected.HasValue)
+            {
+                await Task.Yield();
+                await _viewModel.OpenEntryAsync(selected.Value);
+            }
+        }
+        finally
+        {
+            _isOpeningDateCalendar = false;
         }
     }
 
