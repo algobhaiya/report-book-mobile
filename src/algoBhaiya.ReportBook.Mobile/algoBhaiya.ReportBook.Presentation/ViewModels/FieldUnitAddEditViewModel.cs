@@ -17,6 +17,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly Action<FieldUnit, FieldUnit> _onSave;
         public  Action onModalClose;
         public ObservableCollection<string> DisplayTypes { get; } = new();
+        private bool _isSubmitting;
 
         private readonly string _newModeTitle = "Add Unit";
         private readonly string _editModeTitle = "Edit Unit";
@@ -63,6 +64,18 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public string PageSubtitle => IsEditMode ? _editModeSubtitle : _newModeSubtitle;
         public string SubmitButtonText => IsEditMode ? _updateButtonText : _saveButtonText;
         public bool IsEditMode => TappedUnit != null && TappedUnit.Id > 0;
+        public bool IsSubmitting
+        {
+            get => _isSubmitting;
+            private set
+            {
+                if (_isSubmitting != value)
+                {
+                    _isSubmitting = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private string _unitNameError;
         public string UnitNameError
@@ -143,40 +156,53 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SubmitAsync()
         {
-            var isValid = ValidateFields();
-            if (!isValid)
+            if (IsSubmitting)
             {
                 return;
             }
 
-            var backendType = _typeMap[SelectedDisplayType];
-            var normalizedUnitName = UnitName.Trim();
-
-            // If different name, then check duplicate.
-            if (!string.Equals(TappedUnit.UnitName, normalizedUnitName, StringComparison.Ordinal))
+            IsSubmitting = true;
+            try
             {
-                // validate unitName.
-                var duplicateUnit = await _repository.GetFirstOrDefaultAsync(
-                        u => u.UnitName == normalizedUnitName && u.IsDeleted == false);
-
-                if (duplicateUnit != null)
+                var isValid = ValidateFields();
+                if (!isValid)
                 {
-                    UnitNameError = $"The unit \"{normalizedUnitName}\" already exists. Please choose a different name.";
                     return;
                 }
 
-                await SaveAsync(backendType);
-            } 
-            else if (HasFieldValueChanged(backendType))
-            {
-                await SaveAsync(backendType);
-            } 
-            else
-            {
-                // Skip updating.
-            }
+                var backendType = _typeMap[SelectedDisplayType];
+                var normalizedUnitName = UnitName.Trim();
 
-            onModalClose?.Invoke();           
+                // If different name, then check duplicate.
+                if (!string.Equals(TappedUnit.UnitName, normalizedUnitName, StringComparison.Ordinal))
+                {
+                    // validate unitName.
+                    var duplicateUnit = await _repository.GetFirstOrDefaultAsync(
+                            u => u.UnitName == normalizedUnitName && u.IsDeleted == false);
+
+                    if (duplicateUnit != null)
+                    {
+                        UnitNameError = $"The unit \"{normalizedUnitName}\" already exists. Please choose a different name.";
+                        return;
+                    }
+
+                    await SaveAsync(backendType);
+                } 
+                else if (HasFieldValueChanged(backendType))
+                {
+                    await SaveAsync(backendType);
+                } 
+                else
+                {
+                    // Skip updating.
+                }
+
+                onModalClose?.Invoke();
+            }
+            finally
+            {
+                IsSubmitting = false;
+            }
         }
 
         private bool ValidateFields()
