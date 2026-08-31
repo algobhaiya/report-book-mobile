@@ -5,6 +5,8 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class FieldUnitAddEditPage : ContentPage
 {
     public TaskCompletionSource<int?> ResultSource { get; } = new();
+    private bool _isClosing;
+
     public FieldUnitAddEditPage(FieldUnitAddEditViewModel viewModel)
 	{
 		InitializeComponent();
@@ -13,12 +15,23 @@ public partial class FieldUnitAddEditPage : ContentPage
 	}
 
     private void OnModalClosed()
-    {       
-        ResultSource.SetResult(null);
+    {
+        CloseModal();
     }
 
     private void OnCancelClicked(object sender, EventArgs e)
     {
-        ResultSource.SetResult(null);
+        CloseModal();
+    }
+
+    private void CloseModal()
+    {
+        if (_isClosing)
+        {
+            return;
+        }
+
+        _isClosing = true;
+        ResultSource.TrySetResult(null);
     }
 }

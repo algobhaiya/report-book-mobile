@@ -14,6 +14,7 @@ public partial class FieldTemplatePage : ContentPage
     private ObservableCollection<FieldTemplate> _templates = new();
     private List<FieldUnit> _availableUnits = new();
     private bool _isAddModalOpen;
+    private bool _isOpeningFieldDetail;
     private bool _isLoading;
 
     public ObservableCollection<FieldTemplate> Templates => _templates;
@@ -163,10 +164,23 @@ public partial class FieldTemplatePage : ContentPage
 
     private async void OnFieldTapped(FieldTemplate tappedTemplate)
     {
-        _navDataService.Set(Constants.Constants.FieldTemplate.Item_ToEdit, tappedTemplate);
-        _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Func<FieldTemplate, FieldTemplate, Task>)OnUnitSaved);
+        if (_isOpeningFieldDetail)
+        {
+            return;
+        }
 
-        await OpenModalAsync();
+        _isOpeningFieldDetail = true;
+        try
+        {
+            _navDataService.Set(Constants.Constants.FieldTemplate.Item_ToEdit, tappedTemplate);
+            _navDataService.Set(Constants.Constants.FieldTemplate.Action_OnUnitSaved, (Func<FieldTemplate, FieldTemplate, Task>)OnUnitSaved);
+
+            await OpenModalAsync();
+        }
+        finally
+        {
+            _isOpeningFieldDetail = false;
+        }
 
     }
     
@@ -281,6 +295,6 @@ public partial class FieldTemplatePage : ContentPage
     private void SetRefreshOnReturn()
     {
         _navDataService.Set(Constants.Constants.FieldTemplate.Action_RefreshOnReturn, true);
-        _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
+        _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
     }
 }

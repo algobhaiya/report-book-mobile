@@ -39,7 +39,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             await Shell.Current.DisplayAlert("Success", "Settings updated!", "OK");
 
-            await Shell.Current.Navigation.PopAsync();
+            await Shell.Current.GoToAsync("..");
         }
     }
 

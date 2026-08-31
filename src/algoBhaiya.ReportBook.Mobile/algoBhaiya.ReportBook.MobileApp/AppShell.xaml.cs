@@ -1,11 +1,11 @@
-﻿using algoBhaiya.ReportBook.Presentation.ViewModels;
+using algoBhaiya.ReportBook.Presentation.ViewModels;
 using algoBhaiya.ReportBook.Presentation.Views;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
     public partial class AppShell : Shell
     {
-        private bool _isInitialized = false;          
+        private bool _isInitialized;
 
         public AppShell(AppShellViewModel viewModel)
         {
@@ -14,7 +14,9 @@ namespace algoBhaiya.ReportBook.MobileApp
             Navigated += OnShellNavigated;
 
             Routing.RegisterRoute(nameof(MonthlySummaryPage), typeof(MonthlySummaryPage));
+            Routing.RegisterRoute(nameof(DailyEntryPage), typeof(DailyEntryPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+            Routing.RegisterRoute(nameof(HelpPage), typeof(HelpPage));
             Routing.RegisterRoute(nameof(SwitchProfilePage), typeof(SwitchProfilePage));
             UpdatePageTitle();
         }
@@ -24,24 +26,15 @@ namespace algoBhaiya.ReportBook.MobileApp
             base.OnAppearing();
             UpdatePageTitle();
 
+            await Task.Yield();
+
             if (!_isInitialized)
             {
                 if (BindingContext is AppShellViewModel vm)
                 {
-                    try
-                    {
-                        await vm.LoadUserNameAsync(); // Only after page fully loaded
-                        _isInitialized = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log exception
-                    }
+                    _isInitialized = true;
+                    _ = InitializeShellAsync(vm);
                 }
-            }
-            else
-            {
-                await RefreshStreakAsync();
             }
         }
 
@@ -67,20 +60,14 @@ namespace algoBhaiya.ReportBook.MobileApp
             vm.UpdatePageTitle(pageTitle);
         }
 
-        private async Task RefreshStreakAsync()
+        private async Task InitializeShellAsync(AppShellViewModel vm)
         {
-            if (BindingContext is not AppShellViewModel vm)
-            {
-                return;
-            }
-            
             try
             {
-                await vm.RefreshStreakAsync();
+                await vm.InitializeStartupAsync();
             }
             catch
             {
-
             }
         }
     }

@@ -172,8 +172,8 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
                 await Task.WhenAll(plansTask, entriesTask);
 
-                var plans = plansTask.Result;
-                var entries = entriesTask.Result;
+                var plans = await plansTask;
+                var entries = await entriesTask;
 
                 // IF plan is empty,
                 // THEN set only the current plan.
@@ -299,10 +299,10 @@ namespace algoBhaiya.ReportBook.Infrastructure.Data.Repositories
 
                 await Task.WhenAll(plansTask, templatesTask, unitsTask, entriesTask);
 
-                var plans = plansTask.Result;
-                var fieldTemplates = templatesTask.Result;
-                var units = unitsTask.Result;
-                var entries = entriesTask.Result;
+                var plans = await plansTask;
+                var fieldTemplates = await templatesTask;
+                var units = await unitsTask;
+                var entries = await entriesTask;
 
                 // IF plan is empty,
                 // THEN set only the current plan.

@@ -13,6 +13,7 @@ public partial class FieldUnitPage : ContentPage
     
     private ObservableCollection<FieldUnit> _units = new();
     private bool _isAddModalOpen;
+    private bool _isOpeningUnitDetail;
     private bool _isLoading;
 
     public ObservableCollection<FieldUnit> Units => _units;
@@ -85,6 +86,7 @@ public partial class FieldUnitPage : ContentPage
                 }
                 
                 Units.Remove(unit);
+                _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
             }
         });
 
@@ -135,10 +137,23 @@ public partial class FieldUnitPage : ContentPage
 
     private async void OnUnitTapped(FieldUnit tappedUnit)
     {
-        _navDataService.Set(Constants.Constants.FieldUnit.Item_ToEdit, tappedUnit);
-        _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
+        if (_isOpeningUnitDetail)
+        {
+            return;
+        }
 
-        await OpenModalAsync();
+        _isOpeningUnitDetail = true;
+        try
+        {
+            _navDataService.Set(Constants.Constants.FieldUnit.Item_ToEdit, tappedUnit);
+            _navDataService.Set(Constants.Constants.FieldUnit.Action_OnUnitSaved, (Action<FieldUnit, FieldUnit>)OnUnitSaved);
+
+            await OpenModalAsync();
+        }
+        finally
+        {
+            _isOpeningUnitDetail = false;
+        }
     }
 
     private async Task OpenModalAsync()
@@ -154,6 +169,8 @@ public partial class FieldUnitPage : ContentPage
 
     private void OnUnitSaved(FieldUnit oldUnit, FieldUnit newUnit)
     {
+        _navDataService.Set(Constants.Constants.DailyEntry.Action_InvalidateCache, true);
+
         var existing = Units.FirstOrDefault(x => x.Id == oldUnit.Id);
         if (existing != null)
         {

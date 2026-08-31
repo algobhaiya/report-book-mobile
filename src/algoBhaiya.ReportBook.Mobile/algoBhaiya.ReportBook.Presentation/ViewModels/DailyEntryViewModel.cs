@@ -1,4 +1,4 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Helpers;
 using algoBhaiya.ReportBooks.Core.Interfaces;
@@ -11,9 +11,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 {
     public class DailyEntryViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<DailyEntry> Fields { get; set; } = new();
+        public DailyEntryFieldCollection Fields { get; } = new();
 
-        public ICommand SubmitCommand { get; }
+        private readonly Command _submitCommand;
+        public ICommand SubmitCommand => _submitCommand;
 
         private bool _isLoading;
         public bool IsLoading
@@ -31,8 +32,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public DateTime LoadingDateTime { get; set; }
         private DateTime _effectiveDate;
-        public DateTime FormDate 
-        { 
+        public DateTime FormDate
+        {
             get => _effectiveDate;
             set
             {
@@ -42,9 +43,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     OnPropertyChanged();
                 }
             }
-
         }
-        
+
         private bool _isReadOnly = false;
         public bool IsReadOnly
         {
@@ -56,19 +56,53 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isReadOnly = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(CanSubmit));
+                    OnPropertyChanged(nameof(CanShowSubmit));
+                    _submitCommand.ChangeCanExecute();
                 }
             }
         }
 
+        public bool IsDirty => Fields.DirtyCount > 0;
+
         private byte _maxEditableDayCount = 15;
 
-        public bool CanSubmit => !IsReadOnly;
-
+        public bool CanSubmit => !IsReadOnly && IsDirty;
+        public bool CanShowSubmit => !IsReadOnly;
 
         private readonly IDailyEntryRepository _repository;
         private readonly ITrackingStreakService _trackingStreakService;
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationDataService _navDataService;
+        private readonly SemaphoreSlim _loadLock = new(1, 1);
+        private bool _showCompletionCelebration;
+        public bool ShowCompletionCelebration
+        {
+            get => _showCompletionCelebration;
+            private set
+            {
+                if (_showCompletionCelebration != value)
+                {
+                    _showCompletionCelebration = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private byte _cachedUserId;
+        private DateTime _cachedLoadedDate = DateTime.MinValue;
+        private Dictionary<int, FieldTemplate> _cachedTemplateLookup = new();
+        private Dictionary<byte, FieldUnit> _cachedUnitLookup = new();
+        private List<DailyEntryFieldViewModel> _fieldBlueprints = new();
+        public void InvalidateCache()
+        {
+            _cachedUserId = 0;
+            _cachedLoadedDate = DateTime.MinValue;
+            _cachedTemplateLookup.Clear();
+            _cachedUnitLookup.Clear();
+            _fieldBlueprints.Clear();
+            Fields.Clear();
+            ShowCompletionCelebration = false;
+        }
 
         public DailyEntryViewModel(
             IServiceProvider serviceProvider,
@@ -82,9 +116,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _serviceProvider = serviceProvider;
             _navDataService = navDataService;
 
-            _maxEditableDayCount = (byte) Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
+            _maxEditableDayCount = (byte)Preferences.Get(Constants.Constants.Setting.ModificationDuration, 15);
 
-            SubmitCommand = new Command(async () => await SubmitAsync());           
+            _submitCommand = new Command(async () => await SubmitAsync(), () => CanSubmit);
+            Fields.DirtyCountChanged += OnDirtyCountChanged;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -93,94 +128,202 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         public async Task LoadFieldsAsync()
         {
+            await _loadLock.WaitAsync();
             IsLoading = true;
 
             try
             {
-                Fields.Clear();
-
-                byte userId = (byte)Preferences.Get("CurrentUserId", 0);
-                if (userId == 0)
-                    return;
-
-                SetLoadingTime();
-
-                FormDate = LoadingDateTime;
-                IsReadOnly = (DateTime.Today - FormDate).Days > _maxEditableDayCount;
-
-                var targetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
-                var templateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
-                var unitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
-
-                var plannedFieldsTask = targetRepo
-                    .GetListAsync(f =>
-                        f.UserId == userId &&
-                        f.Month == FormDate.Month &&
-                        f.Year == FormDate.Year);
-
-                var templatesTask = templateRepo.GetListAsync(f => f.UserId == userId);
-                var unitsTask = unitRepo.GetAllAsync();
-                var entriesTask = _repository.GetEntriesForUserAndDateAsync(userId, FormDate);
-
-                await Task.WhenAll(plannedFieldsTask, templatesTask, unitsTask, entriesTask);
-
-                var plannedFields = plannedFieldsTask.Result.OrderBy(p => p.FieldOrder);
-                var fieldTemplates = templatesTask.Result;
-                var units = unitsTask.Result;
-                var entries = entriesTask.Result;
-
-                var fieldTemplateLookup = fieldTemplates
-                    .Where(t => plannedFields.Any(p => p.FieldTemplateId == t.Id))
-                    .ToDictionary(t => t.Id);
-
-                var unitLookup = units.ToDictionary(u => u.Id);
-
-                foreach (var plan in plannedFields)
-                {
-                    if (!fieldTemplateLookup.TryGetValue(plan.FieldTemplateId, out var template))
-                        continue;
-
-                    var entry = entries.FirstOrDefault(e => e.FieldTemplateId == plan.FieldTemplateId);
-
-                    // Skip if field deleted and no corresponding entry exists
-                    if (plan.IsDeleted && entry == null)
-                        continue;
-
-                    template.Unit = unitLookup.TryGetValue(template.UnitId, out var unit)
-                        ? unit
-                        : new FieldUnit();
-
-                    Fields.Add(new DailyEntry
-                    {
-                        Id = entry?.Id ?? 0,
-                        FieldTemplate = template,
-                        FieldTemplateId = template.Id,
-                        UserId = userId,
-                        Date = FormDate,
-                        Value = entry?.Value ?? string.Empty
-                    });
-                }
+                await LoadFieldsCoreAsync();
             }
             finally
             {
                 IsLoading = false;
+                _loadLock.Release();
             }
         }
 
         public async Task LoadFieldsForDateAsync(DateTime date)
         {
+            if (_cachedUserId == (byte)Preferences.Get("CurrentUserId", 0)
+                && _fieldBlueprints.Count > 0
+                && _cachedLoadedDate.Year == date.Year
+                && _cachedLoadedDate.Month == date.Month)
+            {
+                await RefreshFieldValuesAsync(date.Date);
+                return;
+            }
+
             _navDataService.Set(Constants.Constants.DailyEntry.Item_SelectedDate, date.Date);
             await LoadFieldsAsync();
         }
 
+        public async Task RefreshFieldValuesAsync(DateTime date)
+        {
+            await _loadLock.WaitAsync();
+            IsLoading = true;
+
+            try
+            {
+                if (_cachedUserId != (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0)
+                    || _fieldBlueprints.Count == 0
+                    || _cachedLoadedDate.Year != date.Year
+                    || _cachedLoadedDate.Month != date.Month)
+                {
+                    _navDataService.Set(Constants.Constants.DailyEntry.Item_SelectedDate, date.Date);
+                    await LoadFieldsCoreAsync();
+                    return;
+                }
+
+                await RefreshFieldValuesCoreAsync(date.Date);
+            }
+            finally
+            {
+                IsLoading = false;
+                _loadLock.Release();
+            }
+        }
+
+        public void HideCompletionCelebration()
+        {
+            ShowCompletionCelebration = false;
+        }
+
+        private async Task LoadFieldsCoreAsync()
+        {
+            byte userId = (byte)Preferences.Get("CurrentUserId", 0);
+            if (userId == 0)
+            {
+                Fields.Clear();
+                _fieldBlueprints.Clear();
+                _cachedLoadedDate = DateTime.MinValue;
+                return;
+            }
+
+            SetLoadingTime();
+            FormDate = LoadingDateTime;
+            IsReadOnly = (DateTime.Today - FormDate).Days > _maxEditableDayCount;
+
+            var targetRepo = _serviceProvider.GetRequiredService<IRepository<MonthlyTarget>>();
+            var templateRepo = _serviceProvider.GetRequiredService<IRepository<FieldTemplate>>();
+            var unitRepo = _serviceProvider.GetRequiredService<IRepository<FieldUnit>>();
+
+            var plannedFieldsTask = targetRepo
+                .GetListAsync(f =>
+                    f.UserId == userId &&
+                    f.Month == FormDate.Month &&
+                    f.Year == FormDate.Year);
+
+            var entriesTask = _repository.GetEntriesForUserAndDateAsync(userId, FormDate);
+            Task<IEnumerable<FieldTemplate>> templatesTask;
+            Task<IEnumerable<FieldUnit>> unitsTask;
+
+            if (_cachedUserId == userId && _cachedTemplateLookup.Count > 0 && _cachedUnitLookup.Count > 0)
+            {
+                templatesTask = Task.FromResult<IEnumerable<FieldTemplate>>(_cachedTemplateLookup.Values);
+                unitsTask = Task.FromResult<IEnumerable<FieldUnit>>(_cachedUnitLookup.Values);
+            }
+            else
+            {
+                templatesTask = templateRepo.GetListAsync(f => f.UserId == userId);
+                unitsTask = unitRepo.GetAllAsync();
+            }
+
+            await Task.WhenAll(plannedFieldsTask, templatesTask, unitsTask, entriesTask);
+
+            var plannedFields = (await plannedFieldsTask).OrderBy(p => p.FieldOrder);
+            var fieldTemplates = await templatesTask;
+            var units = await unitsTask;
+            var entries = await entriesTask;
+            var entriesLookup = entries
+                .GroupBy(e => e.FieldTemplateId)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            _cachedUserId = userId;
+            _cachedTemplateLookup = fieldTemplates.ToDictionary(t => t.Id);
+            _cachedUnitLookup = units.ToDictionary(u => u.Id);
+            _cachedLoadedDate = FormDate.Date;
+
+            using (Fields.SuspendDirtyTracking())
+            {
+                Fields.Clear();
+                _fieldBlueprints.Clear();
+
+                foreach (var plan in plannedFields)
+                {
+                    if (!_cachedTemplateLookup.TryGetValue(plan.FieldTemplateId, out var template))
+                        continue;
+
+                    entriesLookup.TryGetValue(plan.FieldTemplateId, out var entry);
+
+                    if (plan.IsDeleted && entry == null)
+                        continue;
+
+                    template.Unit = _cachedUnitLookup.TryGetValue(template.UnitId, out var unit)
+                        ? unit
+                        : new FieldUnit();
+
+                    var fieldVm = new DailyEntryFieldViewModel
+                    {
+                        FieldTemplate = template,
+                        FieldTemplateId = template.Id,
+                        FieldName = template.FieldName,
+                        ValueType = template.ValueType,
+                        UnitName = template.Unit?.UnitName ?? string.Empty,
+                        UserId = userId
+                    };
+
+                    fieldVm.ApplyEntry(entry, FormDate);
+                    _fieldBlueprints.Add(fieldVm);
+                    Fields.Add(fieldVm);
+                }
+            }
+        }
+
+        private async Task RefreshFieldValuesCoreAsync(DateTime date)
+        {
+            byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+            if (userId == 0 || _fieldBlueprints.Count == 0)
+            {
+                _navDataService.Set(Constants.Constants.DailyEntry.Item_SelectedDate, date);
+                await LoadFieldsCoreAsync();
+                return;
+            }
+
+            FormDate = date;
+            IsReadOnly = (DateTime.Today - FormDate).Days > _maxEditableDayCount;
+
+            var entries = await _repository.GetEntriesForUserAndDateAsync(userId, date);
+            var entriesLookup = entries
+                .GroupBy(e => e.FieldTemplateId)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            using (Fields.SuspendDirtyTracking())
+            {
+                for (var i = 0; i < _fieldBlueprints.Count; i++)
+                {
+                    var blueprint = _fieldBlueprints[i];
+                    entriesLookup.TryGetValue(blueprint.FieldTemplateId, out var entry);
+                    blueprint.RefreshValue(entry, date);
+                }
+            }
+
+            _cachedLoadedDate = date;
+        }
+
         private void SetLoadingTime()
         {
-            // Selected unit
             DateTime? loadingDateTime = _navDataService.Get<DateTime>(Constants.Constants.DailyEntry.Item_SelectedDate);
 
             LoadingDateTime = loadingDateTime ?? DateTime.Today;
 
             _navDataService.Remove(Constants.Constants.DailyEntry.Item_SelectedDate);
+        }
+
+        private void OnDirtyCountChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsDirty));
+            OnPropertyChanged(nameof(CanSubmit));
+            _submitCommand.ChangeCanExecute();
         }
 
         private async Task SubmitAsync()
@@ -189,7 +332,15 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
             foreach (var entry in Fields)
             {
-                await _repository.SaveDailyEntryAsync(entry);
+                await _repository.SaveDailyEntryAsync(new DailyEntry
+                {
+                    Id = entry.Id,
+                    UserId = (byte)entry.UserId,
+                    FieldTemplateId = entry.FieldTemplateId,
+                    Date = entry.Date,
+                    Value = entry.Value,
+                    FieldTemplate = entry.FieldTemplate
+                });
             }
 
             byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
@@ -197,12 +348,30 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             {
                 await _trackingStreakService.NotifyDailyEntryChangedAsync(userId, FormDate);
             }
-
-            _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
-            _navDataService.Set(Constants.Constants.DailyEntry.Action_ShowCompletionCelebration, isCompleted);
-            await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
             
-            await Shell.Current.Navigation.PopAsync();
+            _navDataService.Set(Constants.Constants.DailyEntry.Action_RefreshListOnReturn, true);
+
+            if (isCompleted)
+            {
+                ShowCompletionCelebration = true;
+                await Task.Delay(1600);
+                HideCompletionCelebration();
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Success", "Daily entry submitted!", "OK");
+            }
+
+            await RefreshFieldValuesAsync(FormDate.Date);
+            await RefreshShellStreakAsync();
+        }
+
+        private static async Task RefreshShellStreakAsync()
+        {
+            if (Shell.Current?.BindingContext is AppShellViewModel shellViewModel)
+            {
+                await shellViewModel.RefreshStreakAsync();
+            }
         }
 
         private bool IsEntryFullyCompletedFromFields()
@@ -215,7 +384,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             return Fields.All(IsSaveableFieldValue);
         }
 
-        private static bool IsSaveableFieldValue(DailyEntry entry)
+        private static bool IsSaveableFieldValue(DailyEntryFieldViewModel entry)
         {
             if (entry == null)
             {
@@ -231,5 +400,4 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 && !string.Equals(entry.Value, "False", StringComparison.Ordinal);
         }
     }
-
 }

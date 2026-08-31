@@ -21,6 +21,8 @@ public partial class MonthlyTargetPage : ContentPage
     {
         base.OnAppearing();
 
+        await Task.Yield();
+
         if (BindingContext is not MonthlyTargetViewModel vm)
         {
             return;

@@ -46,9 +46,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         private bool _isNavigating;
+        private bool _isLoggingOut;
         public ICommand SelectUserCommand { get; }
         public ICommand RefreshCommand { get; }
-        public ICommand CancelCommand { get; }
+        public ICommand LogoutCommand { get; }
 
         public SwitchProfilePageViewModel(IServiceProvider serviceProvider, IAppNavigator appNavigator)
         {
@@ -78,7 +79,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             });
 
             RefreshCommand = new Command(async () => await LoadProfilesAsync());
-            CancelCommand = new Command(async () => await _appNavigator.PopModalAsync());
+            LogoutCommand = new Command(async () => await LogoutAsync());
         }
 
         public bool IsCurrentProfile(AppUser profile) =>
@@ -126,9 +127,48 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SwitchToProfile(AppUser profile)
         {
+            await WaitForStartupInitializationAsync();
             Preferences.Set(AppConstants.AppUser.CurrentUserId, profile.Id);
             await _appNavigator.PopModalAsync();
             _appNavigator.NavigateToMainShell();
+        }
+
+        private async Task LogoutAsync()
+        {
+            if (_isLoggingOut)
+            {
+                return;
+            }
+
+            _isLoggingOut = true;
+            var page = Shell.Current?.CurrentPage;
+            try
+            {
+                if (page == null)
+                {
+                    return;
+                }
+
+                bool confirm = await page.DisplayAlert("Logout", "Do you want to log out now?", "Yes", "No");
+                if (!confirm)
+                {
+                    return;
+                }
+
+                Preferences.Set(AppConstants.AppUser.CurrentUserId, 0);
+                await _appNavigator.PopModalAsync();
+                _appNavigator.NavigateToLogin();
+            }
+            finally
+            {
+                _isLoggingOut = false;
+            }
+        }
+
+        private static Task WaitForStartupInitializationAsync()
+        {
+            return (Application.Current as IStartupInitializationService)?.StartupInitializationTask
+                   ?? Task.CompletedTask;
         }
     }
 }

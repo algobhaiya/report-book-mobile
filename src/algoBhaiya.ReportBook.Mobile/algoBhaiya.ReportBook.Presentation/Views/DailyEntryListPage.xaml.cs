@@ -7,18 +7,16 @@ namespace algoBhaiya.ReportBook.Presentation.Views;
 public partial class DailyEntryListPage : ContentPage
 {
     private readonly DailyEntryListViewModel _viewModel;
-    private readonly IServiceProvider _serviceProvider;
     private readonly NavigationDataService _navDataService;
     private bool _isInitialized = false;
     private bool _isOpeningMonthlySummary = false;
-    private bool _isCelebrationVisible = false;
+    private bool _isOpeningDateCalendar = false;
 
-    public DailyEntryListPage(DailyEntryListViewModel viewModel, IServiceProvider serviceProvider, NavigationDataService navDataService)
+    public DailyEntryListPage(DailyEntryListViewModel viewModel, NavigationDataService navDataService)
     {
         InitializeComponent();
         BindingContext = viewModel;
         _viewModel = viewModel;
-        _serviceProvider = serviceProvider;
         _navDataService = navDataService;
     }
 
@@ -32,27 +30,24 @@ public partial class DailyEntryListPage : ContentPage
             {
                 try
                 {
-                    await vm.RefreshDailyEntriesAsync(); // Only after page fully loaded
-                    await RefreshShellHeaderAsync();
+                    await vm.RefreshDailyEntriesAsync();
                     _isInitialized = true;
+                    _ = RefreshShellHeaderAsync();
                 }
                 catch (Exception ex)
                 {
                     // Log exception
                 }
             }
-        }
+
+            return;
+        } 
         else if (_navDataService.Get<bool>(AppConstants.DailyEntry.Action_RefreshListOnReturn))
         {
-            var showCelebration = _navDataService.Get<bool>(AppConstants.DailyEntry.Action_ShowCompletionCelebration);
             try
             {
                 await _viewModel.RefreshDailyEntriesAsync();
-                await RefreshShellHeaderAsync();
-                if (showCelebration)
-                {
-                    await ShowCelebrationAsync();
-                }
+                _ = RefreshShellHeaderAsync();
             }
             catch (Exception ex)
             {
@@ -61,7 +56,6 @@ public partial class DailyEntryListPage : ContentPage
             finally
             {
                 _navDataService.Remove(AppConstants.DailyEntry.Action_RefreshListOnReturn);
-                _navDataService.Remove(AppConstants.DailyEntry.Action_ShowCompletionCelebration);
             }
         }
     }
@@ -70,6 +64,7 @@ public partial class DailyEntryListPage : ContentPage
     {
         if (Shell.Current?.BindingContext is AppShellViewModel shellViewModel)
         {
+            await shellViewModel.InitializeStartupAsync();
             await shellViewModel.RefreshStreakAsync();
         }
     }
@@ -82,19 +77,32 @@ public partial class DailyEntryListPage : ContentPage
 
     private async void OnDateCalendarClicked(object sender, EventArgs e)
     {
-        var popup = new DatePickerPopup();
-        await Navigation.PushModalAsync(popup);
-        var selected = await popup.ResultSource.Task;
-
-        if (Navigation.ModalStack.Count > 0)
+        if (_isOpeningDateCalendar)
         {
-            await Navigation.PopModalAsync();
+            return;
         }
 
-        if (selected.HasValue)
+        _isOpeningDateCalendar = true;
+        try
         {
-            await Task.Yield();
-            await _viewModel.OpenEntryAsync(selected.Value);
+            var popup = new DatePickerPopup();
+            await Navigation.PushModalAsync(popup);
+            var selected = await popup.ResultSource.Task;
+
+            if (Navigation.ModalStack.Count > 0)
+            {
+                await Navigation.PopModalAsync();
+            }
+
+            if (selected.HasValue)
+            {
+                await Task.Yield();
+                await _viewModel.OpenEntryAsync(selected.Value);
+            }
+        }
+        finally
+        {
+            _isOpeningDateCalendar = false;
         }
     }
 
@@ -127,51 +135,17 @@ public partial class DailyEntryListPage : ContentPage
         {
             _isOpeningMonthlySummary = true;
 
-            var monthlySummaryPage = _serviceProvider.GetRequiredService<MonthlySummaryPage>();
-            if (monthlySummaryPage.BindingContext is MonthlySummaryViewModel monthlySummaryVm)
-            {
-                await monthlySummaryVm.LoadDataAsync(_viewModel.SelectedMonthDate.Year, _viewModel.SelectedMonthDate.Month);
-            }
-
-            await Shell.Current.Navigation.PushAsync(monthlySummaryPage);
+            await Shell.Current.GoToAsync(
+                nameof(MonthlySummaryPage),
+                new Dictionary<string, object>
+                {
+                    ["year"] = _viewModel.SelectedMonthDate.Year,
+                    ["month"] = _viewModel.SelectedMonthDate.Month
+                });
         }
         finally
         {
             _isOpeningMonthlySummary = false;
-        }
-    }
-
-    private async Task ShowCelebrationAsync()
-    {
-        if (_isCelebrationVisible || CelebrationOverlay == null)
-        {
-            return;
-        }
-
-        try
-        {
-            _isCelebrationVisible = true;
-            CelebrationOverlay.IsVisible = true;
-            CelebrationOverlay.Opacity = 0;
-            CelebrationCard.Scale = 0.85;
-            CelebrationCard.Opacity = 0;
-
-            await Task.WhenAll(
-                CelebrationOverlay.FadeTo(1, 180, Easing.CubicOut),
-                CelebrationCard.FadeTo(1, 180, Easing.CubicOut),
-                CelebrationCard.ScaleTo(1, 220, Easing.CubicOut));
-
-            await Task.Delay(1800);
-
-            await Task.WhenAll(
-                CelebrationCard.FadeTo(0, 180, Easing.CubicIn),
-                CelebrationOverlay.FadeTo(0, 200, Easing.CubicIn));
-
-            CelebrationOverlay.IsVisible = false;
-        }
-        finally
-        {
-            _isCelebrationVisible = false;
         }
     }
 }

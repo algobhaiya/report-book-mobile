@@ -5,7 +5,7 @@
              x:Class="algoBhaiya.ReportBook.Presentation.Views.FieldTemplatePage"
              Title="Items">
 
-    <Grid Padding="10,10,5,0">
+    <Grid Padding="10,10,10,0">
         <CollectionView ItemsSource="{Binding Templates}"
                         SelectionMode="None"
                         Margin="0">
@@ -44,10 +44,20 @@
 
                                 </VerticalStackLayout>
 
-                                <Switch Grid.Column="1"
-                                    VerticalOptions="Center"
-                                    IsToggled="{Binding IsEnabled, Mode=OneWay}"
-                                    Toggled="OnSwitchToggled"/>
+                                <Border Grid.Column="1"
+                                        Padding="2,2"
+                                        StrokeShape="RoundRectangle 14"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#1F2937}"
+                                        Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#374151}"
+                                        StrokeThickness="1"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End">
+                                    <Switch VerticalOptions="Center"
+                                            IsToggled="{Binding IsEnabled, Mode=OneWay}"
+                                            Toggled="OnSwitchToggled"
+                                            OnColor="{AppThemeBinding Light=#0A84FF, Dark=#4DA3FF}"
+                                            ThumbColor="{AppThemeBinding Light=#E5E7EB, Dark=#D1D5DB}" />
+                                </Border>
 
                             </Grid>
                         </Border>
@@ -107,13 +117,13 @@
                             Padding="24"
                             HorizontalOptions="Fill"
                             VerticalOptions="Center">
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border"
-                                         Binding="{Binding IsLoading}"
-                                         Value="True">
-                                <Setter Property="IsVisible" Value="False" />
-                            </DataTrigger>
-                        </Border.Triggers>
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding IsLoading}"
+                                             Value="True">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Border.Triggers>
                         <VerticalStackLayout Spacing="12"
                                              HorizontalOptions="Center"
                                              VerticalOptions="Center">

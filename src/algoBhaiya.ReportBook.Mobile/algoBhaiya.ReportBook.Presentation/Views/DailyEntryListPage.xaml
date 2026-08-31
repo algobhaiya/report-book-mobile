@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:algoBhaiya.ReportBook.Presentation.Views"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.DailyEntryListPage"
              Title="{Binding SelectedMonthLabel}">
-    <Grid RowDefinitions="Auto,*" Padding="10">
+    <Grid RowDefinitions="Auto,*" Padding="10,1,10,0">
         <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="0,5">
 
             <HorizontalStackLayout Spacing="4"
@@ -252,38 +252,6 @@
             </CollectionView>
         </RefreshView>
 
-        <Grid x:Name="CelebrationOverlay"
-              Grid.RowSpan="2"
-              IsVisible="False"
-              BackgroundColor="#AA0F172A"
-              InputTransparent="True">
-            <Border x:Name="CelebrationCard"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
-                    Stroke="{AppThemeBinding Light=#A5D6A7, Dark=#374151}"
-                    StrokeThickness="2"
-                    StrokeShape="RoundRectangle 24"
-                    Padding="22"
-                    WidthRequest="280"
-                    Opacity="0"
-                    Scale="0.85">
-                <VerticalStackLayout Spacing="12"
-                                     HorizontalOptions="Center"
-                                     VerticalOptions="Center">
-                    <Label Text="Alhamdulillah, all done."
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           HorizontalTextAlignment="Center"
-                           TextColor="{AppThemeBinding Light=#1B5E20, Dark=#F9FAFB}" />
-
-                    <Label Text="You completed every item for this day."
-                           FontSize="13"
-                           HorizontalTextAlignment="Center"
-                           TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
     </Grid>
 </ContentPage>
 

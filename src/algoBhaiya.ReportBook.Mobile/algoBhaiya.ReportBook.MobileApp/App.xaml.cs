@@ -3,103 +3,88 @@ using algoBhaiya.ReportBook.Infrastructure.Data;
 
 namespace algoBhaiya.ReportBook.MobileApp
 {
-    public partial class App : Application
+    public partial class App : Application, IStartupInitializationService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IAppNavigator _navigator;
+        private static Task? _startupInitializationTask;
 
-        public App(
-            IServiceProvider serviceProvider,
-            IAppNavigator navigator)
+        public Task StartupInitializationTask => _startupInitializationTask ?? Task.CompletedTask;
+
+        public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
-            _navigator = navigator;
-
-            InitializeDatabase();
-
-            NavigateToUserPage();
-            RefreshCurrentUserStreakAsync();
-
-            SeedInitialDataAsync();
-
-            CleanUpData();
         }
 
-        private void InitializeDatabase()
+        protected override Window CreateWindow(IActivationState? activationState)
         {
-            var initializer = _serviceProvider.GetRequiredService<DatabaseInitializer>();
-            Task.Run(async () => await initializer.InitializeAsync()).Wait();
+            var window = new Window(CreateInitialPage());
+            _startupInitializationTask = InitializeStartupAsync();
+            return window;
         }
 
-        private void NavigateToUserPage()
+        private Page CreateInitialPage()
         {
             int currentUserId = Preferences.Get("CurrentUserId", 0);
 
             if (currentUserId > 0)
-                _navigator.NavigateToMainShell();
-            else
-                _navigator.NavigateToLogin();
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
-            RefreshCurrentUserStreakAsync();
-        }
-
-        private void RefreshCurrentUserStreakAsync()
-        {
-            Task.Run(async () =>
             {
-                try
-                {
-                    var streakService = _serviceProvider.GetService<ITrackingStreakService>();
-                    if (streakService != null)
-                    {
-                        await streakService.RefreshForCurrentDayAsync((byte)Preferences.Get("CurrentUserId", 0));
-                    }
-                }
-                catch
-                {
-                }
-            });
+                return _serviceProvider.GetRequiredService<AppShell>();
+            }
+
+            return _serviceProvider.GetRequiredService<Presentation.Views.LoginPage>();
         }
 
-        private void CleanUpData()
+        private async Task InitializeStartupAsync()
         {
-            Task.Run(async () =>
+            try
             {
-                try
+                await Task.Run(async () =>
                 {
-                    var dataRetentionService = _serviceProvider.GetService<IDataRetentionService>();
-                    if (dataRetentionService != null)
-                    {
-                        await dataRetentionService.PerformIncrementalCleanupAsync();
-                    }
-                }
-                catch
-                {
-                }
-            });
+                    await InitializeDatabaseAsync();
+                    await SeedInitialDataAsync();
+                    await CleanUpData();
+                });
+            }
+            catch
+            {
+            }
         }
 
-        private void SeedInitialDataAsync()
+        private async Task InitializeDatabaseAsync()
         {
-            Task.Run(async () =>
+            var initializer = _serviceProvider.GetRequiredService<DatabaseInitializer>();
+            await initializer.InitializeAsync();
+        }
+
+        private async Task CleanUpData()
+        {
+            try
             {
-                try
+                var dataRetentionService = _serviceProvider.GetService<IDataRetentionService>();
+                if (dataRetentionService != null)
                 {
-                    var seedingDataService = _serviceProvider.GetService<ISeedDataService>();
-                    if (seedingDataService != null)
-                    {
-                        await seedingDataService.SeedDefaultUnitsAsync();
-                    }
+                    await dataRetentionService.PerformIncrementalCleanupAsync();
                 }
-                catch
+            }
+            catch
+            {
+            }
+        }
+
+        private async Task SeedInitialDataAsync()
+        {
+            try
+            {
+                var seedingDataService = _serviceProvider.GetService<ISeedDataService>();
+                if (seedingDataService != null)
                 {
+                    await seedingDataService.SeedDefaultUnitsAsync();
                 }
-            });
+            }
+            catch
+            {
+            }
         }
     }
 }

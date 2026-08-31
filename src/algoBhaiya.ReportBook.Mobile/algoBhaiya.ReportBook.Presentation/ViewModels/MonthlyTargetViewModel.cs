@@ -1,7 +1,8 @@
-﻿using algoBhaiya.ReportBook.Core.Entities;
+using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
@@ -23,9 +24,27 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _targetValue = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsDirty));
                 }
             }
         }
+
+        private string _originalTargetValue = string.Empty;
+        public string OriginalTargetValue
+        {
+            get => _originalTargetValue;
+            set
+            {
+                if (_originalTargetValue != value)
+                {
+                    _originalTargetValue = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsDirty));
+                }
+            }
+        }
+
+        public bool IsDirty => !string.Equals(TargetValue ?? string.Empty, OriginalTargetValue ?? string.Empty, StringComparison.Ordinal);
 
         public byte FieldOrder { get; set; }
     }
@@ -35,11 +54,29 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private readonly IMonthlyTargetRepository _repository;
         private readonly IServiceProvider _serviceProvider;
 
-        public ObservableCollection<MonthlyTargetFieldViewModel> Fields { get; set; } = new();
+        public ObservableCollection<MonthlyTargetFieldViewModel> Fields { get; } = new();
 
-        public Command SubmitCommand { get; }
+        private readonly Command _submitCommand;
+        public Command SubmitCommand => _submitCommand;
+        public Command PreviousMonthCommand { get; }
+        public Command NextMonthCommand { get; }
 
         private bool _isLoadingData = false;
+        public bool IsLoadingMonth
+        {
+            get => _isLoadingData;
+            private set
+            {
+                if (_isLoadingData != value)
+                {
+                    _isLoadingData = value;
+                    OnPropertyChanged();
+                    PreviousMonthCommand.ChangeCanExecute();
+                    NextMonthCommand.ChangeCanExecute();
+                }
+            }
+        }
+
         private bool _isReadOnly = false;
         public bool IsReadOnly
         {
@@ -51,6 +88,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     _isReadOnly = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(CanSubmit));
+                    OnPropertyChanged(nameof(CanShowSubmit));
+                    _submitCommand.ChangeCanExecute();
                 }
             }
         }
@@ -69,7 +108,14 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
         }
 
-        public bool CanSubmit => !IsReadOnly;
+        private DateTime _currentMonthDate;
+        private bool _hasLoadedMonth;
+        public bool HasLoadedMonth => _hasLoadedMonth;
+
+        private int _dirtyCount;
+        public bool IsDirty => _dirtyCount > 0;
+        public bool CanSubmit => !IsReadOnly && IsDirty;
+        public bool CanShowSubmit => !IsReadOnly;
         private byte _loggedInUser = 0;
 
         private DateTime _selectedItemDate = DateTime.Today;
@@ -80,25 +126,35 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             _serviceProvider = serviceProvider;
             _repository = repository;
-            SubmitCommand = new Command(async () => await SaveTargetsAsync());
+            _submitCommand = new Command(async () => await SaveTargetsAsync(), () => CanSubmit);
+            PreviousMonthCommand = new Command(async () => await NavigateMonthAsync(-1), () => !_isLoadingData);
+            NextMonthCommand = new Command(async () => await NavigateMonthAsync(1), () => !_isLoadingData);
 
             _loggedInUser = (byte)Preferences.Get("CurrentUserId", 0);
         }
 
         public async Task LoadTargetsAsync(int year, int month)
         {
-            if (_isLoadingData)
+            if (IsLoadingMonth)
             {
                 return;
             }
 
-            _isLoadingData = true;
+            IsLoadingMonth = true;
+            DetachFieldHandlers();
             Fields.Clear();
+            _dirtyCount = 0;
+            OnPropertyChanged(nameof(IsDirty));
+            OnPropertyChanged(nameof(CanSubmit));
+            OnPropertyChanged(nameof(CanShowSubmit));
+            _submitCommand.ChangeCanExecute();
             try
             {
                 if (_loggedInUser == 0) return;
 
                 _selectedItemDate = new DateTime(year, month, 1);
+                _currentMonthDate = _selectedItemDate;
+                _hasLoadedMonth = true;
 
                 IsReadOnly = IsNonEditableMonth(year, month);
 
@@ -114,65 +170,76 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
                 await Task.WhenAll(templatesTask, unitsTask, targetsTask);
 
-                var templates = templatesTask.Result;
-                var units = unitsTask.Result;
-                var targets = targetsTask.Result;
+                var templates = await templatesTask;
+                var units = await unitsTask;
+                var targets = await targetsTask;
 
                 if (IsReadOnly)
                 {
-                // Based on Fixed template
-                targets = targets
-                    .Where(t => t.IsDeleted == false)
-                    .OrderBy(t => t.FieldOrder)
-                    .ToList();
+                    targets = targets
+                        .Where(t => t.IsDeleted == false)
+                        .OrderBy(t => t.FieldOrder)
+                        .ToList();
 
-                foreach (var item in targets)
+                    foreach (var item in targets)
                     {
                         var template = templates.FirstOrDefault(t => t.Id == item.FieldTemplateId);
+                        if (template == null)
+                        {
+                            continue;
+                        }
+
                         var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
 
-                        Fields.Add(new MonthlyTargetFieldViewModel
+                        var field = new MonthlyTargetFieldViewModel
                         {
                             FieldTemplateId = item.FieldTemplateId,
                             FieldName = template.FieldName,
                             ValueType = template.ValueType,
-                            UnitName = unit?.UnitName ?? "",
-                        TargetValue = item?.TargetValue ?? ""
-                        });
+                            UnitName = unit?.UnitName ?? string.Empty,
+                            TargetValue = item.TargetValue ?? string.Empty,
+                            OriginalTargetValue = item.TargetValue ?? string.Empty
+                        };
+
+                        field.PropertyChanged += OnFieldPropertyChanged;
+                        Fields.Add(field);
                     }
                 }
                 else
                 {
-                // Based on Dynamic current template
-                templates = templates
-                    .Where(t => 
-                        t.UserId == _loggedInUser &&
-                        !t.IsDeleted && 
-                        t.IsEnabled)
-                    .OrderBy(t => t.FieldOrder);
+                    templates = templates
+                        .Where(t =>
+                            t.UserId == _loggedInUser &&
+                            !t.IsDeleted &&
+                            t.IsEnabled)
+                        .OrderBy(t => t.FieldOrder);
 
-                foreach (var template in templates)
+                    foreach (var template in templates)
                     {
                         var unit = units.FirstOrDefault(u => u.Id == template.UnitId);
                         var target = targets.FirstOrDefault(t => t.FieldTemplateId == template.Id);
 
-                        Fields.Add(new MonthlyTargetFieldViewModel
+                        var field = new MonthlyTargetFieldViewModel
                         {
                             FieldTemplateId = template.Id,
                             FieldName = template.FieldName,
                             ValueType = template.ValueType,
                             FieldOrder = template.FieldOrder,
-                            UnitName = unit?.UnitName ?? "",
-                            TargetValue = target?.TargetValue ?? ""
-                        });
+                            UnitName = unit?.UnitName ?? string.Empty,
+                            TargetValue = target?.TargetValue ?? string.Empty,
+                            OriginalTargetValue = target?.TargetValue ?? string.Empty
+                        };
+
+                        field.PropertyChanged += OnFieldPropertyChanged;
+                        Fields.Add(field);
                     }
                 }
-                
+
                 CurrentMonthLabel = $"{CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}";
             }
             finally
             {
-                _isLoadingData = false;
+                IsLoadingMonth = false;
             }
         }
 
@@ -204,7 +271,40 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         }
 
         #region Helpers
-        
+
+        private async Task NavigateMonthAsync(int offset)
+        {
+            if (_currentMonthDate == default || IsLoadingMonth)
+            {
+                return;
+            }
+
+            var targetMonth = _currentMonthDate.AddMonths(offset);
+            await LoadTargetsAsync(targetMonth.Year, targetMonth.Month);
+        }
+
+        private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(MonthlyTargetFieldViewModel.TargetValue) &&
+                e.PropertyName != nameof(MonthlyTargetFieldViewModel.OriginalTargetValue))
+            {
+                return;
+            }
+
+            _dirtyCount = Fields.Count(field => field.IsDirty);
+            OnPropertyChanged(nameof(IsDirty));
+            OnPropertyChanged(nameof(CanSubmit));
+            _submitCommand.ChangeCanExecute();
+        }
+
+        private void DetachFieldHandlers()
+        {
+            foreach (var field in Fields)
+            {
+                field.PropertyChanged -= OnFieldPropertyChanged;
+            }
+        }
+
         private bool IsNonEditableMonth(int year, int month)
         {
             var today = DateTime.Today;
@@ -213,5 +313,4 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         #endregion
     }
-
 }

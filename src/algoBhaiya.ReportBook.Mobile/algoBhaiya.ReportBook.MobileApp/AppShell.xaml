@@ -38,9 +38,9 @@
             ContentTemplate="{DataTemplate views:FieldUnitPage}" />
 
         <ShellContent 
-            Title="Guide" 
-            Icon="book_solid.svg"
-            ContentTemplate="{DataTemplate views:HelpPage}" />
+            Title="Profiles" 
+            Icon="profile_user.svg"
+            ContentTemplate="{DataTemplate views:SwitchProfilePage}" />
 
     </TabBar>
 

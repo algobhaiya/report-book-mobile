@@ -19,6 +19,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public ObservableCollection<string> DisplayUnitNames { get; } = new();
         private byte _loggedInUser = 0;
 
+        private readonly string _newModeTitle = "Add Field";
+        private readonly string _editModeTitle = "Edit Field";
+        private readonly string _newModeSubtitle = "Choose a field name, unit, and display order.";
+        private readonly string _editModeSubtitle = "Update this field's name, unit, or display order.";
+        private readonly string _saveButtonText = "Save";
+        private readonly string _updateButtonText = "Update";
+
         private string _fieldName;
         public string FieldName
         {
@@ -29,6 +36,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _fieldName = value;
                     OnPropertyChanged();
+                    if (!string.IsNullOrWhiteSpace(_fieldName))
+                    {
+                        FieldNameError = string.Empty;
+                    }
                 }
             }
         }
@@ -43,6 +54,10 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _selectedUnitName = value;
                     OnPropertyChanged();
+                    if (!string.IsNullOrWhiteSpace(_selectedUnitName))
+                    {
+                        SelectedUnitError = string.Empty;
+                    }
                 }
             }
         }
@@ -57,11 +72,81 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 {
                     _fieldOrder = value;
                     OnPropertyChanged();
+                    if (_fieldOrder > 0)
+                    {
+                        FieldOrderError = string.Empty;
+                    }
                 }
             }
         }
 
         public ICommand SubmitCommand { get; }
+        public string PageTitle => IsEditMode ? _editModeTitle : _newModeTitle;
+        public string PageSubtitle => IsEditMode ? _editModeSubtitle : _newModeSubtitle;
+        public string SubmitButtonText => IsEditMode ? _updateButtonText : _saveButtonText;
+        public bool IsEditMode => TappedField != null && TappedField.Id > 0;
+        private bool _isSubmitting;
+        public bool IsSubmitting
+        {
+            get => _isSubmitting;
+            private set
+            {
+                if (_isSubmitting != value)
+                {
+                    _isSubmitting = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _fieldNameError;
+        public string FieldNameError
+        {
+            get => _fieldNameError;
+            private set
+            {
+                if (_fieldNameError != value)
+                {
+                    _fieldNameError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasFieldNameError));
+                }
+            }
+        }
+
+        private string _selectedUnitError;
+        public string SelectedUnitError
+        {
+            get => _selectedUnitError;
+            private set
+            {
+                if (_selectedUnitError != value)
+                {
+                    _selectedUnitError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasSelectedUnitError));
+                }
+            }
+        }
+
+        private string _fieldOrderError;
+        public string FieldOrderError
+        {
+            get => _fieldOrderError;
+            private set
+            {
+                if (_fieldOrderError != value)
+                {
+                    _fieldOrderError = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasFieldOrderError));
+                }
+            }
+        }
+
+        public bool HasFieldNameError => !string.IsNullOrWhiteSpace(FieldNameError);
+        public bool HasSelectedUnitError => !string.IsNullOrWhiteSpace(SelectedUnitError);
+        public bool HasFieldOrderError => !string.IsNullOrWhiteSpace(FieldOrderError);
         
         public FieldTemplate TappedField { get; set; }
 
@@ -109,54 +194,96 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             var fieldTemplate = _navDataService.Get<FieldTemplate>(Constants.Constants.FieldTemplate.Item_ToEdit);
             
             AssignEntryAsync(fieldTemplate);
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
 
             _navDataService.Remove(Constants.Constants.FieldTemplate.Item_ToEdit);
         }
 
         private async Task SubmitAsync()
         {
-            if (string.IsNullOrWhiteSpace(FieldName) || string.IsNullOrWhiteSpace(SelectedUnitName))
+            if (IsSubmitting)
             {
-                await Shell.Current.DisplayAlert("Error", "Please fill all fields", "OK");
                 return;
             }
 
-            var backendUnit = await _unitRepository
-                .GetFirstOrDefaultAsync(u => 
-                    u.UnitName == SelectedUnitName &&
-                    u.IsDeleted == false);
-
-            // If different name, then check duplicate.
-            if (TappedField.FieldName != FieldName)
+            IsSubmitting = true;
+            try
             {
-                // validate fieldName.
-                var duplicateField = await _repository
-                    .GetFirstOrDefaultAsync(
-                        f => f.FieldName == FieldName && 
-                        f.UserId == _loggedInUser &&
-                        f.IsDeleted == false);
-
-                if (duplicateField != null)
+                if (!ValidateFields())
                 {
-                    await Shell.Current.DisplayAlert(
-                        "Duplicate Name",
-                        $"The field \"{FieldName}\" already exists. Please choose a different name.",
-                        "OK");
                     return;
                 }
 
-                await SaveAsync(backendUnit);
-            } 
-            else if (HasFieldValueChanged(backendUnit))
+                var backendUnit = await _unitRepository
+                    .GetFirstOrDefaultAsync(u => 
+                        u.UnitName == SelectedUnitName &&
+                        u.IsDeleted == false);
+
+                // If different name, then check duplicate.
+                if (TappedField.FieldName != FieldName)
+                {
+                    // validate fieldName.
+                    var duplicateField = await _repository
+                        .GetFirstOrDefaultAsync(
+                            f => f.FieldName == FieldName && 
+                            f.UserId == _loggedInUser &&
+                            f.IsDeleted == false);
+
+                    if (duplicateField != null)
+                    {
+                        FieldNameError = $"The field \"{FieldName}\" already exists. Please choose a different name.";
+                        return;
+                    }
+
+                    await SaveAsync(backendUnit);
+                } 
+                else if (HasFieldValueChanged(backendUnit))
+                {
+                    await SaveAsync(backendUnit);
+                } 
+                else
+                {
+                    // Skip updating.
+                }
+
+                onModalClose?.Invoke();
+            }
+            finally
             {
-                await SaveAsync(backendUnit);
-            } 
+                IsSubmitting = false;
+            }
+        }
+
+        private bool ValidateFields()
+        {
+            var isValid = true;
+
+            if (string.IsNullOrWhiteSpace(FieldName))
+            {
+                FieldNameError = "Field name is required.";
+                isValid = false;
+            }
             else
             {
-                // Skip updating.
+                FieldNameError = string.Empty;
             }
 
-            onModalClose?.Invoke();           
+            if (string.IsNullOrWhiteSpace(SelectedUnitName))
+            {
+                SelectedUnitError = "Please select a unit.";
+                isValid = false;
+            }
+            else
+            {
+                SelectedUnitError = string.Empty;
+            }
+
+            FieldOrderError = string.Empty;
+
+            return isValid;
         }
 
         private async Task SaveAsync(FieldUnit backendUnit)
@@ -179,7 +306,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 FieldName = string.Empty;
                 SelectedUnitName = string.Empty;
                 
-                // Take the max value (as default)
+                // Start new items at the current max, including zero-based data.
                 var maxOrder = (await _repository
                     .GetListAsync(f =>
                         f.UserId == _loggedInUser &&
@@ -189,8 +316,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     .Select(f => f.FieldOrder)
                     .OrderByDescending(f => f)
                     .FirstOrDefault();
-
-                FieldOrder = byte.Min(maxOrder, byte.MaxValue);
+                FieldOrder = maxOrder == 0
+                    ? (byte)0
+                    : byte.Min((byte)(maxOrder + 1), byte.MaxValue);
             }
             else
             {
@@ -200,6 +328,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             TappedField = fieldTemplate ?? new FieldTemplate();
+            FieldNameError = string.Empty;
+            SelectedUnitError = string.Empty;
+            FieldOrderError = string.Empty;
+            OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(PageSubtitle));
+            OnPropertyChanged(nameof(SubmitButtonText));
+            OnPropertyChanged(nameof(IsEditMode));
         }
 
         private async Task<FieldTemplate> DeleteFieldAsync(string fieldName, byte unitId)

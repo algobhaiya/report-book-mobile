@@ -12,6 +12,7 @@ public partial class LoginPage : ContentPage
     private readonly IAppNavigator _appNavigator;
     private bool _isLoading;
     private bool _hasExistingUsers;
+    private bool _isDeleteFlowActive;
 
     public ObservableCollection<AppUser> ExistingUsers { get; set; } = new ();
     public Command<AppUser> UserTappedCommand { get; }
@@ -59,10 +60,8 @@ public partial class LoginPage : ContentPage
         {
             if (selectedUser != null)
             {
+                await WaitForStartupInitializationAsync();
                 Preferences.Set(Constants.Constants.AppUser.CurrentUserId, selectedUser.Id);
-
-                await Navigation.PopAsync();
-
                 _appNavigator.NavigateToMainShell();
             }
         });
@@ -74,11 +73,20 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
 
+        await Task.Yield();
+
+        if (_isDeleteFlowActive)
+        {
+            return;
+        }
+
         await RefreshUsersAsync();
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
+        await WaitForStartupInitializationAsync();
+
         string username = UsernameEntry.Text?.Trim();
 
         if (string.IsNullOrWhiteSpace(username))
@@ -110,34 +118,50 @@ public partial class LoginPage : ContentPage
         }
 
         Preferences.Set(Constants.Constants.AppUser.CurrentUserId, user.Id);
-
-        await Navigation.PopAsync();
-
         _appNavigator.NavigateToMainShell();
     }
 
     private async Task OnRemoveUserClicked(AppUser user)
     {
-        string action = await DisplayActionSheet(
-            $"Remove user '{user.UserName}'?",
-            "Cancel",
-            null,
-            Constants.Constants.LogIn.SoftDeleteBtn,
-            Constants.Constants.LogIn.HardDeleteBtn);
-
-        switch (action)
+        if (_isDeleteFlowActive)
         {
-            case Constants.Constants.LogIn.SoftDeleteBtn:
-                user.IsDeleted = true; // You need to add this flag in your AppUser entity
-                await _repository.UpdateAsync(user);
-                break;
-
-            case Constants.Constants.LogIn.HardDeleteBtn:
-                await DeleteUserPermanentlyAsync(user);
-                break;
+            return;
         }
 
-        await RefreshUsersAsync();
+        _isDeleteFlowActive = true;
+        try
+        {
+            var popup = new UserDeleteChoicePopup(user.UserName);
+            await Navigation.PushModalAsync(popup);
+
+            var choice = await popup.ResultSource.Task;
+
+            switch (choice)
+            {
+                case UserDeleteChoice.SoftDelete:
+                    user.IsDeleted = true;
+                    await _repository.UpdateAsync(user);
+                    HandleDeletedCurrentUserAsync(user);
+                    RemoveUserFromList(user);
+                    break;
+
+                case UserDeleteChoice.HardDelete:
+                    await DeleteUserPermanentlyAsync(user);
+                    HandleDeletedCurrentUserAsync(user);
+                    RemoveUserFromList(user);
+                    break;
+            }
+        }
+        finally
+        {
+            _isDeleteFlowActive = false;
+        }
+    }
+
+    private static Task WaitForStartupInitializationAsync()
+    {
+        return (Application.Current as IStartupInitializationService)?.StartupInitializationTask
+               ?? Task.CompletedTask;
     }
 
     private async Task RefreshUsersAsync()
@@ -159,6 +183,29 @@ public partial class LoginPage : ContentPage
         }
     }
 
+    private void HandleDeletedCurrentUserAsync(AppUser deletedUser)
+    {
+        var currentUserId = Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+        if (currentUserId != deletedUser.Id)
+        {
+            return;
+        }
+
+        Preferences.Set(Constants.Constants.AppUser.CurrentUserId, 0);
+        _appNavigator.NavigateToLogin();
+    }
+
+    private void RemoveUserFromList(AppUser user)
+    {
+        var existingUser = ExistingUsers.FirstOrDefault(u => u.Id == user.Id);
+        if (existingUser != null)
+        {
+            ExistingUsers.Remove(existingUser);
+        }
+
+        HasExistingUsers = ExistingUsers.Count > 0;
+    }
+
     private async Task DeleteUserPermanentlyAsync(AppUser user)
     {
         var confirm = await DisplayAlert("Sure!", $"Delete '{user.UserName}' Permanently?", "Yes", "No");
@@ -174,9 +221,9 @@ public partial class LoginPage : ContentPage
 
             await Task.WhenAll(dailyReportsTask, plansTask, fieldsTask);
 
-            var dailyReports = dailyReportsTask.Result;
-            var plans = plansTask.Result;
-            var fields = fieldsTask.Result;
+            var dailyReports = await dailyReportsTask;
+            var plans = await plansTask;
+            var fields = await fieldsTask;
 
             foreach (var d in dailyReports)
             {

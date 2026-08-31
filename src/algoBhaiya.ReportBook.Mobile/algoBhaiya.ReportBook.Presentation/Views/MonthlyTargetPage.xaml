@@ -1,123 +1,149 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:algoBhaiya.ReportBook.Presentation.ViewModels"
              x:Class="algoBhaiya.ReportBook.Presentation.Views.MonthlyTargetPage"
-             Title="Monthly Plans">
+             Title="Monthly Plans"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#0F172A}">
 
-    <Grid Padding="10" RowSpacing="12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Grid>
+        <Grid RowDefinitions="*,Auto">
+            <ScrollView Grid.Row="0">
+                <VerticalStackLayout Padding="20" Spacing="15">
+                    <Grid ColumnDefinitions="Auto,*"
+                          ColumnSpacing="10"
+                          VerticalOptions="Center">
+                        <Button Text="🗓️ By Month"
+                                Clicked="OnMonthCalendarClicked"
+                                FontAttributes="Bold"
+                                BackgroundColor="#f0f0f0"
+                                TextColor="Black"
+                                CornerRadius="20"
+                                Padding="10,5"
+                                FontSize="13"
+                                MaximumHeightRequest="50" />
 
-        <!-- Search Row -->
-        <HorizontalStackLayout Grid.Row="0"
-                               Spacing="10"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center">
-            <!-- Filter Buttons Row -->
-            <Button Text="🗓️ By Month"
-                    FontAttributes="Bold"
-                    Clicked="OnMonthCalendarClicked"
-                    BackgroundColor="#f0f0f0"
-                    TextColor="Black"
-                    CornerRadius="20"
-                    Padding="10,5"
-                    FontSize="14"
-                    MaximumHeightRequest="50" />
+                        <Border Grid.Column="1"
+                                StrokeShape="RoundRectangle 18"
+                                Stroke="#4CAF50"
+                                BackgroundColor="#E0F2F1"
+                                Padding="10,8">
+                            <Grid ColumnDefinitions="44,*,44"
+                                  ColumnSpacing="8"
+                                  VerticalOptions="Center">
+                                <Button Text="‹"
+                                        Command="{Binding PreviousMonthCommand}"
+                                        BackgroundColor="#f0f0f0"
+                                        TextColor="Black"
+                                        CornerRadius="14"
+                                        FontAttributes="Bold"
+                                        FontSize="18"
+                                        WidthRequest="44"
+                                        HeightRequest="40"
+                                        Padding="0" />
 
-            <Frame CornerRadius="12"
-                   BackgroundColor="#E0F2F1"
-                   BorderColor="#4CAF50"
-                   Padding="13"
-                   HasShadow="False"
-                   Margin="0,5,0,5">
-                <HorizontalStackLayout Spacing="5"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="CenterAndExpand">
-                    <Label Text="Month:"
-                           FontAttributes="Italic"
-                           FontSize="13"
-                           VerticalOptions="Center"
-                           TextColor="#2E7D32" />
-                    <Label Text="{Binding CurrentMonthLabel}"
-                           FontAttributes="Bold"
-                           FontSize="15"
-                           TextColor="#1B5E20"
-                           Padding="1,4" />
-                </HorizontalStackLayout>
-            </Frame>
-        </HorizontalStackLayout>
+                                <Label Grid.Column="1"
+                                       Text="{Binding CurrentMonthLabel}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#1B5E20"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center" />
 
-        <!-- Data List -->
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding Fields}"
-                        VerticalOptions="FillAndExpand">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid ColumnSpacing="10" Padding="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" />
-                            <!-- FieldName: 50% -->
-                            <ColumnDefinition Width="3*" />
-                            <!-- Input: 30% -->
-                            <ColumnDefinition Width="2*" />
-                            <!-- Unit: 20% -->
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Field Name -->
-                        <Label Grid.Column="0"
-                               Text="{Binding FieldName}"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center" />
-
-                        <!-- Input -->
-                        <StackLayout Grid.Column="1" VerticalOptions="Center">
-                            <Entry Placeholder="Enter value"
-                                   Keyboard="Numeric"
-                                   HorizontalTextAlignment="Center"
-                                   Text="{Binding TargetValue}" />
-                        </StackLayout>
-
-                        <!-- Unit -->
-                        <Label Grid.Column="2"
-                               Text="{Binding UnitName}"
-                               FontAttributes="Italic"
-                               TextColor="Gray"
-                               VerticalOptions="Center"
-                               HorizontalTextAlignment="Start" />
+                                <Button Grid.Column="2"
+                                        Text="›"
+                                        Command="{Binding NextMonthCommand}"
+                                        BackgroundColor="#f0f0f0"
+                                        TextColor="Black"
+                                        CornerRadius="14"
+                                        FontAttributes="Bold"
+                                        FontSize="18"
+                                        WidthRequest="44"
+                                        HeightRequest="40"
+                                        Padding="0" />
+                            </Grid>
+                        </Border>
                     </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-            <CollectionView.EmptyView>
-                <StackLayout Padding="20"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center">
-                    <Label Text="No records found for this month."
-                           TextColor="Gray"
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Fields}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnSpacing="10" Padding="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0"
+                                           Text="{Binding FieldName}"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center"
+                                           MaxLines="2"
+                                           TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}" />
+
+                                    <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Entry Placeholder="Enter value"
+                                               Keyboard="Numeric"
+                                               HorizontalTextAlignment="Center"
+                                               TextColor="{AppThemeBinding Light=#0F172A, Dark=#F9FAFB}"
+                                               PlaceholderColor="{AppThemeBinding Light=#94A3B8, Dark=#6B7280}"
+                                               Text="{Binding TargetValue}" />
+                                    </StackLayout>
+
+                                    <Label Grid.Column="2"
+                                           Text="{Binding UnitName}"
+                                           FontAttributes="Italic"
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#9CA3AF}"
+                                           VerticalOptions="Center"
+                                           HorizontalTextAlignment="Start" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <Label Text="No modification for previous month."
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light=#DC2626, Dark=#FCA5A5}"
                            FontAttributes="Italic"
-                           FontSize="15" />
-                </StackLayout>
-            </CollectionView.EmptyView>
-        </CollectionView>
+                           FontSize="12"
+                           IsVisible="{Binding IsReadOnly}" />
+                </VerticalStackLayout>
+            </ScrollView>
 
-        <!-- Submit -->
-        <VerticalStackLayout Grid.Row="2" Spacing="8">
-            <Button Text="Save Targets"
-                    Command="{Binding SubmitCommand}"
-                    IsEnabled="{Binding CanSubmit}"
-                    IsVisible="{Binding CanSubmit}"
-                    BackgroundColor="#4CAF50"
-                    TextColor="White" />
+            <Border Grid.Row="1"
+                    Padding="20,0,20,7"
+                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}"
+                    StrokeThickness="0"
+                    IsVisible="{Binding CanShowSubmit}">
+                <Button Text="Save Targets"
+                        Command="{Binding SubmitCommand}"
+                        BackgroundColor="{AppThemeBinding Light=#16A34A, Dark=#22C55E}"
+                        TextColor="White">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroupList>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Property="Opacity" Value="0.45" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#94A3B8, Dark=#334155}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateGroupList>
+                    </VisualStateManager.VisualStateGroups>
+                </Button>
+            </Border>
 
-            <Label Text="No modification for previous month."   
-                   HorizontalOptions="Center"
-                   TextColor="Red"
-                   FontAttributes="Italic"
-                   FontSize="12"
-                   IsVisible="{Binding IsReadOnly}" />
-        </VerticalStackLayout>
+            <Grid Grid.RowSpan="2"
+                  IsVisible="{Binding IsLoadingMonth}"
+                  BackgroundColor="{AppThemeBinding Light=#66000000, Dark=#99000000}"
+                  InputTransparent="False">
+                <ActivityIndicator IsRunning="{Binding IsLoadingMonth}"
+                                   Color="{AppThemeBinding Light=White, Dark=#F9FAFB}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+            </Grid>
+        </Grid>
     </Grid>
 </ContentPage>

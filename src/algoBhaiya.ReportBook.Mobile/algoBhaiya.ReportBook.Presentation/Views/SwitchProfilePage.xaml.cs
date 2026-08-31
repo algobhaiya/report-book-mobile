@@ -36,10 +36,6 @@ public partial class SwitchProfilePage : ContentPage
         }
     }
 
-    private async void OnCancelClicked(object sender, EventArgs e)
-    {
-        await Navigation.PopModalAsync();
-    }
 }
 
 public class UserInitialsConverter : IValueConverter

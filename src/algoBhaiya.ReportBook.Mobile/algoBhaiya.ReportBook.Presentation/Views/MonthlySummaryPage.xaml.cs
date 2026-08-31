@@ -2,11 +2,13 @@ using algoBhaiya.ReportBook.Presentation.ViewModels;
 
 namespace algoBhaiya.ReportBook.Presentation.Views;
 
-public partial class MonthlySummaryPage : ContentPage
+public partial class MonthlySummaryPage : ContentPage, IQueryAttributable
 {
     private bool _isInitialized = false;
+    private int? _pendingYear;
+    private int? _pendingMonth;
 
-	public MonthlySummaryPage(MonthlySummaryViewModel vm)
+    public MonthlySummaryPage(MonthlySummaryViewModel vm)
 	{
 		InitializeComponent();
 		BindingContext = vm;
@@ -24,10 +26,28 @@ public partial class MonthlySummaryPage : ContentPage
         if (BindingContext is MonthlySummaryViewModel vm)
         {
             _isInitialized = true;
+            if (_pendingYear.HasValue && _pendingMonth.HasValue)
+            {
+                await vm.LoadDataAsync(_pendingYear.Value, _pendingMonth.Value);
+                _pendingYear = null;
+                _pendingMonth = null;
+                return;
+            }
+
             if (!vm.HasLoadedMonth)
             {
                 await vm.LoadDataAsync(DateTime.Today.Year, DateTime.Today.Month);
             }
+        }
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("year", out var yearValue) && int.TryParse(yearValue?.ToString(), out var year) &&
+            query.TryGetValue("month", out var monthValue) && int.TryParse(monthValue?.ToString(), out var month))
+        {
+            _pendingYear = year;
+            _pendingMonth = month;
         }
     }
 

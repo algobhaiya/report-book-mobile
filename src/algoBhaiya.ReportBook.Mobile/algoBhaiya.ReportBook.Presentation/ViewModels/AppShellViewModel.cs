@@ -1,10 +1,12 @@
 ﻿
+using algoBhaiya.ReportBook.Core.Dtos;
 using algoBhaiya.ReportBook.Core.Entities;
 using algoBhaiya.ReportBook.Core.Interfaces;
 using algoBhaiya.ReportBook.Presentation.Views;
 using algoBhaiya.ReportBooks.Core.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Input;
 
 namespace algoBhaiya.ReportBook.Presentation.ViewModels
@@ -18,8 +20,8 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         private bool _isMenuOpen;
         private bool _isStreakDetailsOpen;
         private bool _isStartupStreakLossOpen;
-        private bool _hasSeenPositiveStreakThisSession;
-        private bool _hasShownStartupStreakLossThisSession;
+        private readonly SemaphoreSlim _startupInitializationLock = new(1, 1);
+        private bool _isStartupInitialized;
         private readonly ObservableCollection<StreakWeekDayViewModel> _weeklyDays = new();
 
         public ICommand OpenMenuCommand { get; }
@@ -150,34 +152,64 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _isStreakDetailsOpen = false;
         }
 
-        private async Task CheckAndShowStartupStreakLossAsync()
+        public async Task<StreakRefreshResult> RefreshStartupStreakAsync()
         {
-            if (_isStartupStreakLossOpen)
-            {
-                return;
-            }
-
             byte userId = (byte)Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
             if (userId == 0)
             {
+                StreakCount = 0;
+                return new StreakRefreshResult();
+            }
+
+            var refreshResult = await _trackingStreakService.RefreshStreakForStartupAsync(userId);
+            StreakCount = refreshResult.StreakCount;
+            return refreshResult;
+        }
+
+        public async Task InitializeStartupAsync()
+        {
+            if (_isStartupInitialized)
+            {
                 return;
             }
 
-            _isStartupStreakLossOpen = true;
+            await _startupInitializationLock.WaitAsync();
             try
             {
-                await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
-                _hasShownStartupStreakLossThisSession = true;
+                if (_isStartupInitialized)
+                {
+                    return;
+                }
+
+                await RunStartupStreakFlowAsync();
+                await LoadUserNameAsync(includeStreakRefresh: false);
+                _isStartupInitialized = true;
             }
-            catch
+            finally
             {
-                _isStartupStreakLossOpen = false;                
+                _startupInitializationLock.Release();
             }
         }
 
         public void NotifyStartupStreakLossClosed()
         {
             _isStartupStreakLossOpen = false;
+        }
+
+        private async Task RunStartupStreakFlowAsync()
+        {
+            if (_isStartupStreakLossOpen)
+            {
+                return;
+            }
+
+            var result = await RefreshStartupStreakAsync();
+
+            if (result.IsStartupLoss)
+            {
+                _isStartupStreakLossOpen = true;
+                await _appNavigator.PushModalAsync(() => new StartupStreakLossPopup(this));
+            }
         }
 
         public void UpdatePageTitle(string? title)
@@ -228,10 +260,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             }
 
             var max = Math.Max(items.Count == 0 ? 0 : items.Max(x => x.FilledCount), 1);
+            var hasAnyFilledEntries = items.Any(x => x.FilledCount > 0);
             foreach (var item in items)
             {
-                item.BarProgress = item.FilledCount == 0 ? 0.12 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
-                item.BarHeight = 18 + (92 * item.BarProgress);
+                item.BarProgress = item.FilledCount == 0 ? 0 : Math.Clamp((double)item.FilledCount / max, 0.12, 1);
+                item.BarHeight = hasAnyFilledEntries
+                    ? 10 + (92 * item.BarProgress)
+                    : 7 + (32 * item.BarProgress);
                 item.IsEmpty = item.FilledCount == 0;
                 _weeklyDays.Add(item);
             }
@@ -250,7 +285,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                     DayLabel = GetDayLabel(date),
                     FilledCount = 0,
                     BarProgress = 0.12,
-                    BarHeight = 29,
+                    BarHeight = 20,
                     IsToday = date == today,
                     IsEmpty = true
                 });
@@ -263,13 +298,13 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         {
             return date.DayOfWeek switch
             {
-                DayOfWeek.Saturday => "S",
-                DayOfWeek.Sunday => "S",
-                DayOfWeek.Monday => "M",
-                DayOfWeek.Tuesday => "Tu",
-                DayOfWeek.Wednesday => "W",
-                DayOfWeek.Thursday => "Th",
-                DayOfWeek.Friday => "F",
+                DayOfWeek.Saturday => "Sat",
+                DayOfWeek.Sunday => "Sun",
+                DayOfWeek.Monday => "Mon",
+                DayOfWeek.Tuesday => "Tue",
+                DayOfWeek.Wednesday => "Wed",
+                DayOfWeek.Thursday => "Thu",
+                DayOfWeek.Friday => "Fri",
                 _ => string.Empty,
             };
         }
@@ -304,6 +339,11 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             await _appNavigator.NavigateToAsync<SettingsPage>();
         }
 
+        public async Task NavigateToGuideAsync()
+        {
+            await _appNavigator.NavigateToAsync<HelpPage>();
+        }
+
         public async Task NavigateToSwitchProfileAsync()
         {
             await _appNavigator.PushModalAsync(() =>
@@ -328,7 +368,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
             _appNavigator.NavigateToLogin();
         }
 
-        public async Task LoadUserNameAsync()
+        public async Task LoadUserNameAsync(bool includeStreakRefresh = true)
         {
             byte loggedInUserId = (byte)Preferences.Get("CurrentUserId", 0);
             if (loggedInUserId == 0)
@@ -338,12 +378,25 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var user = await _serviceProvider
+            var userTask = _serviceProvider
                 .GetRequiredService<IRepository<AppUser>>()
                 .GetFirstOrDefaultAsync(u => u.Id == loggedInUserId);
 
-            LoggedInUserName = user?.UserName ?? string.Empty;
-            await RefreshStreakAsync(loggedInUserId);
+            Task<int> streakTask = includeStreakRefresh
+                ? _trackingStreakService.GetCurrentStreakAsync(loggedInUserId)
+                : Task.FromResult(StreakCount);
+
+            var hasActiveFieldsTask = Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false)
+                ? Task.FromResult(true)
+                : _plannerCatalogService.HasActiveFieldsAsync(loggedInUserId);
+
+            await Task.WhenAll(userTask, streakTask, hasActiveFieldsTask);
+
+            LoggedInUserName = (await userTask)?.UserName ?? string.Empty;
+            if (includeStreakRefresh)
+            {
+                StreakCount = await streakTask;
+            }
 
             if (Preferences.Get(Constants.Constants.AppState.PlannerBypassGateKey, false))
             {
@@ -351,10 +404,9 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var hasActiveFields = await _plannerCatalogService.HasActiveFieldsAsync(loggedInUserId);
-            if (!hasActiveFields)
+            if (!await hasActiveFieldsTask)
             {
-                _appNavigator.NavigateToPlanner();
+                MainThread.BeginInvokeOnMainThread(() => _appNavigator.NavigateToPlanner());
             }
         }
 
@@ -372,24 +424,7 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
                 return;
             }
 
-            var previousStreak = StreakCount;
-            StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);
-
-            if (StreakCount > 0)
-            {
-                _hasSeenPositiveStreakThisSession = true;
-                return;
-            }
-
-            if (previousStreak > 0)
-            {
-                _hasSeenPositiveStreakThisSession = true;
-            }
-
-            if (_hasSeenPositiveStreakThisSession && !_hasShownStartupStreakLossThisSession)
-            {
-                await CheckAndShowStartupStreakLossAsync();
-            }
+            StreakCount = await _trackingStreakService.GetCurrentStreakAsync(userId);            
         }
     }
 }
