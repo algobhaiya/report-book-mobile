@@ -123,6 +123,11 @@ public partial class LoginPage : ContentPage
 
     private async Task OnRemoveUserClicked(AppUser user)
     {
+        if (_isDeleteFlowActive)
+        {
+            return;
+        }
+
         _isDeleteFlowActive = true;
         try
         {
@@ -134,14 +139,16 @@ public partial class LoginPage : ContentPage
             switch (choice)
             {
                 case UserDeleteChoice.SoftDelete:
-                    user.IsDeleted = true; // You need to add this flag in your AppUser entity
+                    user.IsDeleted = true;
                     await _repository.UpdateAsync(user);
-                    await RefreshUsersAsync();
+                    HandleDeletedCurrentUserAsync(user);
+                    RemoveUserFromList(user);
                     break;
 
                 case UserDeleteChoice.HardDelete:
                     await DeleteUserPermanentlyAsync(user);
-                    await RefreshUsersAsync();
+                    HandleDeletedCurrentUserAsync(user);
+                    RemoveUserFromList(user);
                     break;
             }
         }
@@ -174,6 +181,29 @@ public partial class LoginPage : ContentPage
         {
             IsLoading = false;
         }
+    }
+
+    private void HandleDeletedCurrentUserAsync(AppUser deletedUser)
+    {
+        var currentUserId = Preferences.Get(Constants.Constants.AppUser.CurrentUserId, 0);
+        if (currentUserId != deletedUser.Id)
+        {
+            return;
+        }
+
+        Preferences.Set(Constants.Constants.AppUser.CurrentUserId, 0);
+        _appNavigator.NavigateToLogin();
+    }
+
+    private void RemoveUserFromList(AppUser user)
+    {
+        var existingUser = ExistingUsers.FirstOrDefault(u => u.Id == user.Id);
+        if (existingUser != null)
+        {
+            ExistingUsers.Remove(existingUser);
+        }
+
+        HasExistingUsers = ExistingUsers.Count > 0;
     }
 
     private async Task DeleteUserPermanentlyAsync(AppUser user)
