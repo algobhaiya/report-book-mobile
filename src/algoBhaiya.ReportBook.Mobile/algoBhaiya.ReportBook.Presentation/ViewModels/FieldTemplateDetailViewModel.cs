@@ -85,6 +85,19 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
         public string PageSubtitle => IsEditMode ? _editModeSubtitle : _newModeSubtitle;
         public string SubmitButtonText => IsEditMode ? _updateButtonText : _saveButtonText;
         public bool IsEditMode => TappedField != null && TappedField.Id > 0;
+        private bool _isSubmitting;
+        public bool IsSubmitting
+        {
+            get => _isSubmitting;
+            private set
+            {
+                if (_isSubmitting != value)
+                {
+                    _isSubmitting = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private string _fieldNameError;
         public string FieldNameError
@@ -191,44 +204,57 @@ namespace algoBhaiya.ReportBook.Presentation.ViewModels
 
         private async Task SubmitAsync()
         {
-            if (!ValidateFields())
+            if (IsSubmitting)
             {
                 return;
             }
 
-            var backendUnit = await _unitRepository
-                .GetFirstOrDefaultAsync(u => 
-                    u.UnitName == SelectedUnitName &&
-                    u.IsDeleted == false);
-
-            // If different name, then check duplicate.
-            if (TappedField.FieldName != FieldName)
+            IsSubmitting = true;
+            try
             {
-                // validate fieldName.
-                var duplicateField = await _repository
-                    .GetFirstOrDefaultAsync(
-                        f => f.FieldName == FieldName && 
-                        f.UserId == _loggedInUser &&
-                        f.IsDeleted == false);
-
-                if (duplicateField != null)
+                if (!ValidateFields())
                 {
-                    FieldNameError = $"The field \"{FieldName}\" already exists. Please choose a different name.";
                     return;
                 }
 
-                await SaveAsync(backendUnit);
-            } 
-            else if (HasFieldValueChanged(backendUnit))
-            {
-                await SaveAsync(backendUnit);
-            } 
-            else
-            {
-                // Skip updating.
-            }
+                var backendUnit = await _unitRepository
+                    .GetFirstOrDefaultAsync(u => 
+                        u.UnitName == SelectedUnitName &&
+                        u.IsDeleted == false);
 
-            onModalClose?.Invoke();           
+                // If different name, then check duplicate.
+                if (TappedField.FieldName != FieldName)
+                {
+                    // validate fieldName.
+                    var duplicateField = await _repository
+                        .GetFirstOrDefaultAsync(
+                            f => f.FieldName == FieldName && 
+                            f.UserId == _loggedInUser &&
+                            f.IsDeleted == false);
+
+                    if (duplicateField != null)
+                    {
+                        FieldNameError = $"The field \"{FieldName}\" already exists. Please choose a different name.";
+                        return;
+                    }
+
+                    await SaveAsync(backendUnit);
+                } 
+                else if (HasFieldValueChanged(backendUnit))
+                {
+                    await SaveAsync(backendUnit);
+                } 
+                else
+                {
+                    // Skip updating.
+                }
+
+                onModalClose?.Invoke();
+            }
+            finally
+            {
+                IsSubmitting = false;
+            }
         }
 
         private bool ValidateFields()

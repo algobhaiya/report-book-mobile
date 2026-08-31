@@ -6,6 +6,7 @@ public partial class FieldTemplateDetailPage : ContentPage
 {
     public TaskCompletionSource<int?> ResultSource { get; } = new();
     private bool _isInitialized = false;
+    private bool _isClosing = false;
 
     public FieldTemplateDetailPage(FieldTemplateDetailViewModel vm)
 	{
@@ -36,12 +37,23 @@ public partial class FieldTemplateDetailPage : ContentPage
     }
 
     private void OnModalClosed()
-    {       
-        ResultSource.SetResult(null);
+    {
+        CloseAsync();
     }
 
     private void OnCancelClicked(object sender, EventArgs e)
     {
-        ResultSource.SetResult(null);
+        CloseAsync();
+    }
+
+    private void CloseAsync()
+    {
+        if (_isClosing)
+        {
+            return;
+        }
+
+        _isClosing = true;
+        ResultSource.TrySetResult(null);
     }
 }
