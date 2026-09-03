@@ -17,9 +17,9 @@
 		<ApplicationId>com.algobhaiya.reportbook.mobileapp</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationVersion>15</ApplicationVersion>  <!-- Internal platform version (required). Integer only -->
-		<ApplicationDisplayVersion>1.0.15</ApplicationDisplayVersion> <!-- Optional User-visible version. Semantic version (1.0.0) -->
-		<ApplicationVersionCode>15</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
+		<ApplicationVersion>16</ApplicationVersion>  <!-- Internal platform version (required). Integer only -->
+		<ApplicationDisplayVersion>2.0.1</ApplicationDisplayVersion> <!-- Optional User-visible version. Semantic version (1.0.0) -->
+		<ApplicationVersionCode>16</ApplicationVersionCode> <!-- Internal numeric version (important for Play Store updates). Integer. (always incremented on each update) -->
 
     <AndroidMinSdkVersion>29</AndroidMinSdkVersion>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
@@ -37,6 +37,12 @@
 	  <AndroidPackageFormat>aab</AndroidPackageFormat>
 	  <AndroidUseAapt2>True</AndroidUseAapt2>
 	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android36.0|AnyCPU'">
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
